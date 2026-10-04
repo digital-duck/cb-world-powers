@@ -1,0 +1,145 @@
+domain: 200years_7powers_ch14
+layout: timeline
+primitives:
+  china_1945_resumption_civil_war:
+    defines: |
+      (1945–1949) Resumption of the Civil War — With Japan defeated, the Nationalist-Communist
+      alliance collapses; full civil war resumes between the Kuomintang and the Chinese
+      Communist Party.
+    tier: 0
+concepts:
+  china_1949_peoples_republic_china_founded:
+    composed_of:
+    - china_1945_resumption_civil_war
+    defines: |
+      (1949) People's Republic of China Founded — Mao Zedong declares the PRC after Communist
+      victory; Chiang Kai-shek's Nationalist government retreats to Taiwan, creating the
+      still-unresolved cross-strait divide.
+    tier: 1
+  china_1950_korean_war_intervention:
+    composed_of:
+    - china_1949_peoples_republic_china_founded
+    defines: |
+      (1950–1953) Korean War Intervention — China enters the Korean War on the side of North
+      Korea, fighting US-led UN forces to a stalemate near the original border.
+    tier: 2
+  china_1958_great_leap_forward:
+    composed_of:
+    - china_1950_korean_war_intervention
+    defines: |
+      (1958–1962) The Great Leap Forward — Mao's rapid industrialization and collectivization
+      campaign causes catastrophic mismanagement and famine, killing tens of millions.
+    tier: 3
+  china_1966_cultural_revolution:
+    composed_of:
+    - china_1958_great_leap_forward
+    defines: |
+      (1966–1976) The Cultural Revolution — Mao mobilizes youth (Red Guards) to purge
+      perceived capitalist and traditional elements from society, causing massive social
+      upheaval, persecution, and economic disruption.
+    tier: 4
+  china_1971_un_seat_transfer:
+    composed_of:
+    - china_1966_cultural_revolution
+    defines: |
+      (1971) UN Seat Transfer — The PRC replaces the Republic of China (Taiwan) as the holder
+      of China's UN Security Council seat, marking a major diplomatic shift.
+    tier: 5
+  china_1972_nixons_visit_china:
+    composed_of:
+    - china_1971_un_seat_transfer
+    defines: |
+      (1972) Nixon's Visit to China — US President Nixon visits Beijing, beginning the
+      normalization of US-China relations and a strategic Cold War realignment.
+    tier: 6
+  china_1976_death_mao_zedong:
+    composed_of:
+    - china_1972_nixons_visit_china
+    defines: |
+      (1976) Death of Mao Zedong — Mao's death ends the Cultural Revolution era and opens the
+      way for a new generation of leadership.
+    tier: 7
+  china_1978_deng_xiaopings_reform_opening:
+    composed_of:
+    - china_1976_death_mao_zedong
+    defines: |
+      (1978) Deng Xiaoping's Reform and Opening-Up — Deng launches market-oriented economic
+      reforms and opens China to foreign investment, setting the stage for decades of rapid
+      growth.
+    tier: 8
+  china_1989_tiananmen_square_protests:
+    composed_of:
+    - china_1978_deng_xiaopings_reform_opening
+    defines: |
+      (1989) Tiananmen Square Protests — Pro-democracy protests are violently suppressed by
+      the military, resulting in significant loss of life and international condemnation.
+    tier: 9
+  china_1997_hong_kong_handover:
+    composed_of:
+    - china_1989_tiananmen_square_protests
+    defines: |
+      (1997) Hong Kong Handover — Britain returns Hong Kong to Chinese sovereignty under a
+      "one country, two systems" framework.
+    tier: 10
+  china_2001_wto_accession:
+    composed_of:
+    - china_1997_hong_kong_handover
+    defines: |
+      (2001) WTO Accession — China joins the World Trade Organization, accelerating its
+      integration into the global economy and its rise as "the world's factory."
+    tier: 11
+  china_2008_beijing_summer_olympics:
+    composed_of:
+    - china_2001_wto_accession
+    defines: |
+      (2008) Beijing Summer Olympics — China hosts the Olympics, showcasing its economic rise
+      and growing global stature.
+    tier: 12
+  china_2013_xi_jinping_becomes_leader_belt:
+    composed_of:
+    - china_2008_beijing_summer_olympics
+    defines: |
+      (2013) Xi Jinping Becomes Leader & Belt and Road Initiative — Xi Jinping consolidates
+      power and launches the Belt and Road Initiative, a massive global infrastructure and
+      investment strategy.
+    tier: 13
+  china_2019_hong_kong_protests_national_security:
+    composed_of:
+    - china_2013_xi_jinping_becomes_leader_belt
+    defines: |
+      (2019–2020) Hong Kong Protests & National Security Law — Mass pro-democracy protests in
+      Hong Kong are followed by a sweeping national security law, curtailing the territory's
+      autonomy.
+    tier: 14
+  china_2020_covid_19_pandemic_origin:
+    composed_of:
+    - china_2019_hong_kong_protests_national_security
+    defines: |
+      (2020) COVID-19 Pandemic Origin — A novel coronavirus first identified in Wuhan triggers
+      a global pandemic; China's strict "zero-COVID" policy shapes years of domestic and
+      international responses.
+    tier: 15
+  china_2022_20th_party_congress_xis:
+    composed_of:
+    - china_2020_covid_19_pandemic_origin
+    defines: |
+      (2022) 20th Party Congress: Xi's Third Term — Xi Jinping secures an unprecedented third
+      term as party leader, breaking the post-Deng norm of a two-term limit and further
+      consolidating personal power.
+    tier: 16
+  china_2022_end_zero_covid_property_crisis:
+    composed_of:
+    - china_2022_20th_party_congress_xis
+    defines: |
+      (2022–2023) End of Zero-COVID & Property Crisis — Mass protests contribute to an abrupt
+      end of zero-COVID restrictions in late 2022; simultaneously, major property developers
+      (including Evergrande) default, exposing a deep real-estate-sector debt crisis.
+    tier: 17
+  china_2025_deepseek_chinas_ai_competitiveness:
+    composed_of:
+    - china_2022_end_zero_covid_property_crisis
+    defines: |
+      (2025) DeepSeek and China's AI Competitiveness — Chinese AI lab DeepSeek releases a
+      highly capable, low-cost open-weight model, rattling global markets and signaling
+      China's growing competitiveness in frontier AI development.
+    tier: 18

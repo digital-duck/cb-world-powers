@@ -1,0 +1,148 @@
+domain: 200years_7powers_ch10
+layout: timeline
+primitives:
+  france_1946_fourth_republic_established:
+    defines: |
+      (1946) Fourth Republic Established — France adopts a new constitution after WWII, but
+      chronic government instability plagues the Fourth Republic throughout its 12-year
+      existence.
+    tier: 0
+concepts:
+  france_1946_first_indochina_war:
+    composed_of:
+    - france_1946_fourth_republic_established
+    defines: |
+      (1946–1954) First Indochina War — France fights to retain colonial control of Vietnam,
+      Laos, and Cambodia against Ho Chi Minh's Viet Minh; the war ends in French defeat at
+      Dien Bien Phu (1954) and Indochina's independence/partition.
+    tier: 1
+  france_1954_algerian_war_independence:
+    composed_of:
+    - france_1946_first_indochina_war
+    defines: |
+      (1954–1962) Algerian War of Independence — A brutal, divisive war over Algerian
+      independence — considered by many in France to be part of the country itself — nearly
+      triggers civil war at home before ending in Algerian independence.
+    tier: 2
+  france_1957_treaty_rome_founding_member_eec:
+    composed_of:
+    - france_1954_algerian_war_independence
+    defines: |
+      (1957) Treaty of Rome — Founding Member of the EEC — France co-founds the European
+      Economic Community, anchoring post-war European economic integration alongside West
+      Germany.
+    tier: 3
+  france_1958_fifth_republic_established:
+    composed_of:
+    - france_1957_treaty_rome_founding_member_eec
+    defines: |
+      (1958) Fifth Republic Established — Amid the Algerian crisis, Charles de Gaulle returns
+      to power and establishes the current Fifth Republic, with a stronger executive
+      presidency.
+    tier: 4
+  france_1960_decolonization_sub_saharan_africa:
+    composed_of:
+    - france_1958_fifth_republic_established
+    defines: |
+      (1960) Decolonization of Sub-Saharan Africa — Most of France's African colonies gain
+      independence in a single wave, rapidly winding down the French colonial empire while
+      leaving lasting economic and linguistic ties (*Françafrique*).
+    tier: 5
+  france_1962_algerian_independence:
+    composed_of:
+    - france_1960_decolonization_sub_saharan_africa
+    defines: |
+      (1962) Algerian Independence — Algeria formally becomes independent after the Evian
+      Accords, ending 132 years of French colonial rule and triggering the exodus of over a
+      million *pieds-noirs* settlers.
+    tier: 6
+  france_1968_may_68_protests:
+    composed_of:
+    - france_1962_algerian_independence
+    defines: |
+      (1968) May 68 Protests — Massive student and worker protests and strikes nearly topple
+      the de Gaulle government, reshaping French social and labor politics for a generation.
+    tier: 7
+  france_1981_mitterrand_elected:
+    composed_of:
+    - france_1968_may_68_protests
+    defines: |
+      (1981) Mitterrand Elected — François Mitterrand becomes the Fifth Republic's first
+      Socialist president, initially pursuing nationalization before shifting toward more
+      market-oriented policy.
+    tier: 8
+  france_1992_maastricht_treaty:
+    composed_of:
+    - france_1981_mitterrand_elected
+    defines: |
+      (1992) Maastricht Treaty — France narrowly ratifies the treaty establishing the European
+      Union, deepening its commitment to European integration.
+    tier: 9
+  france_2002_euro_adopted:
+    composed_of:
+    - france_1992_maastricht_treaty
+    defines: |
+      (2002) Euro Adopted — France replaces the franc with the euro as its official currency,
+      completing a key step in European monetary union.
+    tier: 10
+  france_2005_eu_constitution_referendum_rejected:
+    composed_of:
+    - france_2002_euro_adopted
+    defines: |
+      (2005) EU Constitution Referendum Rejected — French voters reject the proposed European
+      Constitution, reflecting growing public skepticism toward deeper EU integration.
+    tier: 11
+  france_2015_charlie_hebdo_paris_terrorist_attacks:
+    composed_of:
+    - france_2005_eu_constitution_referendum_rejected
+    defines: |
+      (2015) Charlie Hebdo & Paris Terrorist Attacks — Coordinated terrorist attacks,
+      including on the Charlie Hebdo offices and later across Paris (Bataclan and other
+      sites), kill well over 100 people and prompt a prolonged state of emergency.
+    tier: 12
+  france_2017_macron_elected:
+    composed_of:
+    - france_2015_charlie_hebdo_paris_terrorist_attacks
+    defines: |
+      (2017) Macron Elected — Emmanuel Macron becomes the youngest French president in modern
+      history, positioning himself as a centrist reformer and strong pro-EU voice.
+    tier: 13
+  france_2018_yellow_vest_protests:
+    composed_of:
+    - france_2017_macron_elected
+    defines: |
+      (2018–2019) Yellow Vest Protests — Widespread grassroots protests over fuel taxes and
+      economic inequality escalate into a broader movement challenging Macron's economic
+      agenda.
+    tier: 14
+  france_2020_covid_19_pandemic:
+    composed_of:
+    - france_2018_yellow_vest_protests
+    defines: |
+      (2020) COVID-19 Pandemic — France enacts strict lockdowns and faces significant economic
+      and public health disruption, alongside broader European coordination on vaccines and
+      recovery funding.
+    tier: 15
+  france_2023_pension_reform_crisis:
+    composed_of:
+    - france_2020_covid_19_pandemic
+    defines: |
+      (2023) Pension Reform Crisis — Macron's government raises the retirement age from 62 to
+      64 by decree (bypassing a parliamentary vote), triggering months of mass strikes and
+      protests.
+    tier: 16
+  france_2024_paris_summer_olympics:
+    composed_of:
+    - france_2023_pension_reform_crisis
+    defines: |
+      (2024) Paris Summer Olympics — France hosts the Olympics for the first time since 1924,
+      showcasing renewed national confidence amid ongoing political fragmentation at home.
+    tier: 17
+  france_2024_snap_election_hung_parliament:
+    composed_of:
+    - france_2024_paris_summer_olympics
+    defines: |
+      (2024) Snap Election & Hung Parliament — Macron calls a surprise snap legislative
+      election after European Parliament losses; the result is a fractured National Assembly
+      with no majority bloc, deepening political instability.
+    tier: 18

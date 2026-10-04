@@ -1,0 +1,542 @@
+domain: 200years_7powers_ch08
+primitives:
+  uk_pax_britannica:
+    defines: |
+      Mid-19th-century Britain's position as the world's dominant industrial, naval, and
+      colonial power, underwritten by free trade and an unmatched fleet.
+    tier: 0
+  france_second_empire_ambition:
+    defines: |
+      Napoleon III's Second Empire (from 1852), pursuing renewed great-power prestige through
+      military intervention in Europe and colonial expansion into Indochina and North Africa.
+    tier: 0
+  german_unification_1871:
+    defines: |
+      The 1871 proclamation of the German Empire under Prussian leadership after defeating
+      France, creating continental Europe's dominant new industrial and military power
+      overnight.
+    tier: 0
+  russian_autocracy:
+    defines: |
+      Tsarist Russia's semi-feudal, agrarian, autocratic imperial system, still resting on a
+      huge peasantry and an unaccountable monarchy after its 1856 Crimean War defeat exposed
+      its backwardness.
+    tier: 0
+  meiji_restoration:
+    defines: |
+      Japan's 1868 political revolution replacing feudal shogunate rule with a modernizing
+      imperial state, launching rapid state-led industrialization and military reform.
+    tier: 0
+  qing_dynasty_decline:
+    defines: |
+      The Qing Dynasty's weakening after the Opium Wars and the Taiping Rebellion — a
+      technologically outmatched, internally fractured empire that becomes the object of other
+      powers' expansion rather than a great power itself.
+    tier: 0
+  us_gilded_age:
+    defines: |
+      The 1870-1890 explosion of American industrial growth, railroad expansion, and 'Robber
+      Baron' capitalism that built the economic base for the USA's later emergence as a world
+      power.
+    tier: 0
+  great_power_rivalry:
+    defines: |
+      The late-19th-century international system in which industrializing states competed for
+      colonies, resources, and prestige, treating expansion as the measure of national
+      strength.
+    tier: 0
+  science_faraday_darwin_era:
+    defines: |
+      Science at the 1845 threshold: Faraday's electromagnetic induction (1831) has seeded
+      the electrical age; Darwin has returned from the Beagle with evidence for evolution,
+      not yet published; German and British chemistry is industrializing on the back of the
+      periodic table's precursors. The sciences that will reshape medicine, industry, and
+      warfare across the next century are at their starting gate.
+    tier: 0
+concepts:
+  uk_suez_and_raj:
+    composed_of:
+    - uk_pax_britannica
+    defines: |
+      Britain's 1875 purchase of Suez Canal shares and 1876 proclamation of Victoria as
+      Empress of India formalize direct imperial control over the routes and territory it
+      needs to remain the dominant global power.
+    tier: 1
+  uk_scramble_for_africa:
+    composed_of:
+    - uk_suez_and_raj
+    - great_power_rivalry
+    defines: |
+      Britain's participation in the Berlin Conference and the costly Second Boer War
+      (1899-1902) extend its empire at the price of international reputation and exposed
+      military strain.
+    tier: 2
+  uk_entente_and_wwi:
+    composed_of:
+    - uk_scramble_for_africa
+    defines: |
+      Britain's 1904 Entente Cordiale with France and 1907 Triple Entente with Russia realign
+      it against Germany, drawing it into WWI after Germany's invasion of Belgium.
+    tier: 3
+  uk_interwar_strain:
+    composed_of:
+    - uk_entente_and_wwi
+    defines: |
+      The Great Depression and the 1938 Munich Agreement's appeasement of Hitler mark Britain
+      trying, and failing, to manage a German revival it no longer has the economic strength
+      to confront directly.
+    tier: 4
+  uk_wwii_resistance:
+    composed_of:
+    - uk_interwar_strain
+    defines: |
+      Britain stands alone against Nazi Germany after France's 1940 fall, surviving the Battle
+      of Britain and the Blitz before Allied victory in 1945 — militarily victorious but
+      financially and imperially exhausted.
+    tier: 5
+  france_colonial_expansion:
+    composed_of:
+    - france_second_empire_ambition
+    defines: |
+      France conquers Indochina and North/West Africa through the 1880s-90s, building the
+      second-largest colonial empire after Britain's.
+    tier: 1
+  france_revanchism:
+    composed_of:
+    - france_colonial_expansion
+    - german_unification_1871
+    defines: |
+      France's 1871 defeat and loss of Alsace-Lorraine to the newly unified German Empire
+      fuels decades of revanchist sentiment that shapes its alliance choices through WWI.
+    tier: 2
+  france_wwi_devastation:
+    composed_of:
+    - france_revanchism
+    - great_power_rivalry
+    defines: |
+      France bears the war's heaviest Western Front casualties (roughly 1.4 million dead,
+      including Verdun), regaining Alsace-Lorraine at Versailles but emerging economically and
+      demographically scarred.
+    tier: 3
+  france_interwar_fragility:
+    composed_of:
+    - france_wwi_devastation
+    defines: |
+      France's 1923 occupation of the Ruhr fails to extract German reparations and helps
+      trigger German hyperinflation, while its own 1936 Popular Front reforms unfold against
+      the backdrop of the Depression and rising political polarization.
+    tier: 4
+  france_defeat_and_occupation:
+    composed_of:
+    - france_interwar_fragility
+    defines: |
+      Nazi Germany's 1940 Blitzkrieg defeats France in six weeks; the country is divided
+      between direct occupation and the collaborationist Vichy regime until liberation in
+      1944.
+    tier: 5
+  germany_weltpolitik_rivalry:
+    composed_of:
+    - german_unification_1871
+    - great_power_rivalry
+    defines: |
+      Kaiser Wilhelm II's dismissal of Bismarck in 1890 replaces cautious diplomacy with an
+      aggressive Weltpolitik of colonial and naval expansion, provoking repeated crises with
+      Britain and France (Morocco, 1905 and 1911).
+    tier: 1
+  germany_wwi_defeat:
+    composed_of:
+    - germany_weltpolitik_rivalry
+    defines: |
+      Germany's encouragement of Austria-Hungary against Serbia and its invasion of Belgium
+      trigger WWI; defeat in 1918 leads to the Treaty of Versailles, imposing war guilt,
+      territorial loss, and reparations.
+    tier: 2
+  germany_weimar_instability:
+    composed_of:
+    - germany_wwi_defeat
+    defines: |
+      The 1918-19 German Revolution establishes the fragile Weimar Republic; the 1923 Ruhr
+      occupation and hyperinflation wipe out middle-class savings, and the 1929-32 Depression
+      pushes over 6 million Germans into unemployment, radicalizing the electorate.
+    tier: 3
+  germany_nazi_rise:
+    composed_of:
+    - germany_weimar_instability
+    defines: |
+      Hitler becomes Chancellor in 1933 and dismantles Weimar democracy within weeks
+      (Reichstag Fire, Enabling Act); state antisemitism escalates from the 1935 Nuremberg
+      Laws through Kristallnacht to the 1942 Wannsee Conference's formalized genocide.
+    tier: 4
+  germany_wwii_defeat:
+    composed_of:
+    - germany_nazi_rise
+    defines: |
+      Germany's 1939 invasion of Poland and 1941 invasion of the USSR overextend it on two
+      fronts; it surrenders unconditionally in May 1945 after Allied advances from both east
+      and west.
+    tier: 5
+  russia_reform_and_reaction:
+    composed_of:
+    - russian_autocracy
+    defines: |
+      Alexander II's 1861 emancipation of the serfs and judicial/zemstvo reforms are followed
+      by his 1881 assassination and Alexander III's reversion to autocracy and Russification.
+    tier: 1
+  russia_1905_crisis:
+    composed_of:
+    - russia_reform_and_reaction
+    - meiji_restoration
+    defines: |
+      Russia's shocking 1904-05 defeat by Japan — the first modern Asian victory over a
+      European power — destroys the military's prestige and triggers the 1905 Revolution,
+      forcing the creation of the Duma.
+    tier: 2
+  russia_wwi_collapse:
+    composed_of:
+    - russia_1905_crisis
+    - great_power_rivalry
+    defines: |
+      Russia's WWI mobilization to defend Serbia ends in catastrophic defeats against Germany;
+      military failure and food shortages culminate in the Tsar's February 1917 abdication.
+    tier: 3
+  russia_bolshevik_revolution:
+    composed_of:
+    - russia_wwi_collapse
+    defines: |
+      The Bolsheviks seize power in October 1917 and win the ensuing Civil War; the 1921
+      Kronstadt Rebellion prompts the New Economic Policy's brief return to limited private
+      enterprise before the USSR is formally established in 1922.
+    tier: 4
+  russia_stalinist_terror:
+    composed_of:
+    - russia_bolshevik_revolution
+    defines: |
+      Stalin abandons the NEP for forced collectivization and the First Five-Year Plan (1928),
+      causing the Holodomor famine (1932-33) and then the Great Purge (1936-38), which guts
+      the Red Army's leadership on the eve of war.
+    tier: 5
+  russia_wwii_victory:
+    composed_of:
+    - russia_stalinist_terror
+    defines: |
+      Despite the Purge-weakened military, the USSR survives Germany's 1941 invasion, turns
+      the war at Stalingrad and Kursk, and captures Berlin in 1945 at a cost of roughly 27
+      million deaths.
+    tier: 6
+  japan_meiji_modernization:
+    composed_of:
+    - meiji_restoration
+    defines: |
+      Post-1868 Japan abolishes feudal domains, adopts universal conscription, and rapidly
+      modernizes its economy and military along Western lines within a single generation.
+    tier: 1
+  japan_prussian_model_emulation:
+    composed_of:
+    - japan_meiji_modernization
+    - german_unification_1871
+    defines: |
+      Japan's 1889 Meiji Constitution is modeled directly on the German Empire's, including
+      the specific flaw of granting the military direct access to the Emperor independent of
+      civilian cabinet oversight.
+    tier: 2
+  japan_imperial_expansion:
+    composed_of:
+    - japan_meiji_modernization
+    - qing_dynasty_decline
+    defines: |
+      Japan defeats Qing China (1894-95) and then Russia (1904-05), annexes Korea (1910), and
+      gains German Pacific and Chinese possessions in WWI — becoming the first non-Western
+      great power.
+    tier: 2
+  japan_depression_militarism:
+    composed_of:
+    - japan_imperial_expansion
+    - japan_prussian_model_emulation
+    defines: |
+      The 1929-31 Depression devastates Japan's rural silk economy; resentment over the
+      Washington Naval Treaty's tonnage limits and the USA's 1924 immigration exclusion feeds
+      military coups (1932, 1936) that end civilian government and drive the 1931 seizure of
+      Manchuria.
+    tier: 3
+  japan_china_war:
+    composed_of:
+    - japan_depression_militarism
+    - qing_dynasty_decline
+    defines: |
+      The 1937 Marco Polo Bridge Incident escalates into full invasion of China, including the
+      Nanjing Massacre, bogging Japan into a years-long war of occupation it can neither win
+      nor abandon.
+    tier: 4
+  japan_pacific_war_defeat:
+    composed_of:
+    - japan_china_war
+    defines: |
+      A 1940 alliance with Germany and Italy (Tripartite Pact) and a 1941 attack on Pearl
+      Harbor expand the China war into the Pacific War; after the Battle of Midway turns the
+      tide, Japan surrenders in September 1945 following the atomic bombings.
+    tier: 5
+  china_qing_collapse:
+    composed_of:
+    - qing_dynasty_decline
+    defines: |
+      The Self-Strengthening Movement's failure, confirmed by defeat in the First
+      Sino-Japanese War (1895) and the Boxer Rebellion's suppression (1901), leads to the 1911
+      Xinhai Revolution and the Qing Dynasty's abdication.
+    tier: 1
+  china_warlord_fragmentation:
+    composed_of:
+    - china_qing_collapse
+    defines: |
+      Japan's 1915 Twenty-One Demands and the ceding of Shandong to Japan at Versailles
+      (sparking the 1919 May Fourth Movement) unfold against a backdrop of regional warlords
+      fracturing central authority (1916-28).
+    tier: 2
+  china_nationalist_unification:
+    composed_of:
+    - china_warlord_fragmentation
+    defines: |
+      Chiang Kai-shek's Northern Expedition (1926-28) defeats the warlords and nominally
+      reunifies China under the Kuomintang, but the 1927 Shanghai Massacre purges Communists
+      from the alliance and ignites civil war.
+    tier: 3
+  china_civil_war_interrupted:
+    composed_of:
+    - china_nationalist_unification
+    defines: |
+      The Chinese Communist Party, founded in 1921, survives Nationalist encirclement through
+      the 1934-35 Long March; Mao Zedong emerges as its leader while the civil war continues
+      in the shadow of Japanese encroachment.
+    tier: 4
+  china_japanese_invasion:
+    composed_of:
+    - china_civil_war_interrupted
+    - japan_china_war
+    defines: |
+      The 1936 Xi'an Incident forces Chiang into an uneasy United Front with the Communists
+      against Japan; China absorbs eight years of occupation and devastation (1937-45) before
+      Japan's surrender reopens the civil war.
+    tier: 5
+  us_industrial_rise:
+    composed_of:
+    - us_gilded_age
+    defines: |
+      Rapid US industrialization and the 1890 closing of the frontier shift national attention
+      from continental expansion toward overseas ambitions.
+    tier: 1
+  us_overseas_imperialism:
+    composed_of:
+    - us_industrial_rise
+    - great_power_rivalry
+    defines: |
+      Victory in the 1898 Spanish-American War gives the USA Puerto Rico, Guam, and the
+      Philippines, making it an imperial power on the same stage as the older European
+      empires.
+    tier: 2
+  us_wwi_and_isolationism:
+    composed_of:
+    - us_overseas_imperialism
+    defines: |
+      The USA enters WWI in 1917 after German submarine warfare, but the Senate's rejection of
+      the Treaty of Versailles and League of Nations membership sets the stage for a return to
+      isolationism through the 1920s-30s.
+    tier: 3
+  us_great_depression:
+    composed_of:
+    - us_wwi_and_isolationism
+    defines: |
+      The 1929 stock market crash triggers the worst economic downturn in US history, with
+      unemployment reaching 25% and prompting FDR's New Deal relief, recovery, and reform
+      programs (1933-39).
+    tier: 4
+  us_arsenal_of_democracy:
+    composed_of:
+    - us_great_depression
+    defines: |
+      US neutrality gives way to the 1941 Lend-Lease Act supplying the Allies; Japan's attack
+      on Pearl Harbor brings the USA fully into WWII, whose end leaves it economically
+      dominant and a founding UN member.
+    tier: 5
+  # ── Science Thread (cross-cutting, 1845–1945) ──────────────────
+  science_darwinism_and_germ_theory:
+    composed_of:
+    - science_faraday_darwin_era
+    defines: |
+      (1859–1883) Darwin publishes On the Origin of Species (1859), overturning fixed-species
+      biology; Pasteur and Koch establish germ theory and identify the bacterial causes of
+      specific diseases, founding modern medicine and public health. Social Darwinism also
+      emerges as an ideological tool, misapplied to justify imperialism and racial hierarchy
+      across the country chains above.
+    tier: 1
+  science_electrification_and_chemistry:
+    composed_of:
+    - science_darwinism_and_germ_theory
+    defines: |
+      (1865–1895) Maxwell's equations (1865) unify electricity and magnetism; Mendeleev's
+      periodic table (1869) systematizes chemistry; Edison's power station (1882) and Tesla's
+      AC current electrify cities; Bell's telephone (1876) transforms communication. The
+      Second Industrial Revolution diverges from British steam toward German chemical industry
+      and US electrical infrastructure.
+    tier: 2
+  science_radioactivity_and_quantum:
+    composed_of:
+    - science_electrification_and_chemistry
+    defines: |
+      (1895–1915) Röntgen discovers X-rays (1895); Marie Curie identifies radium and polonium
+      (1898); Planck proposes quantum theory (1900); Einstein publishes special relativity and
+      the photoelectric effect (1905); Bohr models the atom (1913). Classical physics gives
+      way to quantum mechanics — the theoretical foundation for nuclear technology that will
+      end the era.
+    tier: 3
+  science_haber_bosch_and_aviation:
+    composed_of:
+    - science_electrification_and_chemistry
+    defines: |
+      (1903–1913) Wright Brothers achieve powered flight (1903); Haber and Bosch develop
+      industrial nitrogen fixation (1909), enabling mass fertilizer production — and,
+      immediately, mass explosives production. When the Royal Navy's blockade cuts off
+      Germany's Chilean nitrate imports in 1914, Haber-Bosch sustains its ammunition supply
+      for the entire war. The same process eventually feeds a billion people.
+    tier: 3
+  science_penicillin_and_nuclear_fission:
+    composed_of:
+    - science_radioactivity_and_quantum
+    - science_haber_bosch_and_aviation
+    defines: |
+      (1928–1942) Fleming discovers penicillin (1928); Chadwick identifies the neutron (1932);
+      Hahn and Strassmann achieve nuclear fission (1938); Einstein writes to Roosevelt urging
+      a US atomic program. The Manhattan Project mobilizes 130,000 people across three
+      countries — the largest and most expensive scientific undertaking in history to that
+      point.
+    tier: 4
+  science_atomic_bomb_1945:
+    composed_of:
+    - science_penicillin_and_nuclear_fission
+    defines: |
+      (1945) Trinity test (July 16) proves the bomb viable; atomic bombings of Hiroshima
+      (August 6) and Nagasaki (August 9) force Japan's surrender, ending WWII without a
+      land invasion. Science becomes the decisive variable in great-power conflict for the
+      first time in history, and immediately sets the terms of Cold War nuclear deterrence.
+    tier: 5
+applications:
+  revisionist_powers_pattern:
+    needs:
+    - germany_nazi_rise
+    - japan_depression_militarism
+    defines: |
+      Observation traceable to the Germany and Japan chains above: both entered the 20th
+      century as industrial latecomers who read the existing order (Versailles for Germany,
+      the Washington Naval Treaty for Japan) as rigged against their claimed rightful place,
+      and both sought to redraw the map by force rather than negotiation.
+    tier: 5
+  economic_instability_extremism:
+    needs:
+    - germany_weimar_instability
+    - japan_depression_militarism
+    defines: |
+      Observation traceable to the same two chains: in both countries a severe, dated economic
+      shock (Germany's 1929-32 unemployment, Japan's 1929-31 rural collapse) directly precedes
+      the political events that ended civilian government — this is a correlation visible in
+      the underlying event chains, not an assumed law of history.
+    tier: 4
+  colonial_order_and_its_costs:
+    needs:
+    - uk_scramble_for_africa
+    - france_colonial_expansion
+    - china_qing_collapse
+    defines: |
+      Observation spanning the UK, France, and China chains: the same decades (1880s-1910s) in
+      which Britain and France most rapidly expanded their empires are the decades in which
+      Qing China's central authority collapsed under combined internal rebellion and external
+      pressure — the two processes share a timeframe in the source data, whatever causal
+      weight a reader assigns to their connection.
+    tier: 3
+  appeasement_isolationism_cost:
+    needs:
+    - uk_interwar_strain
+    - us_wwi_and_isolationism
+    - japan_china_war
+    defines: |
+      Observation traceable to the UK, USA, and Japan-China chains: at each of the Rhineland
+      (1936), Manchuria (1931), and Sudetenland (1938) events, the powers positioned to object
+      (Britain, France, the USA) instead recorded formal protest or none, and the next
+      escalation followed within the chain.
+    tier: 5
+  industrial_capacity_and_outcome:
+    needs:
+    - us_arsenal_of_democracy
+    - russia_wwii_victory
+    - germany_wwii_defeat
+    - japan_pacific_war_defeat
+    defines: |
+      Observation traceable to all four WWII-outcome chains: the two powers whose chains show
+      sustained industrial and manpower buildup through the war (USA, USSR) are the two on the
+      winning side; the two whose chains show resource exhaustion and overextension (Germany,
+      Japan) are the two that surrendered — recorded here as what the chains show, not as a
+      standalone determinist claim.
+    tier: 7
+  vigilance_pattern_synthesis:
+    needs:
+    - revisionist_powers_pattern
+    - economic_instability_extremism
+    - colonial_order_and_its_costs
+    - appeasement_isolationism_cost
+    - industrial_capacity_and_outcome
+    defines: |
+      The five patterns above are offered as a checklist derived from this era's traced event
+      chains, not a prediction — each is falsifiable against the underlying
+      primitives/concepts it cites, and each should be re-examined, not assumed, when applied
+      to the living 1945-2045 chapters this project is still writing.
+    tier: 8
+  # ── Science cross-cutting applications ─────────────────────────
+  science_electrification_shifts_power:
+    needs:
+    - science_electrification_and_chemistry
+    - us_industrial_rise
+    - germany_weltpolitik_rivalry
+    defines: |
+      Observation spanning the science, USA, and Germany chains: the Second Industrial
+      Revolution's electrical and chemical technologies (1870s-1900s) concentrate in Germany
+      and the USA rather than Britain, which industrialized first on steam. The science
+      chain's shift in locus is concurrent with Germany and the USA overtaking Britain's
+      share of world industrial output — recorded here as what the chains show, not as a
+      singular cause.
+    tier: 3
+  science_haber_bosch_and_wwi_length:
+    needs:
+    - science_haber_bosch_and_aviation
+    - germany_wwi_defeat
+    defines: |
+      Observation connecting the science and Germany chains: Haber-Bosch nitrogen fixation
+      gave Germany a domestic explosives supply when the Royal Navy's blockade cut off
+      Chilean nitrate imports in 1914. The science chain records this as a concurrent fact
+      with the Germany chain's WWI events — a case where a single industrial chemistry
+      discovery appears in both threads at the same time.
+    tier: 4
+  science_nuclear_ends_pacific_war:
+    needs:
+    - science_atomic_bomb_1945
+    - japan_pacific_war_defeat
+    - us_arsenal_of_democracy
+    defines: |
+      Observation spanning the science, Japan, and USA chains: the atomic bombings of 1945
+      appear simultaneously in the science chain (culmination of nuclear physics), the Japan
+      chain (surrender trigger), and the USA chain (peak of industrial-scientific
+      mobilization). This is the only event in this dataset that sits at the intersection of
+      all three, making the science thread's endpoint the same event as two country chains'
+      endpoints.
+    tier: 6
+  science_cross_cutting_synthesis_1845_1945:
+    needs:
+    - science_darwinism_and_germ_theory
+    - science_electrification_shifts_power
+    - science_haber_bosch_and_wwi_length
+    - science_nuclear_ends_pacific_war
+    defines: |
+      Cross-cutting science thread, 1845–1945: the science chain intersects all seven country
+      chains at three leverage points — germ theory reshapes public health and imperial
+      medicine across every power; electrification reorders which countries lead the Second
+      Industrial Revolution; nuclear physics determines who wins WWII. Science is not
+      background context in this era — it is an eighth actor whose trajectory shaped all
+      seven powers' trajectories, and whose payoff node (the atomic bomb) is the starting
+      primitive of ch16.
+    tier: 7

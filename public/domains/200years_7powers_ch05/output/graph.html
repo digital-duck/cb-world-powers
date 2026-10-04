@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concept Graph — graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f2f5;overflow:hidden;height:100vh}
+.app{
+  display:grid;
+  grid-template-columns:230px 1fr 210px;
+  grid-template-rows:60vh 40vh;
+  height:100vh;
+  gap:0;
+}
+/* ── Left sidebar: learning path ── */
+#path-sidebar{
+  grid-column:1;grid-row:1/3;
+  background:#f5f6f8;color:#2a2a2a;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid #dde0e6;
+}
+#path-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid #dde0e6;
+  flex-shrink:0;
+}
+#path-header h1{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:2px;font-weight:700}
+#path-header .domain-name{font-size:11px;color:#555;margin-top:4px}
+#path-steps{flex:1;overflow-y:auto;padding:8px 0}
+#path-steps .hint{color:#aaa;font-size:12px;text-align:center;padding:24px 12px;line-height:1.5}
+.step-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 12px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s;
+}
+.step-item:hover{background:#ebebf0}
+.step-item.active{background:#e8eef8;border-left-color:#4a90d9}
+.step-item.target{background:#eaf5ea;border-left-color:#4caf50}
+.step-num{min-width:20px;font-size:10px;font-weight:700;color:#bbb;padding-top:2px;flex-shrink:0}
+.step-item.target .step-num{color:#4caf50}
+.step-label{font-size:12px;font-weight:600;color:#333;line-height:1.4}
+.step-def{font-size:10px;color:#888;margin-top:2px;line-height:1.4}
+.step-kind{display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+#path-count{font-size:10px;color:#aaa;margin-top:3px}
+/* vis-network's own default tooltip CSS sets white-space:nowrap with no
+   width cap, so a node's `defines` text (a full sentence) renders as one
+   unbroken line stretching across the whole canvas — override both here. */
+.vis-tooltip{white-space:normal!important;max-width:280px;line-height:1.4}
+/* ── Graph panel ── */
+#graph-panel{
+  grid-column:2;grid-row:1;
+  position:relative;background:#fff;
+  border-bottom:2px solid #dde;
+}
+#graph-container{width:100%;height:100%}
+.graph-recenter-btn{
+  position:absolute;right:16px;bottom:16px;z-index:50;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid #1e3a5f;background:#1e3a5f;color:#fff;
+  font-size:12px;font-weight:600;font-family:system-ui,sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+}
+.graph-recenter-btn:hover{background:#28496f;border-color:#28496f}
+/* ── Explanation panel ── */
+#explain-panel{
+  grid-column:2;grid-row:2;
+  background:#fff;overflow-y:auto;
+  padding:16px 20px;
+}
+#explain-panel .empty{color:#aaa;font-size:13px;padding:20px 0;text-align:center}
+#explain-panel .node-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+#explain-panel .node-title h2{font-size:16px;color:#1e3a5f}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;
+}
+.badge.primitive{background:#e8f5e9;color:#2e7d32}
+.badge.concept{background:#e3f2fd;color:#1565c0}
+.badge.application{background:#fff3e0;color:#ef6c00}
+.tier-tag{font-size:11px;color:#999;margin-left:auto}
+#explain-panel .defines{
+  font-size:14px;color:#333;line-height:1.6;margin-bottom:12px;
+  padding:10px 12px;background:#f8f9fb;border-radius:6px;
+  border-left:3px solid #90b4e8;
+}
+#explain-panel .section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#999;margin-bottom:6px;
+}
+#explain-panel .prereq-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prereq-chip{
+  padding:3px 9px;border-radius:12px;font-size:11px;
+  background:#e3f2fd;color:#1565c0;cursor:pointer;
+  border:1px solid #90caf9;transition:background .12s;
+}
+.prereq-chip:hover{background:#bbdefb}
+#explain-panel .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{font-size:12px;color:#555}
+.meta-item b{color:#1e3a5f}
+#explain-panel .play-hint{
+  font-size:12px;color:#5a5a5a;line-height:1.6;
+  padding:8px 12px;background:#fffde7;border-radius:6px;
+  border-left:3px solid #ffd54f;margin-bottom:8px;
+}
+/* ── Notes sidebar ── */
+#notes-sidebar{
+  grid-column:3;grid-row:1/3;
+  background:#fafaf8;
+  border-left:2px solid #e8e8e0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notes-header{
+  padding:10px 12px 8px;
+  border-bottom:1px solid #e0e0d8;
+  flex-shrink:0;
+}
+#notes-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+#notes-header h2{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin:0}
+#notes-node-label{font-size:11px;color:#999;margin-top:2px}
+.nb-btn{font-size:10px;padding:2px 7px;border-radius:3px;
+  border:1px solid #ddd;background:#f0f0ea;cursor:pointer;color:#777;
+  font-family:system-ui,sans-serif}
+.nb-btn:hover{background:#e0e0d8;color:#444}
+#notes-textarea{
+  /* 40:60 entry:history split of the sidebar's remaining height (below the
+     fixed header) — flex-grow ratio 2:3 against #notes-with-entries below,
+     not a fixed height, so both panes scale together as the sidebar is
+     resized (see GraphViewer.js's resizable-pane embed). */
+  flex:2 1 0;min-height:0;border:none;resize:none;
+  padding:12px;font-size:12px;line-height:1.6;
+  font-family:inherit;background:#fafaf8;color:#333;
+  outline:none;
+}
+#notes-with-entries{
+  border-top:1px solid #e8e8e0;flex:3 1 0;min-height:0;overflow-y:auto;
+}
+.note-empty-hint{padding:12px;color:#aaa;font-size:11px;font-style:italic}
+.note-entry{
+  padding:6px 12px;cursor:pointer;
+  border-bottom:1px solid #f0f0e8;
+  font-size:11px;
+}
+.note-entry:hover{background:#f0efe8}
+.note-entry .note-node{font-weight:600;color:#555;display:flex;justify-content:space-between;align-items:center}
+.note-entry .note-ts{font-weight:400;color:#bbb;font-size:10px}
+.note-entry .note-preview{color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── kind badge colours in sidebar ── */
+.primitive-k{background:#e8f5e9;color:#2e7d32}
+.concept-k{background:#e3f2fd;color:#1565c0}
+.application-k{background:#fff3e0;color:#ef6c00}
+/* ── concept detail panel ── */
+#concept-detail{margin-top:14px;border-top:1px solid #e8e8e0;padding-top:10px;}
+#concept-iframe{width:100%;height:500px;border:1px solid #e0e0d8;border-radius:4px;margin-top:6px;display:block;}
+.concept-not-found{color:#e57373;font-size:12px;padding:6px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT: learning path sidebar -->
+<aside id="path-sidebar">
+  <div id="path-header">
+    <h1>Learning Path</h1>
+    <div class="domain-name">graph</div>
+    <div id="path-count"></div>
+  </div>
+  <div id="path-steps">
+    <div class="hint">Click any node in the graph<br>to see its learning path</div>
+  </div>
+</aside>
+
+<!-- CENTRE TOP: concept graph -->
+<div id="graph-panel">
+  <div id="graph-container"></div>
+  <button class="graph-recenter-btn" onclick="reCenterGraph()" title="Re-fit the graph to the viewport">Re-Center</button>
+</div>
+
+<!-- CENTRE BOTTOM: explanation panel -->
+<div id="explain-panel">
+  <div class="empty">Select a node to see its definition, prerequisites, and learning context.</div>
+</div>
+
+<!-- RIGHT: notes sidebar -->
+<aside id="notes-sidebar">
+  <div id="notes-header">
+    <div id="notes-header-top">
+      <h2>Notes</h2>
+      <div>
+        <button class="nb-btn" id="nb-save-btn" onclick="saveNoteEntry()">Save</button>
+        <button class="nb-btn" id="nb-clear-btn" onclick="clearNoteInput()">Clear</button>
+        <button class="nb-btn" onclick="exportNotes()">Export</button>
+      </div>
+    </div>
+    <div id="notes-node-label">no node selected</div>
+  </div>
+  <textarea id="notes-textarea" placeholder="Type notes here, then click Save"></textarea>
+  <div id="notes-with-entries"></div>
+</aside>
+
+</div><!-- .app -->
+
+<script>
+const RAW = {"nodes": [{"id": "japan_1853_perry_expedition_convention_kanagawa", "label": "japan 1853 perry expedition convention kanagawa", "kind": "primitive", "tier": 0, "defines": "(1853–1854) Perry Expedition & Convention of Kanagawa — US Commodore Matthew Perry's\nfleet forces Japan to end over two centuries of isolation (*sakoku*) and open ports to\ntrade.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "japan_1858_unequal_treaties", "label": "japan 1858 unequal treaties", "kind": "concept", "tier": 1, "defines": "(1858) Unequal Treaties — Japan is pressured into treaties (Harris Treaty and similar\nwith other powers) granting foreign extraterritoriality and fixed low tariffs, fueling\nanti-shogunate sentiment.\n", "prereqs": ["japan_1853_perry_expedition_convention_kanagawa"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1866_satsuma_ch_sh_alliance", "label": "japan 1866 satsuma ch sh alliance", "kind": "concept", "tier": 2, "defines": "(1866) Satsuma-Chōshū Alliance — Rival domains Satsuma and Chōshū secretly ally to\noverthrow the Tokugawa Shogunate, setting up the Meiji Restoration.\n", "prereqs": ["japan_1858_unequal_treaties"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1868_meiji_restoration", "label": "japan 1868 meiji restoration", "kind": "concept", "tier": 3, "defines": "(1868) Meiji Restoration — The Tokugawa Shogunate is overthrown and imperial rule is\nrestored under Emperor Meiji, launching rapid Westernization and industrialization.\n", "prereqs": ["japan_1866_satsuma_ch_sh_alliance"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1871_abolition_han_system", "label": "japan 1871 abolition han system", "kind": "concept", "tier": 4, "defines": "(1871) Abolition of the Han System — Feudal domains are replaced with centrally\ncontrolled prefectures, consolidating national authority.\n", "prereqs": ["japan_1868_meiji_restoration"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1873_conscription_law_iwakura_missions", "label": "japan 1873 conscription law iwakura missions", "kind": "concept", "tier": 5, "defines": "(1873) Conscription Law & Iwakura Mission's Return — Japan adopts universal military\nconscription; the returning Iwakura Mission pushes further modernization after studying\nWestern institutions abroad.\n", "prereqs": ["japan_1871_abolition_han_system"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1874_expedition_taiwan", "label": "japan 1874 expedition taiwan", "kind": "concept", "tier": 6, "defines": "(1874) Expedition to Taiwan — Japan launches a punitive expedition against Taiwan in\nretaliation for the murder of Ryukyuan sailors, testing its military modernization\nagainst China's Qing Dynasty.\n", "prereqs": ["japan_1873_conscription_law_iwakura_missions"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1889_meiji_constitution", "label": "japan 1889 meiji constitution", "kind": "concept", "tier": 7, "defines": "(1889) Meiji Constitution — Japan adopts a Prussian-modeled constitution granting the\nmilitary direct access to the Emperor independent of civilian cabinet oversight — the\nspecific institutional flaw that later lets the army bypass elected government in the\n1930s.\n", "prereqs": ["japan_1874_expedition_taiwan"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1894_first_sino_japanese_war", "label": "japan 1894 first sino japanese war", "kind": "concept", "tier": 8, "defines": "(1894–1895) First Sino-Japanese War — Conflict over control of Korea. Japan decisively\ndefeats China.\n", "prereqs": ["japan_1889_meiji_constitution"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1895_treaty_shimonoseki", "label": "japan 1895 treaty shimonoseki", "kind": "concept", "tier": 9, "defines": "(1895) Treaty of Shimonoseki — China recognizes Korea's independence (paving the way for\nJapanese annexation), and cedes Taiwan, the Pescadores, and the Liaodong Peninsula to\nJapan.\n", "prereqs": ["japan_1894_first_sino_japanese_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1900_boxer_rebellion", "label": "japan 1900 boxer rebellion", "kind": "concept", "tier": 10, "defines": "(1900) Boxer Rebellion — Japan joins the Eight-Nation Alliance to suppress the rebellion\nin China. Japan provides the largest number of troops and gains a significant foothold\non the mainland.\n", "prereqs": ["japan_1895_treaty_shimonoseki"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1904_russo_japanese_war", "label": "japan 1904 russo japanese war", "kind": "concept", "tier": 11, "defines": "(1904–1905) Russo-Japanese War — Japan fights Russia for control of Manchuria and Korea.\nJapan wins, becoming the first modern Asian power to defeat a European power.\n", "prereqs": ["japan_1900_boxer_rebellion"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1910_annexation_korea", "label": "japan 1910 annexation korea", "kind": "concept", "tier": 12, "defines": "(1910) Annexation of Korea — Japan formally annexes the Korean Peninsula, beginning a\nperiod of harsh colonial rule that lasts until 1945.\n", "prereqs": ["japan_1904_russo_japanese_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1914_world_war_i_asia", "label": "japan 1914 world war i asia", "kind": "concept", "tier": 13, "defines": "(1914–1918) World War I in Asia — Japan seizes German colonial possessions in China\n(Shandong Province) and the Pacific islands, expanding its sphere of influence.\n", "prereqs": ["japan_1910_annexation_korea"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1915_twenty_one_demands", "label": "japan 1915 twenty one demands", "kind": "concept", "tier": 14, "defines": "(1915) Twenty-One Demands — Japan issues a secret ultimatum to China, attempting to\nextend its control over Manchuria and Shandong, effectively reducing China to a Japanese\nprotectorate (ultimately partially successful).\n", "prereqs": ["japan_1914_world_war_i_asia"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1921_washington_naval_treaty", "label": "japan 1921 washington naval treaty", "kind": "concept", "tier": 15, "defines": "(1921–1922) Washington Naval Treaty — The treaty caps Japan's capital-ship tonnage at a\n5:5:3 ratio against Britain and the USA, a settlement Japanese nationalists and the navy\nresented as an imposed inferiority and later cited to justify rearmament.\n", "prereqs": ["japan_1915_twenty_one_demands"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1923_great_kant_earthquake", "label": "japan 1923 great kant earthquake", "kind": "concept", "tier": 16, "defines": "(1923) Great Kantō Earthquake — A massive earthquake devastates Tokyo and Yokohama,\nkilling over 100,000 people; the ensuing chaos includes mass violence against Korean and\nChinese residents and destabilizes the economy for years.\n", "prereqs": ["japan_1921_washington_naval_treaty"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1924_us_immigration_act_japanese_exclusion", "label": "japan 1924 us immigration act japanese exclusion", "kind": "concept", "tier": 17, "defines": "(1924) US Immigration Act (Japanese Exclusion) — The United States bars further Japanese\nimmigration outright, a diplomatic insult that Japanese nationalists cite for years\nafterward as evidence the West would never treat Japan as an equal.\n", "prereqs": ["japan_1923_great_kant_earthquake"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1929_great_depression_japan", "label": "japan 1929 great depression japan", "kind": "concept", "tier": 18, "defines": "(1929–1931) The Great Depression in Japan — Collapsing silk exports and global demand\ndevastate the rural economy, fueling support for ultranationalist and militarist\nmovements that blame party politicians and business elites for the crisis.\n", "prereqs": ["japan_1924_us_immigration_act_japanese_exclusion"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1931_mukden_incident", "label": "japan 1931 mukden incident", "kind": "concept", "tier": 19, "defines": "(1931) Mukden Incident — Japanese agents stage a railway explosion in Manchuria as a\npretext to invade. Japan establishes the puppet state of Manchukuo in 1932.\n", "prereqs": ["japan_1929_great_depression_japan"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1932_unit_731", "label": "japan 1932 unit 731", "kind": "concept", "tier": 20, "defines": "(1932–1945) Unit 731 — Under cover of the new puppet state of Manchukuo, the Imperial\nJapanese Army's Kwantung Army establishes a biological- and chemical-warfare research\nunit (formalized as Unit 731 in 1936) at Pingfang near Harbin, under Shirō Ishii. Over\nthe next thirteen years it conducts lethal experiments — vivisection without anesthesia,\ndeliberate infection with plague, cholera, anthrax, and typhoid, frostbite trials — on\nthousands of Chinese, Soviet, Korean, and Allied prisoners, with field trials also\nreleasing plague-infected fleas over Chinese towns, killing many more beyond the\nfacility's walls. After Japan's surrender, US occupation authorities grant Ishii and most\nsenior staff immunity in exchange for their research data, and no one from the unit is\nprosecuted at the Tokyo war crimes tribunal.\n", "prereqs": ["japan_1931_mukden_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1932_comfort_women_system", "label": "japan 1932 comfort women system", "kind": "concept", "tier": 21, "defines": "(1932–1945) Comfort Women System — Beginning in Shanghai in 1932 in the wake of Japanese\ntroops' mass rape of Chinese women there, the Imperial Japanese Army establishes and\nexpands a network of military-run brothels (\"comfort stations\") across every territory\nit occupies — China, Korea, Taiwan, the Philippines, the Dutch East Indies, Malaya,\nThailand, Burma, Hong Kong, and French Indochina. Historians estimate 20,000 to\n200,000-plus women and girls, many recruited by deception (false job advertisements for\nfactory or nursing work), coercion, or outright abduction, were forced into sexual\nslavery for Japanese soldiers; Korean women, drawn from a colony Japan had annexed since\n1910, make up the largest documented share, alongside large numbers of Chinese women and\nvictims from Taiwan, the Philippines, and elsewhere in occupied Asia. Japan denied the\nsystem's existence for decades until survivor Kim Hak-sun's 1991 public testimony in\nSouth Korea broke the postwar silence and launched an international redress movement;\nJapan's government issued a formal acknowledgment of military involvement and coercion in\nthe 1993 Kōno Statement and funded the Asian Women's Fund (1995) for survivors, but\nsubsequent Japanese officials have periodically walked back or minimized that\nacknowledgment, and most survivors and advocates regard neither gesture as the direct\nstate apology and reparation they have sought.\n", "prereqs": ["japan_1932_unit_731"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1932_january_28_incident", "label": "japan 1932 january 28 incident", "kind": "concept", "tier": 22, "defines": "(1932) January 28 Incident — Japan attacks Shanghai to divert international attention\nfrom Manchuria.\n", "prereqs": ["japan_1932_comfort_women_system"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1932_may_15_incident", "label": "japan 1932 may 15 incident", "kind": "concept", "tier": 23, "defines": "(1932) May 15 Incident — Young naval officers assassinate Prime Minister Inukai\nTsuyoshi, ending the era of party-led civilian cabinets and marking the military's\ngrowing willingness to seize power by force.\n", "prereqs": ["japan_1932_january_28_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1933_tanggu_truce", "label": "japan 1933 tanggu truce", "kind": "concept", "tier": 24, "defines": "(1933) Tanggu Truce — China is forced to sign a ceasefire, creating a demilitarized zone\nsouth of the Great Wall, effectively ceding control of Rehe (Jehol) province to Japan.\n", "prereqs": ["japan_1932_may_15_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1936_february_26_incident", "label": "japan 1936 february 26 incident", "kind": "concept", "tier": 25, "defines": "(1936) February 26 Incident — Army officers attempt a coup, assassinating several senior\nofficials before being suppressed; the aftermath purges moderates and further tightens\nthe military's grip on government policy.\n", "prereqs": ["japan_1933_tanggu_truce"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1937_marco_polo_bridge_incident", "label": "japan 1937 marco polo bridge incident", "kind": "concept", "tier": 26, "defines": "(1937) Marco Polo Bridge Incident — A skirmish near Beijing escalates into the Second\nSino-Japanese War (full-scale invasion).\n", "prereqs": ["japan_1936_february_26_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1937_battle_shanghai", "label": "japan 1937 battle shanghai", "kind": "concept", "tier": 27, "defines": "(Aug–Nov 1937) Battle of Shanghai — Japan escalates the Marco Polo Bridge skirmish into\nfull-scale war by attacking Shanghai. Three months of brutal, building-to-building\nfighting cost both sides hundreds of thousands of casualties before Japan breaks through\nusing naval bombardment, air superiority, and amphibious landings, forcing a costly\nChinese retreat toward the capital, Nanjing.\n", "prereqs": ["japan_1937_marco_polo_bridge_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1937_rape_of_nanking", "label": "japan 1937 rape of nanking", "kind": "concept", "tier": 28, "defines": "(Dec 1937 – Jan 1938) Rape of Nanking (Nanjing Massacre) — Pursuing the retreating\nChinese army, Japanese forces take Nanjing on December 13, 1937, then spend roughly six\nweeks killing an estimated 200,000–300,000 civilians and disarmed prisoners of war and\ncommitting widespread, systematic sexual violence, including mass rape, against women and\ngirls. Foreign residents (John Rabe and others) shelter tens of thousands of civilians\ninside an improvised Nanjing Safety Zone and smuggle out eyewitness accounts and\nphotographs; postwar tribunals, including the Tokyo war crimes trial, document the\nkillings, though exact totals remain disputed because Japanese units destroyed many\nrecords. Iris Chang's 1997 book *The Rape of Nanking* draws on Rabe's diaries, missionary\nrecords, and survivor testimony to bring the massacre to wide English-language attention\nand remains a focal point of ongoing Japan–China historical-memory disputes, including\ndenial and minimization by some Japanese nationalist politicians and textbooks. Chang, who\nspent years immersed in survivor testimony and archival horror to write the book, fell\ninto severe depression and died by suicide in 2004 at age 36 — a cost of the work that is\nitself now part of how the book, and the massacre's place in public memory, are discussed.\n", "prereqs": ["japan_1937_battle_shanghai"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1938_battle_wuhan", "label": "japan 1938 battle wuhan", "kind": "concept", "tier": 29, "defines": "(1938) Battle of Wuhan — Japanese forces capture Wuhan, securing control of the Yangtze\nRiver, but the war bogs down into a stalemate that lasts for years.\n", "prereqs": ["japan_1937_rape_of_nanking"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1939_nomonhan_incident", "label": "japan 1939 nomonhan incident", "kind": "concept", "tier": 30, "defines": "(1939) Nomonhan Incident — Border clashes with the Soviet Union result in a decisive\ndefeat for Japan, leading Japan to look south (Southeast Asia) for expansion rather than\nnorth.\n", "prereqs": ["japan_1938_battle_wuhan"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1940_invasion_french_indochina", "label": "japan 1940 invasion french indochina", "kind": "concept", "tier": 31, "defines": "(1940) Invasion of French Indochina — Japan occupies northern Vietnam, Laos, and\nCambodia to block supplies to China and extend its reach toward Southeast Asia.\n", "prereqs": ["japan_1939_nomonhan_incident"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1940_tripartite_pact", "label": "japan 1940 tripartite pact", "kind": "concept", "tier": 32, "defines": "(1940) Tripartite Pact — Japan formally allies with Nazi Germany and Fascist Italy,\nforming the Axis and committing Japan to a shared war against the Allied powers.\n", "prereqs": ["japan_1940_invasion_french_indochina"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1941_pacific_war_begins", "label": "japan 1941 pacific war begins", "kind": "concept", "tier": 33, "defines": "(1941) Pacific War Begins — Following the US oil embargo, Japan attacks Pearl Harbor and\nsimultaneously invades British Malaya, Hong Kong, the Philippines, the Dutch East\nIndies, and other Pacific territories.\n", "prereqs": ["japan_1940_tripartite_pact"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1942_expansion_peak", "label": "japan 1942 expansion peak", "kind": "concept", "tier": 34, "defines": "(1942) Expansion Peak — Japan reaches the zenith of its empire, controlling vast swathes\nof China, Southeast Asia, and the Pacific.\n", "prereqs": ["japan_1941_pacific_war_begins"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1942_battle_midway", "label": "japan 1942 battle midway", "kind": "concept", "tier": 35, "defines": "(1942) Battle of Midway — A decisive US naval victory destroys four Japanese aircraft\ncarriers, ending Japan's offensive capability in the Pacific and marking the war's\nturning point in the Allies' favor.\n", "prereqs": ["japan_1942_expansion_peak"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1944_operation_ichi_go", "label": "japan 1944 operation ichi go", "kind": "concept", "tier": 36, "defines": "(1944) Operation Ichi-Go — A massive Japanese offensive in China to connect occupied\nterritories and destroy Allied airbases. Japan succeeds tactically but overextends its\nlines.\n", "prereqs": ["japan_1942_battle_midway"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1945_manila_massacre", "label": "japan 1945 manila massacre", "kind": "concept", "tier": 37, "defines": "(Feb–Mar 1945) Battle of Manila & Manila Massacre — As US and Filipino forces retake the\ncity, trapped Japanese naval troops under Rear Admiral Sanji Iwabuchi, defying orders to\nwithdraw, instead massacre an estimated 100,000 Filipino civilians over several weeks —\nmass shootings, bayoneting, arson, and systematic rape — while also destroying much of\nManila's historic core. It stands as the single deadliest urban atrocity of the Pacific\nWar against a civilian population and, along with Nanjing, is cited in the postwar\nwar-crimes trial of General Yamashita, who was convicted and executed partly on this\nbasis (Iwabuchi died during the battle).\n", "prereqs": ["japan_1944_operation_ichi_go"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1945_soviet_invasion_atomic_bombs", "label": "japan 1945 soviet invasion atomic bombs", "kind": "concept", "tier": 38, "defines": "(1945) Soviet Invasion & Atomic Bombs — The Soviet Union invades Manchuria and Korea.\nThe US drops atomic bombs on Hiroshima and Nagasaki.\n", "prereqs": ["japan_1945_manila_massacre"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_1945_formal_surrender", "label": "japan 1945 formal surrender", "kind": "concept", "tier": 39, "defines": "(Sep 1945) Formal Surrender — Japan officially surrenders aboard the USS *Missouri*,\nending its imperial aggression and occupation of Asia.\n", "prereqs": ["japan_1945_soviet_invasion_atomic_bombs"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}], "edges": [{"from": "japan_1853_perry_expedition_convention_kanagawa", "to": "japan_1858_unequal_treaties"}, {"from": "japan_1858_unequal_treaties", "to": "japan_1866_satsuma_ch_sh_alliance"}, {"from": "japan_1866_satsuma_ch_sh_alliance", "to": "japan_1868_meiji_restoration"}, {"from": "japan_1868_meiji_restoration", "to": "japan_1871_abolition_han_system"}, {"from": "japan_1871_abolition_han_system", "to": "japan_1873_conscription_law_iwakura_missions"}, {"from": "japan_1873_conscription_law_iwakura_missions", "to": "japan_1874_expedition_taiwan"}, {"from": "japan_1874_expedition_taiwan", "to": "japan_1889_meiji_constitution"}, {"from": "japan_1889_meiji_constitution", "to": "japan_1894_first_sino_japanese_war"}, {"from": "japan_1894_first_sino_japanese_war", "to": "japan_1895_treaty_shimonoseki"}, {"from": "japan_1895_treaty_shimonoseki", "to": "japan_1900_boxer_rebellion"}, {"from": "japan_1900_boxer_rebellion", "to": "japan_1904_russo_japanese_war"}, {"from": "japan_1904_russo_japanese_war", "to": "japan_1910_annexation_korea"}, {"from": "japan_1910_annexation_korea", "to": "japan_1914_world_war_i_asia"}, {"from": "japan_1914_world_war_i_asia", "to": "japan_1915_twenty_one_demands"}, {"from": "japan_1915_twenty_one_demands", "to": "japan_1921_washington_naval_treaty"}, {"from": "japan_1921_washington_naval_treaty", "to": "japan_1923_great_kant_earthquake"}, {"from": "japan_1923_great_kant_earthquake", "to": "japan_1924_us_immigration_act_japanese_exclusion"}, {"from": "japan_1924_us_immigration_act_japanese_exclusion", "to": "japan_1929_great_depression_japan"}, {"from": "japan_1929_great_depression_japan", "to": "japan_1931_mukden_incident"}, {"from": "japan_1931_mukden_incident", "to": "japan_1932_unit_731"}, {"from": "japan_1932_unit_731", "to": "japan_1932_comfort_women_system"}, {"from": "japan_1932_comfort_women_system", "to": "japan_1932_january_28_incident"}, {"from": "japan_1932_january_28_incident", "to": "japan_1932_may_15_incident"}, {"from": "japan_1932_may_15_incident", "to": "japan_1933_tanggu_truce"}, {"from": "japan_1933_tanggu_truce", "to": "japan_1936_february_26_incident"}, {"from": "japan_1936_february_26_incident", "to": "japan_1937_marco_polo_bridge_incident"}, {"from": "japan_1937_marco_polo_bridge_incident", "to": "japan_1937_battle_shanghai"}, {"from": "japan_1937_battle_shanghai", "to": "japan_1937_rape_of_nanking"}, {"from": "japan_1937_rape_of_nanking", "to": "japan_1938_battle_wuhan"}, {"from": "japan_1938_battle_wuhan", "to": "japan_1939_nomonhan_incident"}, {"from": "japan_1939_nomonhan_incident", "to": "japan_1940_invasion_french_indochina"}, {"from": "japan_1940_invasion_french_indochina", "to": "japan_1940_tripartite_pact"}, {"from": "japan_1940_tripartite_pact", "to": "japan_1941_pacific_war_begins"}, {"from": "japan_1941_pacific_war_begins", "to": "japan_1942_expansion_peak"}, {"from": "japan_1942_expansion_peak", "to": "japan_1942_battle_midway"}, {"from": "japan_1942_battle_midway", "to": "japan_1944_operation_ichi_go"}, {"from": "japan_1944_operation_ichi_go", "to": "japan_1945_manila_massacre"}, {"from": "japan_1945_manila_massacre", "to": "japan_1945_soviet_invasion_atomic_bombs"}, {"from": "japan_1945_soviet_invasion_atomic_bombs", "to": "japan_1945_formal_surrender"}]};
+const DOMAIN_KEY = "graph";
+const GRAPH_LAYOUT = "timeline";
+
+// ── index ──────────────────────────────────────────────────────────────────
+const nodeIndex = {};
+RAW.nodes.forEach(n => nodeIndex[n.id] = n);
+
+const prereqOf  = {};  // id → ids that are direct prerequisites OF id
+const dependsOn = {};  // id → ids that id feeds into
+RAW.nodes.forEach(n => { prereqOf[n.id] = []; dependsOn[n.id] = []; });
+RAW.edges.forEach(e => {
+  prereqOf[e.to].push(e.from);
+  dependsOn[e.from].push(e.to);
+});
+
+// ── BFS longest-path levels (fixes application nodes at wrong tier) ─────────
+const bfsLevels = (() => {
+  const levels = {};
+  const successors = {};
+  RAW.nodes.forEach(n => { levels[n.id] = -1; successors[n.id] = []; });
+  RAW.edges.forEach(e => successors[e.from].push(e.to));
+  const sources = RAW.nodes.filter(n => !RAW.edges.some(e => e.to === n.id));
+  const queue = sources.map(n => n.id);
+  queue.forEach(n => levels[n] = 0);
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const succ of successors[cur]) {
+      const nl = levels[cur] + 1;
+      if (levels[succ] < nl) { levels[succ] = nl; queue.push(succ); }
+    }
+  }
+  return levels;
+})();
+
+// ── graph algorithms ────────────────────────────────────────────────────────
+function getAncestors(targetId) {
+  const visited = new Set();
+  const queue = [targetId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const p of prereqOf[cur])
+      if (!visited.has(p)) { visited.add(p); queue.push(p); }
+  }
+  return visited;
+}
+
+function topoSort(nodeSet) {
+  const inDeg = {};
+  nodeSet.forEach(n => inDeg[n] = 0);
+  nodeSet.forEach(n => { for (const p of prereqOf[n]) if (nodeSet.has(p)) inDeg[n]++; });
+  const reach = {};
+  nodeSet.forEach(n => {
+    let r = 0;
+    nodeSet.forEach(m => { if (m !== n && getAncestors(m).has(n)) r++; });
+    reach[n] = r;
+  });
+  const heap = [];
+  nodeSet.forEach(n => { if (inDeg[n] === 0) heap.push(n); });
+  heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+  const result = [];
+  while (heap.length) {
+    const node = heap.shift();
+    result.push(node);
+    for (const succ of dependsOn[node]) {
+      if (!nodeSet.has(succ)) continue;
+      if (--inDeg[succ] === 0) {
+        heap.push(succ);
+        heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+      }
+    }
+  }
+  return result;
+}
+
+// Read once, up front — used both for the network's own edge-curvature
+// hint below and by _layoutTimeline() later. Settings-page preference
+// (src/pages/Settings.js's getTimelineOrientation()); irrelevant for the
+// default "graph" layout.
+let TIMELINE_ORIENTATION = 'vertical';
+try {
+  TIMELINE_ORIENTATION = localStorage.getItem('cb-timeline-orientation') === 'horizontal' ? 'horizontal' : 'vertical';
+} catch (_) {}
+
+// ── vis.js network ──────────────────────────────────────────────────────────
+const container = document.getElementById('graph-container');
+// vis-network renders a node's `title` tooltip via the DOM node's
+// innerText (verified against the vis-network@9.1.9 bundle itself — it
+// does NOT interpret the string as HTML), so no escaping is needed here;
+// escaping it (an earlier version of this code did) actively backfires,
+// since innerText doesn't decode HTML entities back to characters —
+// "it's" would show up literally as "it&#39;s". Wrapping is handled by
+// the .vis-tooltip CSS override below, not here.
+const visNodes = new vis.DataSet(RAW.nodes.map(n => ({
+  id: n.id,
+  label: n.label.replace(/ /g, '\n'),
+  level: bfsLevels[n.id] !== undefined ? bfsLevels[n.id] : n.tier,
+  color: n.color,
+  font: n.font,
+  shape: n.kind === 'concept' ? 'ellipse' : 'box',
+  title: n.defines || undefined,
+})));
+const visEdges = new vis.DataSet(RAW.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  arrows: 'to', color: {color: '#c8ccd4'}, width: 1,
+})));
+// Edge curvature direction should follow whichever axis is the *main*
+// (sequence) axis — vertical for the default graph layout and a
+// vertical-orientation timeline, horizontal for a horizontal-orientation
+// timeline — otherwise the zig-zag connectors look bowed the wrong way.
+const _edgeForceDirection = (GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal') ? 'horizontal' : 'vertical';
+// hierarchical.enabled stays false: _layoutGraph()/_layoutTimeline() below
+// already set every node's final x/y explicitly via moveNode() once
+// 'afterDrawing' fires, so vis-network's own hierarchical engine would be
+// redundant — worse, vis-network re-runs that engine on every DataSet
+// change (selectNode()'s visNodes.update()/visEdges.update() calls when
+// highlighting a clicked node's path), which silently overwrote the
+// manual timeline positions and collapsed every node onto the same
+// cross-axis column the moment a node was clicked. Positions are fully
+// hand-computed below; the built-in layout engine has nothing to add and
+// only fights the manual one if left on.
+const network = new vis.Network(container, {nodes: visNodes, edges: visEdges}, {
+  layout: { hierarchical: { enabled: false } },
+  physics: { enabled: false },
+  interaction: { hover: true, tooltipDelay: 150 },
+  edges: { smooth: { type: 'cubicBezier', forceDirection: _edgeForceDirection } },
+});
+
+// Group nodes by their BFS tier — shared by both layouts below. Using the
+// *rank* of each distinct tier value (ti), not the raw tier number itself,
+// is what already made the compact layout's spacing even regardless of
+// gaps in the YAML's tier numbering — the timeline layout leans on that
+// same property to satisfy "don't treat the axis as a literal time scale".
+function _groupByTier() {
+  const byTier = {};
+  RAW.nodes.forEach(n => {
+    const tier = bfsLevels[n.id] ?? n.tier ?? 0;
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(n.id);
+  });
+  const tiers = Object.keys(byTier).map(Number).sort((a, b) => a - b);
+  return { byTier, tiers };
+}
+
+// Compact layout (default "graph"): group by tier, sort alphabetically,
+// left-align all nodes — a hierarchical prerequisite DAG.
+function _layoutGraph() {
+  const { byTier, tiers } = _groupByTier();
+  const spacing = 140;
+  const tierSep = 85;
+  _mainAxisSpacing = tierSep;
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const y = ti * tierSep;
+    ids.forEach((id, i) => {
+      network.moveNode(id, i * spacing, y);
+    });
+  });
+}
+
+// Timeline layout ("layout: timeline" in graph.yaml): a linear chain of
+// stops — main axis position is the tier's *rank* (evenly spaced, not
+// scaled to any real date/duration — see graph.yaml's own tier field,
+// which is just a sequence index here, not a year), alternating to either
+// side of the centerline on the cross axis so consecutive stops zig-zag
+// rather than overlap. The zig-zag path traced by the connecting edges
+// *is* the visual timeline — no separate straight guide line is drawn.
+// Orientation (vertical: top-to-bottom main axis, or horizontal:
+// left-to-right) is a Settings-page preference (src/pages/Settings.js's
+// getTimelineOrientation()), read from localStorage here since it can
+// change without regenerating this static page.
+function _layoutTimeline() {
+  const { byTier, tiers } = _groupByTier();
+  const mainSep = 140;
+  const crossOffset = 90;
+  const withinTierSpacing = 60;
+  _mainAxisSpacing = mainSep;
+
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const main = ti * mainSep;
+    const cross = (ti % 2 === 0 ? -1 : 1) * crossOffset;
+    ids.forEach((id, i) => {
+      // More than one event sharing a tier: spread them along the cross
+      // axis around that tier's alternating offset instead of stacking.
+      const spread = (i - (ids.length - 1) / 2) * withinTierSpacing;
+      if (TIMELINE_ORIENTATION === 'horizontal') {
+        network.moveNode(id, main, cross + spread);
+      } else {
+        network.moveNode(id, cross + spread, main);
+      }
+    });
+  });
+}
+
+// network.fit() alone zooms out to fit every node/tier in the viewport —
+// fine for a small graph, but for a large one it shrinks nodes/labels past
+// legibility. This floors the scale so the initial view shows roughly
+// DESIRED_VISIBLE_TIERS tiers along the layout's main axis instead of the
+// whole graph crammed in: a small graph that already fits within that many
+// tiers is untouched (fit's own scale wins), a large one defaults to a
+// legible subset instead of the whole graph in miniature. Sized off
+// _mainAxisSpacing (set by whichever of _layoutGraph/_layoutTimeline just
+// ran) rather than a sampled node's pixel size — a single sampled node
+// (e.g. a short-label primitive) previously over- or under-estimated the
+// scale needed for the graph's *typical* node size.
+let _mainAxisSpacing = 140;
+function _applyLegibleFloor() {
+  if (RAW.nodes.length === 0) return;
+  const fitScale = network.getScale();
+  const container = document.getElementById('graph-container');
+  const horizontal = GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal';
+  const viewportMain = horizontal ? container.clientWidth : container.clientHeight;
+  const DESIRED_VISIBLE_TIERS = 4;
+  const targetScale = viewportMain / (_mainAxisSpacing * DESIRED_VISIBLE_TIERS);
+  const minLegibleScale = Math.min(targetScale, 1);
+  if (fitScale < minLegibleScale) {
+    network.moveTo({ scale: minLegibleScale, animation: false });
+  }
+}
+
+network.once('afterDrawing', function() {
+  if (GRAPH_LAYOUT === 'timeline') {
+    _layoutTimeline();
+  } else {
+    _layoutGraph();
+  }
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+});
+
+// A true fit-to-everything, regardless of graph size — what the Re-Center
+// button explicitly promises ("re-fit the graph to the viewport").
+function reCenterGraph() {
+  network.fit({ animation: true });
+}
+
+// Same fit, but re-applies the legibility floor — used by GraphViewer.js's
+// automatic post-layout re-fit (once the parent app's CSS relayout has
+// settled the iframe's real container size) so a large graph's default
+// view stays readable instead of being reset to the full, tiny-node fit.
+function fitLegible() {
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+}
+
+// The parent app's own CSS relayout (hiding graph.html's own chrome,
+// slotting the Notes drawer below the graph) doesn't necessarily finish
+// resizing #graph-container in a single frame — a further layout pass can
+// resize it again after GraphViewer.js's one requestAnimationFrame call to
+// fitLegible() already ran, and vis-network's own internal handling of a
+// container resize after the fact can leave the view at a scale neither
+// fit() nor our floor ever asked for. Re-applying the floor once the
+// container's size has actually stopped changing (debounced) catches
+// that; disconnecting after the first settle avoids overriding a user's
+// own manual zoom/pan on every later resize (e.g. dragging the Notes
+// drawer's gutter).
+if (typeof ResizeObserver !== 'undefined') {
+  const _graphContainer = document.getElementById('graph-container');
+  let _resizeSettleTimer = null;
+  const _ro = new ResizeObserver(() => {
+    clearTimeout(_resizeSettleTimer);
+    _resizeSettleTimer = setTimeout(() => {
+      _ro.disconnect();
+      try { fitLegible(); } catch (_) {}
+    }, 200);
+  });
+  _ro.observe(_graphContainer);
+}
+
+const C_PATH   = {background: '#fff9c4', border: '#f9a825'};
+const C_TARGET = {background: '#ffe082', border: '#e65100'};
+
+function resetColors() {
+  visNodes.update(RAW.nodes.map(n => ({id: n.id, color: n.color})));
+  visEdges.update(RAW.edges.map((e, i) => ({id: i, color: {color: '#c8ccd4'}, width: 1})));
+}
+
+// ── explanation panel ───────────────────────────────────────────────────────
+function renderExplanation(node) {
+  const kclass = node.kind;
+  const prereqChips = (node.prereqs || []).map(p =>
+    `<span class="prereq-chip" onclick="selectNode('${p}')">${p.replace(/_/g,' ')}</span>`
+  ).join('');
+  const metaItems = [
+    node.verifier ? `<span class="meta-item"><b>Verifier:</b> ${node.verifier}</span>` : '',
+    node.lab      ? `<span class="meta-item"><b>Lab:</b> ${node.lab}</span>` : '',
+  ].filter(Boolean).join('');
+  const playHtml = node.play
+    ? `<div class="section-label">Try it</div><div class="play-hint">${node.play}</div>`
+    : '';
+
+  const panel = document.getElementById('explain-panel');
+  panel.innerHTML = `
+    <div class="node-title">
+      <h2>${node.label}</h2>
+      <span class="badge ${kclass}">${kclass}</span>
+      <span class="tier-tag">BFS level ${bfsLevels[node.id] ?? node.tier}</span>
+    </div>
+    ${node.defines ? `<div class="defines">${node.defines}</div>` : ''}
+    ${prereqChips ? `<div class="section-label">Prerequisites</div><div class="prereq-list">${prereqChips}</div>` : ''}
+    ${metaItems ? `<div class="meta-row">${metaItems}</div>` : ''}
+    ${playHtml}
+  `;
+
+  // ── concept HTML detail ──
+  const conceptsBase = window.__cb_CONCEPTS_BASE;
+  const conceptUrls = window.__cb_CONCEPT_URLS || {};
+  const mappedUrl = conceptUrls[node.id];
+  if (mappedUrl || conceptsBase) {
+    const conceptUrl = mappedUrl || (conceptsBase + 'concept_' + encodeURIComponent(node.id) + '.html');
+    const detail = document.createElement('div');
+    detail.id = 'concept-detail';
+    detail.innerHTML = '<div class="section-label">Concept Detail</div><div class="concept-loading" style="color:#aaa;font-size:12px;padding:6px 0">Loading…</div>';
+    panel.appendChild(detail);
+    fetch(conceptUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.text();
+      })
+      .then(html => {
+        const slot = detail.querySelector('.concept-loading');
+        if (!slot) return;
+        // Vite dev server returns the SPA index.html (200) for missing static files.
+        // Verify we got a real concept page by checking for a known marker.
+        if (html.includes('spl-credit') || html.includes('Powered by')) {
+          const iframe = document.createElement('iframe');
+          iframe.id = 'concept-iframe';
+          iframe.src = conceptUrl;
+          slot.replaceWith(iframe);
+        } else {
+          slot.className = 'concept-not-found';
+          slot.textContent = 'Content not found — generate it first.';
+        }
+      })
+      .catch(() => {
+        const slot = detail.querySelector('.concept-loading');
+        if (slot) { slot.className = 'concept-not-found'; slot.textContent = 'Content not found — generate it first.'; }
+      });
+  }
+}
+
+// ── learning path sidebar ───────────────────────────────────────────────────
+function renderPathSidebar(orderedPath, targetId) {
+  const stepsEl = document.getElementById('path-steps');
+  const countEl = document.getElementById('path-count');
+  countEl.textContent = orderedPath.length
+    ? `${orderedPath.length} step${orderedPath.length !== 1 ? 's' : ''} to learn first`
+    : 'Root concept — no prerequisites';
+
+  const target = nodeIndex[targetId];
+  const kc = k => `${k.charAt(0).toUpperCase() + k.slice(1)}`;
+
+  stepsEl.innerHTML = orderedPath.map((n, i) => {
+    const nd = nodeIndex[n];
+    return `<div class="step-item" onclick="selectNode('${n}')">
+      <span class="step-num">${i + 1}.</span>
+      <div>
+        <div class="step-label">${nd.label}
+          <span class="step-kind ${nd.kind}-k">${nd.kind}</span>
+        </div>
+        ${nd.defines ? `<div class="step-def">${nd.defines}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div class="step-item target">
+    <span class="step-num">▶</span>
+    <div>
+      <div class="step-label">${target.label}
+        <span class="step-kind ${target.kind}-k">${target.kind}</span>
+      </div>
+      ${target.defines ? `<div class="step-def">${target.defines}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── notes (localStorage) ────────────────────────────────────────────────────
+// Each node's notes are an append-only history of timestamped entries, not
+// a single overwritable value — Save (explicit, not triggered on every
+// keystroke) appends a new entry and clears the input, so writing a
+// follow-up thought later never clobbers what was already saved for that
+// node. See _parseEntries for the migration from the old single-note
+// format this replaces.
+let currentNodeId = null;
+
+function noteKey(nodeId) { return `concept_notes_${DOMAIN_KEY}_${nodeId}`; }
+
+function _parseEntries(raw) {
+  if (!raw) return [];
+  try {
+    const d = JSON.parse(raw);
+    if (Array.isArray(d)) return d;
+    // Legacy single-note format ({text, ts}) written before notes became
+    // an entry history — migrate it in place as a one-entry history
+    // instead of silently discarding whatever was already saved there.
+    if (d && typeof d === 'object' && d.text) return [{ text: d.text, ts: d.ts || '' }];
+    return [];
+  } catch (_) {
+    return raw ? [{ text: raw, ts: '' }] : [];
+  }
+}
+
+// Used by GraphViewer.js's _wireNoteHistoryBridge (parent app embed) to
+// pull one specific past entry's full text into the "Note Detail" tab —
+// a top-level `function` declaration so it lands on this iframe's window
+// (see that file's comment on why `const`/`let` don't).
+function getEntryText(nodeId, ts) {
+  const entry = _parseEntries(localStorage.getItem(noteKey(nodeId))).find(e => e.ts === ts);
+  return entry ? entry.text : '';
+}
+
+function saveNoteEntry() {
+  if (!currentNodeId) return;
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value;
+  if (!text.trim()) return;
+  const entries = _parseEntries(localStorage.getItem(noteKey(currentNodeId)));
+  entries.push({ text, ts: new Date().toISOString() });
+  localStorage.setItem(noteKey(currentNodeId), JSON.stringify(entries));
+  ta.value = '';
+  renderNoteHistory(currentNodeId);
+  const btn = document.getElementById('nb-save-btn');
+  if (btn) { btn.textContent = 'Saved!'; setTimeout(() => { btn.textContent = 'Save'; }, 1000); }
+}
+
+// Clears the draft in the input box only — the saved entry history is
+// untouched (there's no single "the note" to delete any more, just past
+// entries, none of which this button targets).
+function clearNoteInput() {
+  document.getElementById('notes-textarea').value = '';
+}
+
+function _fmtTs(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+// A note's text is whatever the reader typed into the textarea, stored
+// straight to localStorage with no sanitization — so renderNoteHistory's
+// preview has to escape it before it goes into innerHTML, even though
+// today's writer/reader is the same person in the same browser. Same
+// reasoning as this app's own src/lib/html.js escapeHtml.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// All saved entries for ONE node (the currently-selected one), most recent
+// first — not a cross-node index. data-node-id/data-ts on each row are read
+// by GraphViewer.js's _wireNoteHistoryBridge (the app embed's "click a past
+// entry to view its full text in the Note Detail tab" feature) via
+// getEntryText() above; unused, harmless in the standalone page.
+function renderNoteHistory(nodeId) {
+  const container = document.getElementById('notes-with-entries');
+  const entries = _parseEntries(localStorage.getItem(noteKey(nodeId)));
+  if (!entries.length) {
+    container.innerHTML = '<div class="note-empty-hint">No saved entries yet for this concept.</div>';
+    return;
+  }
+  container.innerHTML = entries.slice().reverse().map(e =>
+    `<div class="note-entry" data-node-id="${_escHtml(nodeId)}" data-ts="${_escHtml(e.ts)}">
+      <div class="note-node"><span class="note-ts">${_fmtTs(e.ts)}</span></div>
+      <div class="note-preview">${_escHtml(e.text.slice(0, 80))}</div>
+    </div>`
+  ).join('');
+}
+
+function switchNotes(nodeId) {
+  // No implicit carry-over save of whatever's in the input when switching
+  // nodes — Save is explicit now (see saveNoteEntry), so an unsaved draft
+  // is intentionally discarded, same as closing a document without saving.
+  currentNodeId = nodeId;
+  document.getElementById('notes-textarea').value = '';
+  document.getElementById('notes-node-label').textContent =
+    nodeIndex[nodeId]?.label || nodeId;
+  renderNoteHistory(nodeId);
+}
+
+function exportNotes() {
+  const notes = {};
+  RAW.nodes.forEach(n => {
+    const v = localStorage.getItem(noteKey(n.id));
+    if (v) notes[n.id] = v;
+  });
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${DOMAIN_KEY}_notes.json`;
+  a.click();
+}
+
+// ── unified node select ─────────────────────────────────────────────────────
+function selectNode(nodeId) {
+  if (!nodeIndex[nodeId]) return;
+  network.selectNodes([nodeId]);
+  handleSelect(nodeId);
+}
+
+function handleSelect(targetId) {
+  const node = nodeIndex[targetId];
+
+  renderExplanation(node);
+  switchNotes(targetId);
+
+  const ancestors = getAncestors(targetId);
+  const pathSet = new Set([...ancestors]);
+  const orderedPath = topoSort(pathSet);
+
+  renderPathSidebar(orderedPath, targetId);
+
+  resetColors();
+  visNodes.update(orderedPath.map(n => ({id: n, color: C_PATH})));
+  visNodes.update([{id: targetId, color: C_TARGET}]);
+  visEdges.update(RAW.edges.map((e, i) => {
+    const inPath = pathSet.has(e.from) && (pathSet.has(e.to) || e.to === targetId);
+    return {id: i, color: {color: inPath ? '#f9a825' : '#c8ccd4'}, width: inPath ? 2 : 1};
+  }));
+}
+
+network.on('click', params => {
+  if (params.nodes.length) handleSelect(params.nodes[0]);
+});
+
+// initial empty state — real content loads once a node is selected (see
+// switchNotes -> renderNoteHistory)
+document.getElementById('notes-with-entries').innerHTML =
+  '<div class="note-empty-hint">Select a concept to see or add notes.</div>';
+
+// When viewed directly (not in an iframe), inject a back link next to the
+// "Learning Path" heading so it doesn't look like a title-bar element.
+if (window.parent === window) {
+  var h1 = document.querySelector('#path-header h1');
+  if (h1) {
+    var backLink = document.createElement('a');
+    backLink.href = '../../';
+    backLink.textContent = '← App';
+    backLink.style.cssText = [
+      'font-size:10px','color:#2563eb','font-family:system-ui,sans-serif',
+      'text-decoration:none','font-weight:400','letter-spacing:normal',
+      'text-transform:none','white-space:nowrap','flex-shrink:0'
+    ].join(';');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:baseline;gap:8px;';
+    h1.parentNode.insertBefore(row, h1);
+    row.appendChild(h1);
+    row.appendChild(backLink);
+  }
+}
+</script>
+</body>
+</html>

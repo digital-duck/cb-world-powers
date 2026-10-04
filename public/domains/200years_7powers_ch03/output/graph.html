@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concept Graph — graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f2f5;overflow:hidden;height:100vh}
+.app{
+  display:grid;
+  grid-template-columns:230px 1fr 210px;
+  grid-template-rows:60vh 40vh;
+  height:100vh;
+  gap:0;
+}
+/* ── Left sidebar: learning path ── */
+#path-sidebar{
+  grid-column:1;grid-row:1/3;
+  background:#f5f6f8;color:#2a2a2a;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid #dde0e6;
+}
+#path-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid #dde0e6;
+  flex-shrink:0;
+}
+#path-header h1{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:2px;font-weight:700}
+#path-header .domain-name{font-size:11px;color:#555;margin-top:4px}
+#path-steps{flex:1;overflow-y:auto;padding:8px 0}
+#path-steps .hint{color:#aaa;font-size:12px;text-align:center;padding:24px 12px;line-height:1.5}
+.step-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 12px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s;
+}
+.step-item:hover{background:#ebebf0}
+.step-item.active{background:#e8eef8;border-left-color:#4a90d9}
+.step-item.target{background:#eaf5ea;border-left-color:#4caf50}
+.step-num{min-width:20px;font-size:10px;font-weight:700;color:#bbb;padding-top:2px;flex-shrink:0}
+.step-item.target .step-num{color:#4caf50}
+.step-label{font-size:12px;font-weight:600;color:#333;line-height:1.4}
+.step-def{font-size:10px;color:#888;margin-top:2px;line-height:1.4}
+.step-kind{display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+#path-count{font-size:10px;color:#aaa;margin-top:3px}
+/* vis-network's own default tooltip CSS sets white-space:nowrap with no
+   width cap, so a node's `defines` text (a full sentence) renders as one
+   unbroken line stretching across the whole canvas — override both here. */
+.vis-tooltip{white-space:normal!important;max-width:280px;line-height:1.4}
+/* ── Graph panel ── */
+#graph-panel{
+  grid-column:2;grid-row:1;
+  position:relative;background:#fff;
+  border-bottom:2px solid #dde;
+}
+#graph-container{width:100%;height:100%}
+.graph-recenter-btn{
+  position:absolute;right:16px;bottom:16px;z-index:50;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid #1e3a5f;background:#1e3a5f;color:#fff;
+  font-size:12px;font-weight:600;font-family:system-ui,sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+}
+.graph-recenter-btn:hover{background:#28496f;border-color:#28496f}
+/* ── Explanation panel ── */
+#explain-panel{
+  grid-column:2;grid-row:2;
+  background:#fff;overflow-y:auto;
+  padding:16px 20px;
+}
+#explain-panel .empty{color:#aaa;font-size:13px;padding:20px 0;text-align:center}
+#explain-panel .node-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+#explain-panel .node-title h2{font-size:16px;color:#1e3a5f}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;
+}
+.badge.primitive{background:#e8f5e9;color:#2e7d32}
+.badge.concept{background:#e3f2fd;color:#1565c0}
+.badge.application{background:#fff3e0;color:#ef6c00}
+.tier-tag{font-size:11px;color:#999;margin-left:auto}
+#explain-panel .defines{
+  font-size:14px;color:#333;line-height:1.6;margin-bottom:12px;
+  padding:10px 12px;background:#f8f9fb;border-radius:6px;
+  border-left:3px solid #90b4e8;
+}
+#explain-panel .section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#999;margin-bottom:6px;
+}
+#explain-panel .prereq-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prereq-chip{
+  padding:3px 9px;border-radius:12px;font-size:11px;
+  background:#e3f2fd;color:#1565c0;cursor:pointer;
+  border:1px solid #90caf9;transition:background .12s;
+}
+.prereq-chip:hover{background:#bbdefb}
+#explain-panel .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{font-size:12px;color:#555}
+.meta-item b{color:#1e3a5f}
+#explain-panel .play-hint{
+  font-size:12px;color:#5a5a5a;line-height:1.6;
+  padding:8px 12px;background:#fffde7;border-radius:6px;
+  border-left:3px solid #ffd54f;margin-bottom:8px;
+}
+/* ── Notes sidebar ── */
+#notes-sidebar{
+  grid-column:3;grid-row:1/3;
+  background:#fafaf8;
+  border-left:2px solid #e8e8e0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notes-header{
+  padding:10px 12px 8px;
+  border-bottom:1px solid #e0e0d8;
+  flex-shrink:0;
+}
+#notes-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+#notes-header h2{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin:0}
+#notes-node-label{font-size:11px;color:#999;margin-top:2px}
+.nb-btn{font-size:10px;padding:2px 7px;border-radius:3px;
+  border:1px solid #ddd;background:#f0f0ea;cursor:pointer;color:#777;
+  font-family:system-ui,sans-serif}
+.nb-btn:hover{background:#e0e0d8;color:#444}
+#notes-textarea{
+  /* 40:60 entry:history split of the sidebar's remaining height (below the
+     fixed header) — flex-grow ratio 2:3 against #notes-with-entries below,
+     not a fixed height, so both panes scale together as the sidebar is
+     resized (see GraphViewer.js's resizable-pane embed). */
+  flex:2 1 0;min-height:0;border:none;resize:none;
+  padding:12px;font-size:12px;line-height:1.6;
+  font-family:inherit;background:#fafaf8;color:#333;
+  outline:none;
+}
+#notes-with-entries{
+  border-top:1px solid #e8e8e0;flex:3 1 0;min-height:0;overflow-y:auto;
+}
+.note-empty-hint{padding:12px;color:#aaa;font-size:11px;font-style:italic}
+.note-entry{
+  padding:6px 12px;cursor:pointer;
+  border-bottom:1px solid #f0f0e8;
+  font-size:11px;
+}
+.note-entry:hover{background:#f0efe8}
+.note-entry .note-node{font-weight:600;color:#555;display:flex;justify-content:space-between;align-items:center}
+.note-entry .note-ts{font-weight:400;color:#bbb;font-size:10px}
+.note-entry .note-preview{color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── kind badge colours in sidebar ── */
+.primitive-k{background:#e8f5e9;color:#2e7d32}
+.concept-k{background:#e3f2fd;color:#1565c0}
+.application-k{background:#fff3e0;color:#ef6c00}
+/* ── concept detail panel ── */
+#concept-detail{margin-top:14px;border-top:1px solid #e8e8e0;padding-top:10px;}
+#concept-iframe{width:100%;height:500px;border:1px solid #e0e0d8;border-radius:4px;margin-top:6px;display:block;}
+.concept-not-found{color:#e57373;font-size:12px;padding:6px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT: learning path sidebar -->
+<aside id="path-sidebar">
+  <div id="path-header">
+    <h1>Learning Path</h1>
+    <div class="domain-name">graph</div>
+    <div id="path-count"></div>
+  </div>
+  <div id="path-steps">
+    <div class="hint">Click any node in the graph<br>to see its learning path</div>
+  </div>
+</aside>
+
+<!-- CENTRE TOP: concept graph -->
+<div id="graph-panel">
+  <div id="graph-container"></div>
+  <button class="graph-recenter-btn" onclick="reCenterGraph()" title="Re-fit the graph to the viewport">Re-Center</button>
+</div>
+
+<!-- CENTRE BOTTOM: explanation panel -->
+<div id="explain-panel">
+  <div class="empty">Select a node to see its definition, prerequisites, and learning context.</div>
+</div>
+
+<!-- RIGHT: notes sidebar -->
+<aside id="notes-sidebar">
+  <div id="notes-header">
+    <div id="notes-header-top">
+      <h2>Notes</h2>
+      <div>
+        <button class="nb-btn" id="nb-save-btn" onclick="saveNoteEntry()">Save</button>
+        <button class="nb-btn" id="nb-clear-btn" onclick="clearNoteInput()">Clear</button>
+        <button class="nb-btn" onclick="exportNotes()">Export</button>
+      </div>
+    </div>
+    <div id="notes-node-label">no node selected</div>
+  </div>
+  <textarea id="notes-textarea" placeholder="Type notes here, then click Save"></textarea>
+  <div id="notes-with-entries"></div>
+</aside>
+
+</div><!-- .app -->
+
+<script>
+const RAW = {"nodes": [{"id": "germany_1848_revolutions_1848_frankfurt_parliament", "label": "germany 1848 revolutions 1848 frankfurt parliament", "kind": "primitive", "tier": 0, "defines": "(1848–1849) Revolutions of 1848 & Frankfurt Parliament — Liberal and nationalist\nuprisings sweep the German states; the Frankfurt Parliament drafts a constitution for a\nunified Germany but collapses after Prussia's king refuses the offered crown.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "germany_1862_bismarck_becomes_prussian_minister_president", "label": "germany 1862 bismarck becomes prussian minister president", "kind": "concept", "tier": 1, "defines": "(1862) Bismarck Becomes Prussian Minister-President — Otto von Bismarck begins his\n\"blood and iron\" policy, using war and diplomacy to unify Germany under Prussian\nleadership.\n", "prereqs": ["germany_1848_revolutions_1848_frankfurt_parliament"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1864_second_schleswig_war", "label": "germany 1864 second schleswig war", "kind": "concept", "tier": 2, "defines": "(1864) Second Schleswig War — Prussia and Austria jointly defeat Denmark over the\nSchleswig-Holstein duchies, a first step in Bismarck's unification strategy.\n", "prereqs": ["germany_1862_bismarck_becomes_prussian_minister_president"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1866_austro_prussian_war_north_german", "label": "germany 1866 austro prussian war north german", "kind": "concept", "tier": 3, "defines": "(1866) Austro-Prussian War & North German Confederation — Prussia defeats Austria,\nexcluding it from German affairs and forming the Prussian-led North German\nConfederation.\n", "prereqs": ["germany_1864_second_schleswig_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1870_franco_prussian_war", "label": "germany 1870 franco prussian war", "kind": "concept", "tier": 4, "defines": "(1870–1871) Franco-Prussian War — Prussia and its German allies defeat France; the\nvictory directly precipitates German unification.\n", "prereqs": ["germany_1866_austro_prussian_war_north_german"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1871_german_unification", "label": "germany 1871 german unification", "kind": "concept", "tier": 5, "defines": "(1871) German Unification — The German Empire is proclaimed in the Hall of Mirrors at\nVersailles after defeating France. This shifts the balance of power in Europe.\n", "prereqs": ["germany_1870_franco_prussian_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1884_scramble_africa", "label": "germany 1884 scramble africa", "kind": "concept", "tier": 6, "defines": "(1884–1885) Scramble for Africa — Germany acquires colonies in Africa (e.g., German\nSouth-West Africa, Togoland) and the Pacific, challenging British and French dominance.\n", "prereqs": ["germany_1871_german_unification"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1890_wilhelm_ii_dismisses_bismarck", "label": "germany 1890 wilhelm ii dismisses bismarck", "kind": "concept", "tier": 7, "defines": "(1890) Wilhelm II dismisses Bismarck — The Kaiser abandons Bismarck's cautious diplomacy\nfor an aggressive, expansionist foreign policy (*Weltpolitik*).\n", "prereqs": ["germany_1884_scramble_africa"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1905_moroccan_crises", "label": "germany 1905 moroccan crises", "kind": "concept", "tier": 8, "defines": "(1905 & 1911) Moroccan Crises — Germany attempts to test the strength of the\nAnglo-French alliance by provoking France in Morocco, increasing tensions in Europe.\n", "prereqs": ["germany_1890_wilhelm_ii_dismisses_bismarck"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1914_blank_check_wwi", "label": "germany 1914 blank check wwi", "kind": "concept", "tier": 9, "defines": "(1914) The \"Blank Check\" & WWI — Germany encourages Austria-Hungary to be harsh on\nSerbia after the Archduke's assassination. Germany invades neutral Belgium (Schlieffen\nPlan) to attack France, dragging Britain into the war.\n", "prereqs": ["germany_1905_moroccan_crises"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1917_unrestricted_submarine_warfare", "label": "germany 1917 unrestricted submarine warfare", "kind": "concept", "tier": 10, "defines": "(1917) Unrestricted Submarine Warfare — Germany resumes sinking merchant ships without\nwarning, leading the USA to enter the war against Germany.\n", "prereqs": ["germany_1914_blank_check_wwi"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1919_treaty_versailles", "label": "germany 1919 treaty versailles", "kind": "concept", "tier": 11, "defines": "(1919) Treaty of Versailles — Germany accepts blame for WWI and loses territory\n(Alsace-Lorraine, Polish Corridor), its military is restricted, and heavy reparations\nare imposed.\n", "prereqs": ["germany_1917_unrestricted_submarine_warfare"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1918_german_revolution_weimar_republic", "label": "germany 1918 german revolution weimar republic", "kind": "concept", "tier": 12, "defines": "(1918–1919) German Revolution & the Weimar Republic — The Kaiser abdicates amid naval\nmutinies and mass unrest; a new democratic constitution establishes the Weimar Republic,\na fragile parliamentary system that Hitler will later dismantle from within rather than\noverthrow from without.\n", "prereqs": ["germany_1919_treaty_versailles"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1923_ruhr_occupation_hyperinflation_beer_hall", "label": "germany 1923 ruhr occupation hyperinflation beer hall", "kind": "concept", "tier": 13, "defines": "(1923) Ruhr Occupation, Hyperinflation & Beer Hall Putsch — France and Belgium occupy\nthe Ruhr over missed reparations payments; the resulting hyperinflation wipes out\nmiddle-class savings, and Hitler's failed Munich coup (the Beer Hall Putsch) first\nbrings him to national attention.\n", "prereqs": ["germany_1918_german_revolution_weimar_republic"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1925_locarno_treaties_golden_twenties", "label": "germany 1925 locarno treaties golden twenties", "kind": "concept", "tier": 14, "defines": "(1925) Locarno Treaties & the \"Golden Twenties\" — Under Foreign Minister Gustav\nStresemann, Germany accepts its western borders and enters a brief period of currency\nstabilization and relative prosperity — the calm that makes the 1929 collapse legible as\na collapse.\n", "prereqs": ["germany_1923_ruhr_occupation_hyperinflation_beer_hall"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1929_great_depression_germany", "label": "germany 1929 great depression germany", "kind": "concept", "tier": 15, "defines": "(1929–1932) The Great Depression in Germany — The Wall Street Crash triggers mass\nunemployment (over 6 million by 1932) and the withdrawal of US loans that had propped up\nthe Weimar economy, radicalizing voters toward the Nazi and Communist parties at the\nballot box.\n", "prereqs": ["germany_1925_locarno_treaties_golden_twenties"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1933_hitler_becomes_chancellor", "label": "germany 1933 hitler becomes chancellor", "kind": "concept", "tier": 16, "defines": "(1933) Hitler becomes Chancellor — The Nazi Party seizes power; Germany begins\nwithdrawing from the League of Nations and rearming.\n", "prereqs": ["germany_1929_great_depression_germany"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1933_reichstag_fire_enabling_act", "label": "germany 1933 reichstag fire enabling act", "kind": "concept", "tier": 17, "defines": "(1933) Reichstag Fire & Enabling Act — A fire at the Reichstag is used as pretext to\nsuspend civil liberties; the subsequent Enabling Act lets Hitler's government legislate\nwithout the Reichstag, legally dismantling German democracy within weeks of taking\npower.\n", "prereqs": ["germany_1933_hitler_becomes_chancellor"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1934_night_long_knives", "label": "germany 1934 night long knives", "kind": "concept", "tier": 18, "defines": "(1934) Night of the Long Knives — Hitler purges the SA leadership and other rivals in a\nseries of extrajudicial killings, consolidating his control over the Nazi Party and\nwinning the army's loyalty.\n", "prereqs": ["germany_1933_reichstag_fire_enabling_act"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1935_nuremberg_laws", "label": "germany 1935 nuremberg laws", "kind": "concept", "tier": 19, "defines": "(1935) Nuremberg Laws — New race laws strip German Jews of citizenship and criminalize\nmarriage or relations between Jews and non-Jews, formalizing state antisemitism years\nbefore the Holocaust's industrial phase.\n", "prereqs": ["germany_1934_night_long_knives"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1936_remilitarization_rhineland", "label": "germany 1936 remilitarization rhineland", "kind": "concept", "tier": 20, "defines": "(1936) Remilitarization of the Rhineland — Germany sends troops into the demilitarized\nRhineland, violating the Treaty of Versailles. Britain and France do not react.\n", "prereqs": ["germany_1935_nuremberg_laws"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1938_anschluss_sudetenland", "label": "germany 1938 anschluss sudetenland", "kind": "concept", "tier": 21, "defines": "(1938) Anschluss & Sudetenland — Germany annexes Austria (Anschluss) and then takes the\nSudetenland region of Czechoslovakia (Munich Agreement).\n", "prereqs": ["germany_1936_remilitarization_rhineland"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1938_kristallnacht", "label": "germany 1938 kristallnacht", "kind": "concept", "tier": 22, "defines": "(1938) Kristallnacht — A state-orchestrated pogrom destroys thousands of Jewish\nbusinesses, synagogues, and homes across Germany and Austria, marking the shift from\nlegal persecution to open, organized violence against Jews.\n", "prereqs": ["germany_1938_anschluss_sudetenland"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1939_invasion_poland", "label": "germany 1939 invasion poland", "kind": "concept", "tier": 23, "defines": "(1939) Invasion of Poland — Germany signs the Molotov-Ribbentrop Pact with the USSR and\ninvades Poland on September 1, starting World War II in Europe.\n", "prereqs": ["germany_1938_kristallnacht"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1940_blitzkrieg_west", "label": "germany 1940 blitzkrieg west", "kind": "concept", "tier": 24, "defines": "(1940) Blitzkrieg in the West — Germany invades Denmark, Norway, the Netherlands,\nBelgium, and France. The \"Blitzkrieg\" tactic leads to the rapid fall of France.\n", "prereqs": ["germany_1939_invasion_poland"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1941_operation_barbarossa", "label": "germany 1941 operation barbarossa", "kind": "concept", "tier": 25, "defines": "(1941) Operation Barbarossa — Germany breaks its pact with the USSR and launches the\nlargest invasion in history, aiming to destroy the Soviet Union and seize resources.\n", "prereqs": ["germany_1940_blitzkrieg_west"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1942_holocaust", "label": "germany 1942 holocaust", "kind": "concept", "tier": 26, "defines": "(1942) The Holocaust — The Wannsee Conference formalizes the \"Final Solution,\" leading\nto the industrial genocide of six million Jews and millions of others.\n", "prereqs": ["germany_1941_operation_barbarossa"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_1944_total_defeat", "label": "germany 1944 total defeat", "kind": "concept", "tier": 27, "defines": "(1944–1945) Total Defeat — The Allies push back from the East (Soviets) and West\n(US/UK). Germany surrenders unconditionally in May 1945.\n", "prereqs": ["germany_1942_holocaust"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}], "edges": [{"from": "germany_1848_revolutions_1848_frankfurt_parliament", "to": "germany_1862_bismarck_becomes_prussian_minister_president"}, {"from": "germany_1862_bismarck_becomes_prussian_minister_president", "to": "germany_1864_second_schleswig_war"}, {"from": "germany_1864_second_schleswig_war", "to": "germany_1866_austro_prussian_war_north_german"}, {"from": "germany_1866_austro_prussian_war_north_german", "to": "germany_1870_franco_prussian_war"}, {"from": "germany_1870_franco_prussian_war", "to": "germany_1871_german_unification"}, {"from": "germany_1871_german_unification", "to": "germany_1884_scramble_africa"}, {"from": "germany_1884_scramble_africa", "to": "germany_1890_wilhelm_ii_dismisses_bismarck"}, {"from": "germany_1890_wilhelm_ii_dismisses_bismarck", "to": "germany_1905_moroccan_crises"}, {"from": "germany_1905_moroccan_crises", "to": "germany_1914_blank_check_wwi"}, {"from": "germany_1914_blank_check_wwi", "to": "germany_1917_unrestricted_submarine_warfare"}, {"from": "germany_1917_unrestricted_submarine_warfare", "to": "germany_1919_treaty_versailles"}, {"from": "germany_1919_treaty_versailles", "to": "germany_1918_german_revolution_weimar_republic"}, {"from": "germany_1918_german_revolution_weimar_republic", "to": "germany_1923_ruhr_occupation_hyperinflation_beer_hall"}, {"from": "germany_1923_ruhr_occupation_hyperinflation_beer_hall", "to": "germany_1925_locarno_treaties_golden_twenties"}, {"from": "germany_1925_locarno_treaties_golden_twenties", "to": "germany_1929_great_depression_germany"}, {"from": "germany_1929_great_depression_germany", "to": "germany_1933_hitler_becomes_chancellor"}, {"from": "germany_1933_hitler_becomes_chancellor", "to": "germany_1933_reichstag_fire_enabling_act"}, {"from": "germany_1933_reichstag_fire_enabling_act", "to": "germany_1934_night_long_knives"}, {"from": "germany_1934_night_long_knives", "to": "germany_1935_nuremberg_laws"}, {"from": "germany_1935_nuremberg_laws", "to": "germany_1936_remilitarization_rhineland"}, {"from": "germany_1936_remilitarization_rhineland", "to": "germany_1938_anschluss_sudetenland"}, {"from": "germany_1938_anschluss_sudetenland", "to": "germany_1938_kristallnacht"}, {"from": "germany_1938_kristallnacht", "to": "germany_1939_invasion_poland"}, {"from": "germany_1939_invasion_poland", "to": "germany_1940_blitzkrieg_west"}, {"from": "germany_1940_blitzkrieg_west", "to": "germany_1941_operation_barbarossa"}, {"from": "germany_1941_operation_barbarossa", "to": "germany_1942_holocaust"}, {"from": "germany_1942_holocaust", "to": "germany_1944_total_defeat"}]};
+const DOMAIN_KEY = "graph";
+const GRAPH_LAYOUT = "timeline";
+
+// ── index ──────────────────────────────────────────────────────────────────
+const nodeIndex = {};
+RAW.nodes.forEach(n => nodeIndex[n.id] = n);
+
+const prereqOf  = {};  // id → ids that are direct prerequisites OF id
+const dependsOn = {};  // id → ids that id feeds into
+RAW.nodes.forEach(n => { prereqOf[n.id] = []; dependsOn[n.id] = []; });
+RAW.edges.forEach(e => {
+  prereqOf[e.to].push(e.from);
+  dependsOn[e.from].push(e.to);
+});
+
+// ── BFS longest-path levels (fixes application nodes at wrong tier) ─────────
+const bfsLevels = (() => {
+  const levels = {};
+  const successors = {};
+  RAW.nodes.forEach(n => { levels[n.id] = -1; successors[n.id] = []; });
+  RAW.edges.forEach(e => successors[e.from].push(e.to));
+  const sources = RAW.nodes.filter(n => !RAW.edges.some(e => e.to === n.id));
+  const queue = sources.map(n => n.id);
+  queue.forEach(n => levels[n] = 0);
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const succ of successors[cur]) {
+      const nl = levels[cur] + 1;
+      if (levels[succ] < nl) { levels[succ] = nl; queue.push(succ); }
+    }
+  }
+  return levels;
+})();
+
+// ── graph algorithms ────────────────────────────────────────────────────────
+function getAncestors(targetId) {
+  const visited = new Set();
+  const queue = [targetId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const p of prereqOf[cur])
+      if (!visited.has(p)) { visited.add(p); queue.push(p); }
+  }
+  return visited;
+}
+
+function topoSort(nodeSet) {
+  const inDeg = {};
+  nodeSet.forEach(n => inDeg[n] = 0);
+  nodeSet.forEach(n => { for (const p of prereqOf[n]) if (nodeSet.has(p)) inDeg[n]++; });
+  const reach = {};
+  nodeSet.forEach(n => {
+    let r = 0;
+    nodeSet.forEach(m => { if (m !== n && getAncestors(m).has(n)) r++; });
+    reach[n] = r;
+  });
+  const heap = [];
+  nodeSet.forEach(n => { if (inDeg[n] === 0) heap.push(n); });
+  heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+  const result = [];
+  while (heap.length) {
+    const node = heap.shift();
+    result.push(node);
+    for (const succ of dependsOn[node]) {
+      if (!nodeSet.has(succ)) continue;
+      if (--inDeg[succ] === 0) {
+        heap.push(succ);
+        heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+      }
+    }
+  }
+  return result;
+}
+
+// Read once, up front — used both for the network's own edge-curvature
+// hint below and by _layoutTimeline() later. Settings-page preference
+// (src/pages/Settings.js's getTimelineOrientation()); irrelevant for the
+// default "graph" layout.
+let TIMELINE_ORIENTATION = 'vertical';
+try {
+  TIMELINE_ORIENTATION = localStorage.getItem('cb-timeline-orientation') === 'horizontal' ? 'horizontal' : 'vertical';
+} catch (_) {}
+
+// ── vis.js network ──────────────────────────────────────────────────────────
+const container = document.getElementById('graph-container');
+// vis-network renders a node's `title` tooltip via the DOM node's
+// innerText (verified against the vis-network@9.1.9 bundle itself — it
+// does NOT interpret the string as HTML), so no escaping is needed here;
+// escaping it (an earlier version of this code did) actively backfires,
+// since innerText doesn't decode HTML entities back to characters —
+// "it's" would show up literally as "it&#39;s". Wrapping is handled by
+// the .vis-tooltip CSS override below, not here.
+const visNodes = new vis.DataSet(RAW.nodes.map(n => ({
+  id: n.id,
+  label: n.label.replace(/ /g, '\n'),
+  level: bfsLevels[n.id] !== undefined ? bfsLevels[n.id] : n.tier,
+  color: n.color,
+  font: n.font,
+  shape: n.kind === 'concept' ? 'ellipse' : 'box',
+  title: n.defines || undefined,
+})));
+const visEdges = new vis.DataSet(RAW.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  arrows: 'to', color: {color: '#c8ccd4'}, width: 1,
+})));
+// Edge curvature direction should follow whichever axis is the *main*
+// (sequence) axis — vertical for the default graph layout and a
+// vertical-orientation timeline, horizontal for a horizontal-orientation
+// timeline — otherwise the zig-zag connectors look bowed the wrong way.
+const _edgeForceDirection = (GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal') ? 'horizontal' : 'vertical';
+// hierarchical.enabled stays false: _layoutGraph()/_layoutTimeline() below
+// already set every node's final x/y explicitly via moveNode() once
+// 'afterDrawing' fires, so vis-network's own hierarchical engine would be
+// redundant — worse, vis-network re-runs that engine on every DataSet
+// change (selectNode()'s visNodes.update()/visEdges.update() calls when
+// highlighting a clicked node's path), which silently overwrote the
+// manual timeline positions and collapsed every node onto the same
+// cross-axis column the moment a node was clicked. Positions are fully
+// hand-computed below; the built-in layout engine has nothing to add and
+// only fights the manual one if left on.
+const network = new vis.Network(container, {nodes: visNodes, edges: visEdges}, {
+  layout: { hierarchical: { enabled: false } },
+  physics: { enabled: false },
+  interaction: { hover: true, tooltipDelay: 150 },
+  edges: { smooth: { type: 'cubicBezier', forceDirection: _edgeForceDirection } },
+});
+
+// Group nodes by their BFS tier — shared by both layouts below. Using the
+// *rank* of each distinct tier value (ti), not the raw tier number itself,
+// is what already made the compact layout's spacing even regardless of
+// gaps in the YAML's tier numbering — the timeline layout leans on that
+// same property to satisfy "don't treat the axis as a literal time scale".
+function _groupByTier() {
+  const byTier = {};
+  RAW.nodes.forEach(n => {
+    const tier = bfsLevels[n.id] ?? n.tier ?? 0;
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(n.id);
+  });
+  const tiers = Object.keys(byTier).map(Number).sort((a, b) => a - b);
+  return { byTier, tiers };
+}
+
+// Compact layout (default "graph"): group by tier, sort alphabetically,
+// left-align all nodes — a hierarchical prerequisite DAG.
+function _layoutGraph() {
+  const { byTier, tiers } = _groupByTier();
+  const spacing = 140;
+  const tierSep = 85;
+  _mainAxisSpacing = tierSep;
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const y = ti * tierSep;
+    ids.forEach((id, i) => {
+      network.moveNode(id, i * spacing, y);
+    });
+  });
+}
+
+// Timeline layout ("layout: timeline" in graph.yaml): a linear chain of
+// stops — main axis position is the tier's *rank* (evenly spaced, not
+// scaled to any real date/duration — see graph.yaml's own tier field,
+// which is just a sequence index here, not a year), alternating to either
+// side of the centerline on the cross axis so consecutive stops zig-zag
+// rather than overlap. The zig-zag path traced by the connecting edges
+// *is* the visual timeline — no separate straight guide line is drawn.
+// Orientation (vertical: top-to-bottom main axis, or horizontal:
+// left-to-right) is a Settings-page preference (src/pages/Settings.js's
+// getTimelineOrientation()), read from localStorage here since it can
+// change without regenerating this static page.
+function _layoutTimeline() {
+  const { byTier, tiers } = _groupByTier();
+  const mainSep = 140;
+  const crossOffset = 90;
+  const withinTierSpacing = 60;
+  _mainAxisSpacing = mainSep;
+
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const main = ti * mainSep;
+    const cross = (ti % 2 === 0 ? -1 : 1) * crossOffset;
+    ids.forEach((id, i) => {
+      // More than one event sharing a tier: spread them along the cross
+      // axis around that tier's alternating offset instead of stacking.
+      const spread = (i - (ids.length - 1) / 2) * withinTierSpacing;
+      if (TIMELINE_ORIENTATION === 'horizontal') {
+        network.moveNode(id, main, cross + spread);
+      } else {
+        network.moveNode(id, cross + spread, main);
+      }
+    });
+  });
+}
+
+// network.fit() alone zooms out to fit every node/tier in the viewport —
+// fine for a small graph, but for a large one it shrinks nodes/labels past
+// legibility. This floors the scale so the initial view shows roughly
+// DESIRED_VISIBLE_TIERS tiers along the layout's main axis instead of the
+// whole graph crammed in: a small graph that already fits within that many
+// tiers is untouched (fit's own scale wins), a large one defaults to a
+// legible subset instead of the whole graph in miniature. Sized off
+// _mainAxisSpacing (set by whichever of _layoutGraph/_layoutTimeline just
+// ran) rather than a sampled node's pixel size — a single sampled node
+// (e.g. a short-label primitive) previously over- or under-estimated the
+// scale needed for the graph's *typical* node size.
+let _mainAxisSpacing = 140;
+function _applyLegibleFloor() {
+  if (RAW.nodes.length === 0) return;
+  const fitScale = network.getScale();
+  const container = document.getElementById('graph-container');
+  const horizontal = GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal';
+  const viewportMain = horizontal ? container.clientWidth : container.clientHeight;
+  const DESIRED_VISIBLE_TIERS = 4;
+  const targetScale = viewportMain / (_mainAxisSpacing * DESIRED_VISIBLE_TIERS);
+  const minLegibleScale = Math.min(targetScale, 1);
+  if (fitScale < minLegibleScale) {
+    network.moveTo({ scale: minLegibleScale, animation: false });
+  }
+}
+
+network.once('afterDrawing', function() {
+  if (GRAPH_LAYOUT === 'timeline') {
+    _layoutTimeline();
+  } else {
+    _layoutGraph();
+  }
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+});
+
+// A true fit-to-everything, regardless of graph size — what the Re-Center
+// button explicitly promises ("re-fit the graph to the viewport").
+function reCenterGraph() {
+  network.fit({ animation: true });
+}
+
+// Same fit, but re-applies the legibility floor — used by GraphViewer.js's
+// automatic post-layout re-fit (once the parent app's CSS relayout has
+// settled the iframe's real container size) so a large graph's default
+// view stays readable instead of being reset to the full, tiny-node fit.
+function fitLegible() {
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+}
+
+// The parent app's own CSS relayout (hiding graph.html's own chrome,
+// slotting the Notes drawer below the graph) doesn't necessarily finish
+// resizing #graph-container in a single frame — a further layout pass can
+// resize it again after GraphViewer.js's one requestAnimationFrame call to
+// fitLegible() already ran, and vis-network's own internal handling of a
+// container resize after the fact can leave the view at a scale neither
+// fit() nor our floor ever asked for. Re-applying the floor once the
+// container's size has actually stopped changing (debounced) catches
+// that; disconnecting after the first settle avoids overriding a user's
+// own manual zoom/pan on every later resize (e.g. dragging the Notes
+// drawer's gutter).
+if (typeof ResizeObserver !== 'undefined') {
+  const _graphContainer = document.getElementById('graph-container');
+  let _resizeSettleTimer = null;
+  const _ro = new ResizeObserver(() => {
+    clearTimeout(_resizeSettleTimer);
+    _resizeSettleTimer = setTimeout(() => {
+      _ro.disconnect();
+      try { fitLegible(); } catch (_) {}
+    }, 200);
+  });
+  _ro.observe(_graphContainer);
+}
+
+const C_PATH   = {background: '#fff9c4', border: '#f9a825'};
+const C_TARGET = {background: '#ffe082', border: '#e65100'};
+
+function resetColors() {
+  visNodes.update(RAW.nodes.map(n => ({id: n.id, color: n.color})));
+  visEdges.update(RAW.edges.map((e, i) => ({id: i, color: {color: '#c8ccd4'}, width: 1})));
+}
+
+// ── explanation panel ───────────────────────────────────────────────────────
+function renderExplanation(node) {
+  const kclass = node.kind;
+  const prereqChips = (node.prereqs || []).map(p =>
+    `<span class="prereq-chip" onclick="selectNode('${p}')">${p.replace(/_/g,' ')}</span>`
+  ).join('');
+  const metaItems = [
+    node.verifier ? `<span class="meta-item"><b>Verifier:</b> ${node.verifier}</span>` : '',
+    node.lab      ? `<span class="meta-item"><b>Lab:</b> ${node.lab}</span>` : '',
+  ].filter(Boolean).join('');
+  const playHtml = node.play
+    ? `<div class="section-label">Try it</div><div class="play-hint">${node.play}</div>`
+    : '';
+
+  const panel = document.getElementById('explain-panel');
+  panel.innerHTML = `
+    <div class="node-title">
+      <h2>${node.label}</h2>
+      <span class="badge ${kclass}">${kclass}</span>
+      <span class="tier-tag">BFS level ${bfsLevels[node.id] ?? node.tier}</span>
+    </div>
+    ${node.defines ? `<div class="defines">${node.defines}</div>` : ''}
+    ${prereqChips ? `<div class="section-label">Prerequisites</div><div class="prereq-list">${prereqChips}</div>` : ''}
+    ${metaItems ? `<div class="meta-row">${metaItems}</div>` : ''}
+    ${playHtml}
+  `;
+
+  // ── concept HTML detail ──
+  const conceptsBase = window.__cb_CONCEPTS_BASE;
+  const conceptUrls = window.__cb_CONCEPT_URLS || {};
+  const mappedUrl = conceptUrls[node.id];
+  if (mappedUrl || conceptsBase) {
+    const conceptUrl = mappedUrl || (conceptsBase + 'concept_' + encodeURIComponent(node.id) + '.html');
+    const detail = document.createElement('div');
+    detail.id = 'concept-detail';
+    detail.innerHTML = '<div class="section-label">Concept Detail</div><div class="concept-loading" style="color:#aaa;font-size:12px;padding:6px 0">Loading…</div>';
+    panel.appendChild(detail);
+    fetch(conceptUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.text();
+      })
+      .then(html => {
+        const slot = detail.querySelector('.concept-loading');
+        if (!slot) return;
+        // Vite dev server returns the SPA index.html (200) for missing static files.
+        // Verify we got a real concept page by checking for a known marker.
+        if (html.includes('spl-credit') || html.includes('Powered by')) {
+          const iframe = document.createElement('iframe');
+          iframe.id = 'concept-iframe';
+          iframe.src = conceptUrl;
+          slot.replaceWith(iframe);
+        } else {
+          slot.className = 'concept-not-found';
+          slot.textContent = 'Content not found — generate it first.';
+        }
+      })
+      .catch(() => {
+        const slot = detail.querySelector('.concept-loading');
+        if (slot) { slot.className = 'concept-not-found'; slot.textContent = 'Content not found — generate it first.'; }
+      });
+  }
+}
+
+// ── learning path sidebar ───────────────────────────────────────────────────
+function renderPathSidebar(orderedPath, targetId) {
+  const stepsEl = document.getElementById('path-steps');
+  const countEl = document.getElementById('path-count');
+  countEl.textContent = orderedPath.length
+    ? `${orderedPath.length} step${orderedPath.length !== 1 ? 's' : ''} to learn first`
+    : 'Root concept — no prerequisites';
+
+  const target = nodeIndex[targetId];
+  const kc = k => `${k.charAt(0).toUpperCase() + k.slice(1)}`;
+
+  stepsEl.innerHTML = orderedPath.map((n, i) => {
+    const nd = nodeIndex[n];
+    return `<div class="step-item" onclick="selectNode('${n}')">
+      <span class="step-num">${i + 1}.</span>
+      <div>
+        <div class="step-label">${nd.label}
+          <span class="step-kind ${nd.kind}-k">${nd.kind}</span>
+        </div>
+        ${nd.defines ? `<div class="step-def">${nd.defines}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div class="step-item target">
+    <span class="step-num">▶</span>
+    <div>
+      <div class="step-label">${target.label}
+        <span class="step-kind ${target.kind}-k">${target.kind}</span>
+      </div>
+      ${target.defines ? `<div class="step-def">${target.defines}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── notes (localStorage) ────────────────────────────────────────────────────
+// Each node's notes are an append-only history of timestamped entries, not
+// a single overwritable value — Save (explicit, not triggered on every
+// keystroke) appends a new entry and clears the input, so writing a
+// follow-up thought later never clobbers what was already saved for that
+// node. See _parseEntries for the migration from the old single-note
+// format this replaces.
+let currentNodeId = null;
+
+function noteKey(nodeId) { return `concept_notes_${DOMAIN_KEY}_${nodeId}`; }
+
+function _parseEntries(raw) {
+  if (!raw) return [];
+  try {
+    const d = JSON.parse(raw);
+    if (Array.isArray(d)) return d;
+    // Legacy single-note format ({text, ts}) written before notes became
+    // an entry history — migrate it in place as a one-entry history
+    // instead of silently discarding whatever was already saved there.
+    if (d && typeof d === 'object' && d.text) return [{ text: d.text, ts: d.ts || '' }];
+    return [];
+  } catch (_) {
+    return raw ? [{ text: raw, ts: '' }] : [];
+  }
+}
+
+// Used by GraphViewer.js's _wireNoteHistoryBridge (parent app embed) to
+// pull one specific past entry's full text into the "Note Detail" tab —
+// a top-level `function` declaration so it lands on this iframe's window
+// (see that file's comment on why `const`/`let` don't).
+function getEntryText(nodeId, ts) {
+  const entry = _parseEntries(localStorage.getItem(noteKey(nodeId))).find(e => e.ts === ts);
+  return entry ? entry.text : '';
+}
+
+function saveNoteEntry() {
+  if (!currentNodeId) return;
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value;
+  if (!text.trim()) return;
+  const entries = _parseEntries(localStorage.getItem(noteKey(currentNodeId)));
+  entries.push({ text, ts: new Date().toISOString() });
+  localStorage.setItem(noteKey(currentNodeId), JSON.stringify(entries));
+  ta.value = '';
+  renderNoteHistory(currentNodeId);
+  const btn = document.getElementById('nb-save-btn');
+  if (btn) { btn.textContent = 'Saved!'; setTimeout(() => { btn.textContent = 'Save'; }, 1000); }
+}
+
+// Clears the draft in the input box only — the saved entry history is
+// untouched (there's no single "the note" to delete any more, just past
+// entries, none of which this button targets).
+function clearNoteInput() {
+  document.getElementById('notes-textarea').value = '';
+}
+
+function _fmtTs(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+// A note's text is whatever the reader typed into the textarea, stored
+// straight to localStorage with no sanitization — so renderNoteHistory's
+// preview has to escape it before it goes into innerHTML, even though
+// today's writer/reader is the same person in the same browser. Same
+// reasoning as this app's own src/lib/html.js escapeHtml.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// All saved entries for ONE node (the currently-selected one), most recent
+// first — not a cross-node index. data-node-id/data-ts on each row are read
+// by GraphViewer.js's _wireNoteHistoryBridge (the app embed's "click a past
+// entry to view its full text in the Note Detail tab" feature) via
+// getEntryText() above; unused, harmless in the standalone page.
+function renderNoteHistory(nodeId) {
+  const container = document.getElementById('notes-with-entries');
+  const entries = _parseEntries(localStorage.getItem(noteKey(nodeId)));
+  if (!entries.length) {
+    container.innerHTML = '<div class="note-empty-hint">No saved entries yet for this concept.</div>';
+    return;
+  }
+  container.innerHTML = entries.slice().reverse().map(e =>
+    `<div class="note-entry" data-node-id="${_escHtml(nodeId)}" data-ts="${_escHtml(e.ts)}">
+      <div class="note-node"><span class="note-ts">${_fmtTs(e.ts)}</span></div>
+      <div class="note-preview">${_escHtml(e.text.slice(0, 80))}</div>
+    </div>`
+  ).join('');
+}
+
+function switchNotes(nodeId) {
+  // No implicit carry-over save of whatever's in the input when switching
+  // nodes — Save is explicit now (see saveNoteEntry), so an unsaved draft
+  // is intentionally discarded, same as closing a document without saving.
+  currentNodeId = nodeId;
+  document.getElementById('notes-textarea').value = '';
+  document.getElementById('notes-node-label').textContent =
+    nodeIndex[nodeId]?.label || nodeId;
+  renderNoteHistory(nodeId);
+}
+
+function exportNotes() {
+  const notes = {};
+  RAW.nodes.forEach(n => {
+    const v = localStorage.getItem(noteKey(n.id));
+    if (v) notes[n.id] = v;
+  });
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${DOMAIN_KEY}_notes.json`;
+  a.click();
+}
+
+// ── unified node select ─────────────────────────────────────────────────────
+function selectNode(nodeId) {
+  if (!nodeIndex[nodeId]) return;
+  network.selectNodes([nodeId]);
+  handleSelect(nodeId);
+}
+
+function handleSelect(targetId) {
+  const node = nodeIndex[targetId];
+
+  renderExplanation(node);
+  switchNotes(targetId);
+
+  const ancestors = getAncestors(targetId);
+  const pathSet = new Set([...ancestors]);
+  const orderedPath = topoSort(pathSet);
+
+  renderPathSidebar(orderedPath, targetId);
+
+  resetColors();
+  visNodes.update(orderedPath.map(n => ({id: n, color: C_PATH})));
+  visNodes.update([{id: targetId, color: C_TARGET}]);
+  visEdges.update(RAW.edges.map((e, i) => {
+    const inPath = pathSet.has(e.from) && (pathSet.has(e.to) || e.to === targetId);
+    return {id: i, color: {color: inPath ? '#f9a825' : '#c8ccd4'}, width: inPath ? 2 : 1};
+  }));
+}
+
+network.on('click', params => {
+  if (params.nodes.length) handleSelect(params.nodes[0]);
+});
+
+// initial empty state — real content loads once a node is selected (see
+// switchNotes -> renderNoteHistory)
+document.getElementById('notes-with-entries').innerHTML =
+  '<div class="note-empty-hint">Select a concept to see or add notes.</div>';
+
+// When viewed directly (not in an iframe), inject a back link next to the
+// "Learning Path" heading so it doesn't look like a title-bar element.
+if (window.parent === window) {
+  var h1 = document.querySelector('#path-header h1');
+  if (h1) {
+    var backLink = document.createElement('a');
+    backLink.href = '../../';
+    backLink.textContent = '← App';
+    backLink.style.cssText = [
+      'font-size:10px','color:#2563eb','font-family:system-ui,sans-serif',
+      'text-decoration:none','font-weight:400','letter-spacing:normal',
+      'text-transform:none','white-space:nowrap','flex-shrink:0'
+    ].join(';');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:baseline;gap:8px;';
+    h1.parentNode.insertBefore(row, h1);
+    row.appendChild(h1);
+    row.appendChild(backLink);
+  }
+}
+</script>
+</body>
+</html>

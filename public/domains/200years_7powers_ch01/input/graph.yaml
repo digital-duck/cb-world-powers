@@ -1,0 +1,217 @@
+domain: 200years_7powers_ch01
+layout: timeline
+primitives:
+  uk_1845_great_famine_ireland:
+    defines: |
+      (1845–1852) The Great Famine (Ireland) — Potato blight causes mass starvation and
+      emigration from Ireland, then part of the UK; roughly one million die and over a million
+      emigrate, reshaping Anglo-Irish relations for a century.
+    tier: 0
+concepts:
+  uk_1846_repeal_corn_laws:
+    composed_of:
+    - uk_1845_great_famine_ireland
+    defines: |
+      (1846) Repeal of the Corn Laws — Robert Peel repeals protectionist grain tariffs,
+      marking Britain's shift toward free trade and cheaper food for industrial workers.
+    tier: 1
+  uk_1851_great_exhibition:
+    composed_of:
+    - uk_1846_repeal_corn_laws
+    defines: |
+      (1851) The Great Exhibition — The Crystal Palace exhibition in London showcases British
+      industrial and imperial power to the world, cementing the country's self-image as the
+      workshop of the world.
+    tier: 2
+  uk_1853_crimean_war:
+    composed_of:
+    - uk_1851_great_exhibition
+    defines: |
+      (1853–1856) Crimean War — Britain and France ally with the Ottoman Empire against
+      Russia; the war exposes military mismanagement and spurs reforms, including Florence
+      Nightingale's nursing improvements.
+    tier: 3
+  uk_1857_indian_rebellion_crown_rule:
+    composed_of:
+    - uk_1853_crimean_war
+    defines: |
+      (1857–1858) Indian Rebellion & Crown Rule — A major uprising against East India Company
+      rule is crushed; the British government abolishes the Company and places India under
+      direct Crown control (the Raj).
+    tier: 4
+  uk_1867_second_reform_act:
+    composed_of:
+    - uk_1857_indian_rebellion_crown_rule
+    defines: |
+      (1867) Second Reform Act — Voting rights are extended to many urban working-class men,
+      roughly doubling the electorate.
+    tier: 5
+  uk_1875_suez_canal_shares_purchase:
+    composed_of:
+    - uk_1867_second_reform_act
+    defines: |
+      (1875) Suez Canal Shares Purchase — Prime Minister Disraeli buys Egypt's shares in the
+      Suez Canal, securing a strategic route to India.
+    tier: 6
+  uk_1876_victoria_becomes_empress_india:
+    composed_of:
+    - uk_1875_suez_canal_shares_purchase
+    defines: |
+      (1876) Victoria Becomes Empress of India — Queen Victoria is proclaimed Empress of
+      India, formalizing Britain's imperial relationship with the subcontinent.
+    tier: 7
+  uk_1884_third_reform_act_berlin_conference:
+    composed_of:
+    - uk_1876_victoria_becomes_empress_india
+    defines: |
+      (1884–1885) Third Reform Act & Berlin Conference — The electorate expands further to
+      include most rural male workers; Britain participates in the Berlin Conference
+      formalizing the "Scramble for Africa" among European powers.
+    tier: 8
+  uk_1899_second_boer_war:
+    composed_of:
+    - uk_1884_third_reform_act_berlin_conference
+    defines: |
+      (1899–1902) Second Boer War — Britain defeats the Boer republics in South Africa after a
+      costly, controversial war involving concentration camps, damaging Britain's
+      international reputation.
+    tier: 9
+  uk_1904_entente_cordiale:
+    composed_of:
+    - uk_1899_second_boer_war
+    defines: |
+      (1904) Entente Cordiale — Britain and France settle colonial disputes and form a
+      diplomatic understanding, realigning European power blocs ahead of WWI.
+    tier: 10
+  uk_1907_triple_entente:
+    composed_of:
+    - uk_1904_entente_cordiale
+    defines: |
+      (1907) Triple Entente — Britain, France, and Russia form an informal alliance, setting
+      the stage for the alignment of powers in World War I.
+    tier: 11
+  uk_1911_parliament_act:
+    composed_of:
+    - uk_1907_triple_entente
+    defines: |
+      (1911) Parliament Act — Curbs the power of the unelected House of Lords to block
+      legislation, shifting more power to the elected Commons.
+    tier: 12
+  uk_1914_world_war_i:
+    composed_of:
+    - uk_1911_parliament_act
+    defines: |
+      (1914–1918) World War I — Britain enters the war after Germany invades Belgium; the war
+      costs roughly 880,000 British lives and reshapes British society and economy.
+    tier: 13
+  uk_1916_battle_somme:
+    composed_of:
+    - uk_1914_world_war_i
+    defines: |
+      (1916) Battle of the Somme — One of the bloodiest battles in British military history,
+      with roughly 60,000 British casualties on the first day alone.
+    tier: 14
+  uk_1918_representation_people_act:
+    composed_of:
+    - uk_1916_battle_somme
+    defines: |
+      (1918) Representation of the People Act — Grants voting rights to most men over 21 and
+      women over 30 who meet property qualifications, a major step toward universal suffrage.
+    tier: 15
+  uk_1919_treaty_versailles:
+    composed_of:
+    - uk_1918_representation_people_act
+    defines: |
+      (1919) Treaty of Versailles — Britain, as a victorious power, helps impose the peace
+      settlement on Germany and gains League of Nations mandates over former German and
+      Ottoman territories.
+    tier: 16
+  uk_1922_irish_free_state_established:
+    composed_of:
+    - uk_1919_treaty_versailles
+    defines: |
+      (1922) Irish Free State Established — After the Irish War of Independence, most of
+      Ireland becomes a self-governing dominion, while Northern Ireland remains part of the
+      UK.
+    tier: 17
+  uk_1926_general_strike:
+    composed_of:
+    - uk_1922_irish_free_state_established
+    defines: |
+      (1926) The General Strike — Trade unions call a nationwide strike in support of coal
+      miners; it collapses after nine days but leaves lasting scars on labor relations.
+    tier: 18
+  uk_1928_equal_franchise_act:
+    composed_of:
+    - uk_1926_general_strike
+    defines: |
+      (1928) Equal Franchise Act — Voting rights are extended to all women over 21 on equal
+      terms with men, completing universal adult suffrage.
+    tier: 19
+  uk_1929_great_depression:
+    composed_of:
+    - uk_1928_equal_franchise_act
+    defines: |
+      (1929–1939) The Great Depression — Mass unemployment and economic hardship hit British
+      industrial regions hard, reshaping domestic politics and economic policy.
+    tier: 20
+  uk_1931_statute_westminster:
+    composed_of:
+    - uk_1929_great_depression
+    defines: |
+      (1931) Statute of Westminster — Grants legislative independence to Britain's
+      self-governing dominions (Canada, Australia, etc.), reshaping the Empire into the
+      Commonwealth.
+    tier: 21
+  uk_1936_abdication_crisis:
+    composed_of:
+    - uk_1931_statute_westminster
+    defines: |
+      (1936) Abdication Crisis — King Edward VIII abdicates to marry a divorced American,
+      Wallis Simpson, in a constitutional crisis; his brother becomes George VI.
+    tier: 22
+  uk_1938_munich_agreement:
+    composed_of:
+    - uk_1936_abdication_crisis
+    defines: |
+      (1938) Munich Agreement — Prime Minister Chamberlain agrees to Germany's annexation of
+      the Sudetenland in a failed attempt to appease Hitler and avoid war.
+    tier: 23
+  uk_1939_world_war_ii:
+    composed_of:
+    - uk_1938_munich_agreement
+    defines: |
+      (1939–1945) World War II — Britain declares war after Germany invades Poland; it stands
+      alone against Nazi Germany after the fall of France before the USSR and USA later join
+      the Allies.
+    tier: 24
+  uk_1940_churchill_becomes_pm_dunkirk_battle:
+    composed_of:
+    - uk_1939_world_war_ii
+    defines: |
+      (1940) Churchill Becomes PM, Dunkirk & Battle of Britain — Winston Churchill leads
+      Britain through the evacuation of Dunkirk and the aerial Battle of Britain, which
+      prevents a German invasion.
+    tier: 25
+  uk_1940_blitz:
+    composed_of:
+    - uk_1940_churchill_becomes_pm_dunkirk_battle
+    defines: |
+      (1940–1941) The Blitz — Sustained German bombing of British cities kills over 40,000
+      civilians and devastates urban infrastructure, but fails to break civilian morale.
+    tier: 26
+  uk_1944_d_day:
+    composed_of:
+    - uk_1940_blitz
+    defines: |
+      (1944) D-Day — British, American, and Allied forces launch the Normandy invasion,
+      opening the decisive Western Front against Nazi Germany.
+    tier: 27
+  uk_1945_ve_day_vj_day_labour:
+    composed_of:
+    - uk_1944_d_day
+    defines: |
+      (1945) VE Day, VJ Day & Labour Landslide — Germany surrenders in May and Japan in
+      September, ending WWII; a landslide Labour victory under Clement Attlee ushers in the
+      post-war welfare state.
+    tier: 28

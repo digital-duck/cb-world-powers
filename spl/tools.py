@@ -725,7 +725,7 @@ _CONCEPT_PAGE_TEMPLATE = """\
 """ + _MATHJAX_HEAD + """
 <style>
 """ + _SHARED_CSS + """
-.page{max-width:780px;margin:0 auto;padding:40px 32px}
+.page{padding:40px 24px}
 section{margin-bottom:48px;border-top:1px solid #e0e0d8;padding-top:36px}
 section:first-of-type{border-top:none;padding-top:0}
 </style>
@@ -761,7 +761,7 @@ nav.toc a{color:#a8c8f0;text-decoration:none}
 nav.toc a:hover{color:#fff}
 nav.toc li.toc-target{font-weight:700}
 nav.toc li.toc-target a{color:#fff}
-main{padding:48px 64px;max-width:860px}
+main{padding:48px 32px;max-width:860px}
 h1.book-title{font-size:2rem;color:#1e3a5f;margin-bottom:4px}
 .subtitle{color:#666;margin-bottom:48px;font-size:1rem;font-style:italic;font-family:system-ui,sans-serif}
 section{margin-bottom:56px;border-top:1px solid #e0e0d8;padding-top:40px}

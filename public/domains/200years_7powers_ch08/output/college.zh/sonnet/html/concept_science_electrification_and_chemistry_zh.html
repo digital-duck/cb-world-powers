@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Electrification And Chemistry | 200Years 7Powers Ch08</title>
+<script>
+MathJax = {
+  loader: { load: ['[tex]/mathtools'] },
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']],
+         packages: { '[+]': ['mathtools'] } },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'neutral' });</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#fafaf8;color:#1a1a1a;line-height:1.7}
+h2{font-size:1.45rem;color:#1e3a5f;margin-bottom:12px}
+h3{font-size:1.1rem;color:#2e4a7f;margin:20px 0 8px}
+h4{font-size:1rem;color:#3a5a8f;margin:16px 0 6px}
+p{margin-bottom:16px;font-size:1rem}
+li{margin-bottom:6px;margin-left:24px;font-size:1rem}
+pre{background:#f4f4f0;border:1px solid #d8d8d0;border-radius:6px;
+    padding:16px 20px;overflow-x:auto;margin:16px 0}
+code{font-family:Menlo,Consolas,monospace;font-size:.87em}
+p code{background:#f0f0ea;padding:1px 4px;border-radius:3px}
+footer.spl-credit{margin-top:32px;padding-top:16px;border-top:1px solid #e0e0d8;
+      font-family:system-ui,sans-serif;font-size:.78rem;color:#999;text-align:center}
+footer.spl-credit a{color:#2563eb;text-decoration:none}
+footer.spl-credit span{display:block}
+footer.spl-credit .spl-credit__meta{margin-bottom:4px}
+.cb-figure{margin:24px 0;text-align:center}
+.cb-figure img{max-width:100%;height:auto;border:1px solid #e0e0d8;border-radius:6px}
+figcaption{font-size:.82rem;color:#666;margin-top:8px;font-style:italic;text-align:center}
+pre.mermaid{background:none;border:none;padding:0;overflow:visible;margin:16px 0}
+.page{padding:40px 24px}
+section{margin-bottom:48px;border-top:1px solid #e0e0d8;padding-top:36px}
+section:first-of-type{border-top:none;padding-top:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <main>
+    <h2 id="science-electrification-and-chemistry">Science Electrification And Chemistry</h2>
+<p>1865年至1895年间，科学从抽象理论迅速转化为改变城市面貌与产业格局的现实力量,这一时期标志着第二次工业革命的真正起点。英国物理学家麦克斯韦于1865年发表电磁场方程组,首次用统一的数学语言证明电与磁本质上是同一种力的两种表现,并预言了电磁波的存在——这一预言在二十多年后被赫兹用实验证实,为后来的无线电通信奠定了理论基础。几乎同时,俄国化学家门捷列夫于1869年发布元素周期表,按原子量与化学性质将已知元素系统排列,其大胆之处在于为尚未发现的元素预留空位并预测其性质,后续镓、锗等元素的发现精确印证了这些预测,使化学从经验分类学科转变为具有预测能力的系统科学。</p>
+<p>理论突破很快被转化为工业应用。1876年贝尔发明电话,使远距离即时语音通信成为可能,彻底改变了商业与社会联络方式。1882年爱迪生在纽约珍珠街建成世界上第一座商用发电站,采用直流电为曼哈顿下城约85户用户供电照明,标志着电力从实验室走向城市基础设施。随后,特斯拉与西屋公司力推交流电系统,凭借其可远距离低损耗输电的优势,在1893年芝加哥世博会与1896年尼亚加拉水电站项目中战胜爱迪生的直流方案,史称"电流之战",最终奠定了现代电网的技术路线。</p>
+<p>这一时期的产业分化具有深远的地缘经济意义:英国仍依赖第一次工业革命的蒸汽动力与纺织业优势,而德国凭借强大的化学工业(如巴斯夫、拜耳等企业在染料、化肥领域的突破)与系统化的技术教育体系迅速崛起,美国则依托丰富资源与爱迪生、特斯拉等人的电气发明建立起全国性电力基础设施。到1900年,德国化学品出口已占全球近三分之二,美国发电量迅速超越英国,两国由此在新兴产业上实现对老牌工业国英国的赶超,预示了二十世纪工业与国力格局的根本转变。</p>
+<pre class="mermaid">graph TD
+    A[麦克斯韦电磁理论 1865] --> B[电力基础设施]
+    C[门捷列夫周期表 1869] --> D[德国化学工业]
+    B --> E[爱迪生发电站 1882]
+    B --> F[特斯拉交流电系统]
+    E --> G[美国电气化]
+    F --> G
+    D --> H[产业格局分化:德国化学+美国电力 取代 英国蒸汽]
+    G --> H</pre>
+<p><em>该图展示了1865–1895年间科学理论突破如何经由技术应用,推动德国与美国在化学与电力产业上超越英国,重塑第二次工业革命的国家竞争格局。</em></p>
+  </main>
+  <footer class="spl-credit"><span class="spl-credit__meta">200Years 7Powers Ch08 (Level: College &middot; Language: ZH &middot; Model: sonnet)</span><span class="spl-credit__powered">Generated and Powered by <a href="https://github.com/digital-duck/SPL.py" target="_blank" rel="noopener">SPL</a></span></footer>
+</div>
+</body>
+</html>
