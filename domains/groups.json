@@ -1,0 +1,41 @@
+{
+  "groups": [
+    {
+      "id": "history",
+      "label": "History",
+      "groups": [
+        {
+          "id": "world-powers",
+          "label": "World Powers",
+          "domains": [
+            "200years_7powers_ch08",
+            "200years_7powers_ch16",
+            "200years_7powers_ch06",
+            "200years_7powers_ch14",
+            "200years_7powers_ch02",
+            "200years_7powers_ch10",
+            "200years_7powers_ch03",
+            "200years_7powers_ch11",
+            "200years_7powers_ch05",
+            "200years_7powers_ch13",
+            "200years_7powers_ch04",
+            "200years_7powers_ch12",
+            "200years_7powers_ch01",
+            "200years_7powers_ch09",
+            "200years_7powers_ch07",
+            "200years_7powers_ch15",
+            "200years_7powers_ch00"
+          ]
+        }
+      ]
+    }
+  ],
+  "root": {
+    "id": "all",
+    "label": "All Domains"
+  },
+  "uncategorized": {
+    "id": "uncategorized",
+    "label": "Uncategorized"
+  }
+}

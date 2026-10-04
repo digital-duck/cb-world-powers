@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concept Graph — graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f2f5;overflow:hidden;height:100vh}
+.app{
+  display:grid;
+  grid-template-columns:230px 1fr 210px;
+  grid-template-rows:60vh 40vh;
+  height:100vh;
+  gap:0;
+}
+/* ── Left sidebar: learning path ── */
+#path-sidebar{
+  grid-column:1;grid-row:1/3;
+  background:#f5f6f8;color:#2a2a2a;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid #dde0e6;
+}
+#path-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid #dde0e6;
+  flex-shrink:0;
+}
+#path-header h1{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:2px;font-weight:700}
+#path-header .domain-name{font-size:11px;color:#555;margin-top:4px}
+#path-steps{flex:1;overflow-y:auto;padding:8px 0}
+#path-steps .hint{color:#aaa;font-size:12px;text-align:center;padding:24px 12px;line-height:1.5}
+.step-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 12px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s;
+}
+.step-item:hover{background:#ebebf0}
+.step-item.active{background:#e8eef8;border-left-color:#4a90d9}
+.step-item.target{background:#eaf5ea;border-left-color:#4caf50}
+.step-num{min-width:20px;font-size:10px;font-weight:700;color:#bbb;padding-top:2px;flex-shrink:0}
+.step-item.target .step-num{color:#4caf50}
+.step-label{font-size:12px;font-weight:600;color:#333;line-height:1.4}
+.step-def{font-size:10px;color:#888;margin-top:2px;line-height:1.4}
+.step-kind{display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+#path-count{font-size:10px;color:#aaa;margin-top:3px}
+/* vis-network's own default tooltip CSS sets white-space:nowrap with no
+   width cap, so a node's `defines` text (a full sentence) renders as one
+   unbroken line stretching across the whole canvas — override both here. */
+.vis-tooltip{white-space:normal!important;max-width:280px;line-height:1.4}
+/* ── Graph panel ── */
+#graph-panel{
+  grid-column:2;grid-row:1;
+  position:relative;background:#fff;
+  border-bottom:2px solid #dde;
+}
+#graph-container{width:100%;height:100%}
+.graph-recenter-btn{
+  position:absolute;right:16px;bottom:16px;z-index:50;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid #1e3a5f;background:#1e3a5f;color:#fff;
+  font-size:12px;font-weight:600;font-family:system-ui,sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+}
+.graph-recenter-btn:hover{background:#28496f;border-color:#28496f}
+/* ── Explanation panel ── */
+#explain-panel{
+  grid-column:2;grid-row:2;
+  background:#fff;overflow-y:auto;
+  padding:16px 20px;
+}
+#explain-panel .empty{color:#aaa;font-size:13px;padding:20px 0;text-align:center}
+#explain-panel .node-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+#explain-panel .node-title h2{font-size:16px;color:#1e3a5f}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;
+}
+.badge.primitive{background:#e8f5e9;color:#2e7d32}
+.badge.concept{background:#e3f2fd;color:#1565c0}
+.badge.application{background:#fff3e0;color:#ef6c00}
+.tier-tag{font-size:11px;color:#999;margin-left:auto}
+#explain-panel .defines{
+  font-size:14px;color:#333;line-height:1.6;margin-bottom:12px;
+  padding:10px 12px;background:#f8f9fb;border-radius:6px;
+  border-left:3px solid #90b4e8;
+}
+#explain-panel .section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#999;margin-bottom:6px;
+}
+#explain-panel .prereq-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prereq-chip{
+  padding:3px 9px;border-radius:12px;font-size:11px;
+  background:#e3f2fd;color:#1565c0;cursor:pointer;
+  border:1px solid #90caf9;transition:background .12s;
+}
+.prereq-chip:hover{background:#bbdefb}
+#explain-panel .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{font-size:12px;color:#555}
+.meta-item b{color:#1e3a5f}
+#explain-panel .play-hint{
+  font-size:12px;color:#5a5a5a;line-height:1.6;
+  padding:8px 12px;background:#fffde7;border-radius:6px;
+  border-left:3px solid #ffd54f;margin-bottom:8px;
+}
+/* ── Notes sidebar ── */
+#notes-sidebar{
+  grid-column:3;grid-row:1/3;
+  background:#fafaf8;
+  border-left:2px solid #e8e8e0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notes-header{
+  padding:10px 12px 8px;
+  border-bottom:1px solid #e0e0d8;
+  flex-shrink:0;
+}
+#notes-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+#notes-header h2{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin:0}
+#notes-node-label{font-size:11px;color:#999;margin-top:2px}
+.nb-btn{font-size:10px;padding:2px 7px;border-radius:3px;
+  border:1px solid #ddd;background:#f0f0ea;cursor:pointer;color:#777;
+  font-family:system-ui,sans-serif}
+.nb-btn:hover{background:#e0e0d8;color:#444}
+#notes-textarea{
+  /* 40:60 entry:history split of the sidebar's remaining height (below the
+     fixed header) — flex-grow ratio 2:3 against #notes-with-entries below,
+     not a fixed height, so both panes scale together as the sidebar is
+     resized (see GraphViewer.js's resizable-pane embed). */
+  flex:2 1 0;min-height:0;border:none;resize:none;
+  padding:12px;font-size:12px;line-height:1.6;
+  font-family:inherit;background:#fafaf8;color:#333;
+  outline:none;
+}
+#notes-with-entries{
+  border-top:1px solid #e8e8e0;flex:3 1 0;min-height:0;overflow-y:auto;
+}
+.note-empty-hint{padding:12px;color:#aaa;font-size:11px;font-style:italic}
+.note-entry{
+  padding:6px 12px;cursor:pointer;
+  border-bottom:1px solid #f0f0e8;
+  font-size:11px;
+}
+.note-entry:hover{background:#f0efe8}
+.note-entry .note-node{font-weight:600;color:#555;display:flex;justify-content:space-between;align-items:center}
+.note-entry .note-ts{font-weight:400;color:#bbb;font-size:10px}
+.note-entry .note-preview{color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── kind badge colours in sidebar ── */
+.primitive-k{background:#e8f5e9;color:#2e7d32}
+.concept-k{background:#e3f2fd;color:#1565c0}
+.application-k{background:#fff3e0;color:#ef6c00}
+/* ── concept detail panel ── */
+#concept-detail{margin-top:14px;border-top:1px solid #e8e8e0;padding-top:10px;}
+#concept-iframe{width:100%;height:500px;border:1px solid #e0e0d8;border-radius:4px;margin-top:6px;display:block;}
+.concept-not-found{color:#e57373;font-size:12px;padding:6px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT: learning path sidebar -->
+<aside id="path-sidebar">
+  <div id="path-header">
+    <h1>Learning Path</h1>
+    <div class="domain-name">graph</div>
+    <div id="path-count"></div>
+  </div>
+  <div id="path-steps">
+    <div class="hint">Click any node in the graph<br>to see its learning path</div>
+  </div>
+</aside>
+
+<!-- CENTRE TOP: concept graph -->
+<div id="graph-panel">
+  <div id="graph-container"></div>
+  <button class="graph-recenter-btn" onclick="reCenterGraph()" title="Re-fit the graph to the viewport">Re-Center</button>
+</div>
+
+<!-- CENTRE BOTTOM: explanation panel -->
+<div id="explain-panel">
+  <div class="empty">Select a node to see its definition, prerequisites, and learning context.</div>
+</div>
+
+<!-- RIGHT: notes sidebar -->
+<aside id="notes-sidebar">
+  <div id="notes-header">
+    <div id="notes-header-top">
+      <h2>Notes</h2>
+      <div>
+        <button class="nb-btn" id="nb-save-btn" onclick="saveNoteEntry()">Save</button>
+        <button class="nb-btn" id="nb-clear-btn" onclick="clearNoteInput()">Clear</button>
+        <button class="nb-btn" onclick="exportNotes()">Export</button>
+      </div>
+    </div>
+    <div id="notes-node-label">no node selected</div>
+  </div>
+  <textarea id="notes-textarea" placeholder="Type notes here, then click Save"></textarea>
+  <div id="notes-with-entries"></div>
+</aside>
+
+</div><!-- .app -->
+
+<script>
+const RAW = {"nodes": [{"id": "usa_1845_annexation_texas", "label": "usa 1845 annexation texas", "kind": "primitive", "tier": 0, "defines": "(1845) Annexation of Texas — The US annexes the Republic of Texas, inflaming tensions\nwith Mexico over the disputed southern border and slavery's expansion.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "usa_1846_mexican_american_war", "label": "usa 1846 mexican american war", "kind": "concept", "tier": 1, "defines": "(1846–1848) Mexican-American War — The US defeats Mexico; the Treaty of Guadalupe\nHidalgo cedes California, Nevada, Utah, and most of Arizona/New Mexico — the Mexican\nCession — reopening the fight over slavery in new territories.\n", "prereqs": ["usa_1845_annexation_texas"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1848_california_gold_rush", "label": "usa 1848 california gold rush", "kind": "concept", "tier": 2, "defines": "(1848–1855) California Gold Rush — Gold discovery at Sutter's Mill triggers mass\nmigration west, rapid statehood for California (1850), and displacement of Native\npeoples.\n", "prereqs": ["usa_1846_mexican_american_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1854_kansas_nebraska_act", "label": "usa 1854 kansas nebraska act", "kind": "concept", "tier": 3, "defines": "(1854) Kansas–Nebraska Act — Repeals the Missouri Compromise line, letting new\nterritories decide slavery by popular sovereignty; sparks violent conflict (\"Bleeding\nKansas\") and the founding of the Republican Party.\n", "prereqs": ["usa_1848_california_gold_rush"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1857_dred_scott_v_sandford", "label": "usa 1857 dred scott v sandford", "kind": "concept", "tier": 4, "defines": "(1857) Dred Scott v. Sandford — The Supreme Court rules that Black Americans cannot be\ncitizens and Congress cannot ban slavery in the territories, deepening the sectional\ncrisis.\n", "prereqs": ["usa_1854_kansas_nebraska_act"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1860_secession_crisis", "label": "usa 1860 secession crisis", "kind": "concept", "tier": 5, "defines": "(1860–1861) Secession Crisis — Abraham Lincoln's election triggers eleven Southern\nstates to secede and form the Confederate States of America.\n", "prereqs": ["usa_1857_dred_scott_v_sandford"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1861_american_civil_war", "label": "usa 1861 american civil war", "kind": "concept", "tier": 6, "defines": "(1861–1865) The American Civil War — War between the Union and the Confederacy over\nslavery and states' rights. Over 600,000 die, making it the deadliest conflict in US\nhistory.\n", "prereqs": ["usa_1860_secession_crisis"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1863_emancipation_proclamation", "label": "usa 1863 emancipation proclamation", "kind": "concept", "tier": 7, "defines": "(1863) Emancipation Proclamation — Lincoln declares enslaved people in Confederate\nstates free, reframing the war as a fight to end slavery and clearing the way for Black\nenlistment in the Union Army.\n", "prereqs": ["usa_1861_american_civil_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1865_union_victory_lincolns_assassination", "label": "usa 1865 union victory lincolns assassination", "kind": "concept", "tier": 8, "defines": "(1865) Union Victory, Lincoln's Assassination & 13th Amendment — The Confederacy\nsurrenders at Appomattox; Lincoln is assassinated days later; the 13th Amendment\nabolishes slavery nationwide.\n", "prereqs": ["usa_1863_emancipation_proclamation"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1865_reconstruction", "label": "usa 1865 reconstruction", "kind": "concept", "tier": 9, "defines": "(1865–1877) Reconstruction — The South is reorganized and reintegrated; the 14th and\n15th Amendments grant citizenship and voting rights to Black men, but Reconstruction\nends with the Compromise of 1877, ushering in Jim Crow segregation.\n", "prereqs": ["usa_1865_union_victory_lincolns_assassination"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1867_alaska_purchase", "label": "usa 1867 alaska purchase", "kind": "concept", "tier": 10, "defines": "(1867) Alaska Purchase — The US buys Alaska from Russia, expanding its territory and\nforeshadowing later Pacific-facing ambitions.\n", "prereqs": ["usa_1865_reconstruction"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1869_transcontinental_railroad_completed", "label": "usa 1869 transcontinental railroad completed", "kind": "concept", "tier": 11, "defines": "(1869) Transcontinental Railroad Completed — The Golden Spike links the eastern and\nwestern US by rail, accelerating westward settlement, trade, and Native displacement.\n", "prereqs": ["usa_1867_alaska_purchase"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1870_gilded_age", "label": "usa 1870 gilded age", "kind": "concept", "tier": 12, "defines": "(1870–1890) The Gilded Age — Era of rapid industrial growth, railroad expansion, and the\nrise of \"Robber Barons\" (captains of industry). Massive immigration fueled the labor\nforce, creating significant wealth inequality.\n", "prereqs": ["usa_1869_transcontinental_railroad_completed"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1890_closing_frontier", "label": "usa 1890 closing frontier", "kind": "concept", "tier": 13, "defines": "(1890) Closing of the Frontier — The US Census Bureau declared the American frontier\n\"closed.\" This shifted American attention from domestic expansion to overseas\nimperialism.\n", "prereqs": ["usa_1870_gilded_age"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1898_spanish_american_war", "label": "usa 1898 spanish american war", "kind": "concept", "tier": 14, "defines": "(1898) Spanish-American War — The US defeated Spain, acquiring Puerto Rico, Guam, and\nthe Philippines, and granting independence to Cuba (under US supervision). This marked\nthe debut of the US as a major imperial power.\n", "prereqs": ["usa_1890_closing_frontier"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1901_progressive_era", "label": "usa 1901 progressive era", "kind": "concept", "tier": 15, "defines": "(1901–1909) The Progressive Era — Under Presidents Theodore Roosevelt and Taft, the\ngovernment began regulating big business (trust-busting), conserving natural resources,\nand enacting consumer protection laws.\n", "prereqs": ["usa_1898_spanish_american_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1914_world_war_i_neutrality", "label": "usa 1914 world war i neutrality", "kind": "concept", "tier": 16, "defines": "(1914–1917) World War I (Neutrality) — Initially neutral, the US profited from selling\narms to the Allies. Unrestricted submarine warfare by Germany eventually drew the US\ninto the war.\n", "prereqs": ["usa_1901_progressive_era"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1917_wwi_involvement", "label": "usa 1917 wwi involvement", "kind": "concept", "tier": 17, "defines": "(1917–1918) WWI Involvement — The American Expeditionary Forces arrived in Europe,\nproviding fresh troops that helped break the stalemate and lead to an Allied victory.\n", "prereqs": ["usa_1914_world_war_i_neutrality"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1920_19th_amendment_prohibition", "label": "usa 1920 19th amendment prohibition", "kind": "concept", "tier": 18, "defines": "(1920) 19th Amendment & Prohibition — Women gained the right to vote nationwide.\nProhibition began, banning the sale of alcohol, leading to the rise of organized crime.\n", "prereqs": ["usa_1917_wwi_involvement"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1920_roaring_twenties", "label": "usa 1920 roaring twenties", "kind": "concept", "tier": 19, "defines": "(1920s) The Roaring Twenties — A period of economic prosperity, a booming stock market,\nautomobile culture (Ford Model T), and Jazz. However, it ended with the stock market\ncrash.\n", "prereqs": ["usa_1920_19th_amendment_prohibition"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1924_immigration_act_japanese_exclusion", "label": "usa 1924 immigration act japanese exclusion", "kind": "concept", "tier": 20, "defines": "(1924) Immigration Act (Japanese Exclusion) — A national-origins quota law bars nearly\nall immigration from Asia, including Japan; the exclusion of Japanese immigrants\nspecifically becomes a lasting grievance cited by Japanese nationalists in the run-up to\nWWII.\n", "prereqs": ["usa_1920_roaring_twenties"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1929_great_depression", "label": "usa 1929 great depression", "kind": "concept", "tier": 21, "defines": "(1929) The Great Depression — The stock market crash triggered the worst economic\ndownturn in history. Banks failed, unemployment soared to 25%, and drought caused the\nDust Bowl.\n", "prereqs": ["usa_1924_immigration_act_japanese_exclusion"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1933_new_deal", "label": "usa 1933 new deal", "kind": "concept", "tier": 22, "defines": "(1933–1939) The New Deal — President Franklin D. Roosevelt (FDR) launched a series of\ngovernment programs (Social Security, Works Progress Administration) to provide relief,\nrecovery, and reform.\n", "prereqs": ["usa_1929_great_depression"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1939_neutrality_arsenal_democracy", "label": "usa 1939 neutrality arsenal democracy", "kind": "concept", "tier": 23, "defines": "(1939–1941) Neutrality to Arsenal of Democracy — While officially neutral in WWII, the\nUS passed the Lend-Lease Act to supply the Allies with food and weapons.\n", "prereqs": ["usa_1933_new_deal"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1941_pearl_harbor", "label": "usa 1941 pearl harbor", "kind": "concept", "tier": 24, "defines": "(1941) Pearl Harbor — Japan attacked the US naval base in Hawaii. The US declared war on\nJapan, and Germany/Italy declared war on the US, officially entering WWII.\n", "prereqs": ["usa_1939_neutrality_arsenal_democracy"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1944_d_day_g_i_bill", "label": "usa 1944 d day g i bill", "kind": "concept", "tier": 25, "defines": "(1944) D-Day & G.I. Bill — Allied forces invaded Normandy. The G.I. Bill was passed,\noffering education and housing benefits to veterans, spurring post-war economic growth.\n", "prereqs": ["usa_1941_pearl_harbor"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_1945_end_wwii_un_charter", "label": "usa 1945 end wwii un charter", "kind": "concept", "tier": 26, "defines": "(1945) End of WWII & UN Charter — Germany surrenders in May (V-E Day). US drops atomic\nbombs on Hiroshima and Nagasaki; Japan surrenders in September (V-J Day). The US becomes\na founding member of the UN.\n", "prereqs": ["usa_1944_d_day_g_i_bill"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}], "edges": [{"from": "usa_1845_annexation_texas", "to": "usa_1846_mexican_american_war"}, {"from": "usa_1846_mexican_american_war", "to": "usa_1848_california_gold_rush"}, {"from": "usa_1848_california_gold_rush", "to": "usa_1854_kansas_nebraska_act"}, {"from": "usa_1854_kansas_nebraska_act", "to": "usa_1857_dred_scott_v_sandford"}, {"from": "usa_1857_dred_scott_v_sandford", "to": "usa_1860_secession_crisis"}, {"from": "usa_1860_secession_crisis", "to": "usa_1861_american_civil_war"}, {"from": "usa_1861_american_civil_war", "to": "usa_1863_emancipation_proclamation"}, {"from": "usa_1863_emancipation_proclamation", "to": "usa_1865_union_victory_lincolns_assassination"}, {"from": "usa_1865_union_victory_lincolns_assassination", "to": "usa_1865_reconstruction"}, {"from": "usa_1865_reconstruction", "to": "usa_1867_alaska_purchase"}, {"from": "usa_1867_alaska_purchase", "to": "usa_1869_transcontinental_railroad_completed"}, {"from": "usa_1869_transcontinental_railroad_completed", "to": "usa_1870_gilded_age"}, {"from": "usa_1870_gilded_age", "to": "usa_1890_closing_frontier"}, {"from": "usa_1890_closing_frontier", "to": "usa_1898_spanish_american_war"}, {"from": "usa_1898_spanish_american_war", "to": "usa_1901_progressive_era"}, {"from": "usa_1901_progressive_era", "to": "usa_1914_world_war_i_neutrality"}, {"from": "usa_1914_world_war_i_neutrality", "to": "usa_1917_wwi_involvement"}, {"from": "usa_1917_wwi_involvement", "to": "usa_1920_19th_amendment_prohibition"}, {"from": "usa_1920_19th_amendment_prohibition", "to": "usa_1920_roaring_twenties"}, {"from": "usa_1920_roaring_twenties", "to": "usa_1924_immigration_act_japanese_exclusion"}, {"from": "usa_1924_immigration_act_japanese_exclusion", "to": "usa_1929_great_depression"}, {"from": "usa_1929_great_depression", "to": "usa_1933_new_deal"}, {"from": "usa_1933_new_deal", "to": "usa_1939_neutrality_arsenal_democracy"}, {"from": "usa_1939_neutrality_arsenal_democracy", "to": "usa_1941_pearl_harbor"}, {"from": "usa_1941_pearl_harbor", "to": "usa_1944_d_day_g_i_bill"}, {"from": "usa_1944_d_day_g_i_bill", "to": "usa_1945_end_wwii_un_charter"}]};
+const DOMAIN_KEY = "graph";
+const GRAPH_LAYOUT = "timeline";
+
+// ── index ──────────────────────────────────────────────────────────────────
+const nodeIndex = {};
+RAW.nodes.forEach(n => nodeIndex[n.id] = n);
+
+const prereqOf  = {};  // id → ids that are direct prerequisites OF id
+const dependsOn = {};  // id → ids that id feeds into
+RAW.nodes.forEach(n => { prereqOf[n.id] = []; dependsOn[n.id] = []; });
+RAW.edges.forEach(e => {
+  prereqOf[e.to].push(e.from);
+  dependsOn[e.from].push(e.to);
+});
+
+// ── BFS longest-path levels (fixes application nodes at wrong tier) ─────────
+const bfsLevels = (() => {
+  const levels = {};
+  const successors = {};
+  RAW.nodes.forEach(n => { levels[n.id] = -1; successors[n.id] = []; });
+  RAW.edges.forEach(e => successors[e.from].push(e.to));
+  const sources = RAW.nodes.filter(n => !RAW.edges.some(e => e.to === n.id));
+  const queue = sources.map(n => n.id);
+  queue.forEach(n => levels[n] = 0);
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const succ of successors[cur]) {
+      const nl = levels[cur] + 1;
+      if (levels[succ] < nl) { levels[succ] = nl; queue.push(succ); }
+    }
+  }
+  return levels;
+})();
+
+// ── graph algorithms ────────────────────────────────────────────────────────
+function getAncestors(targetId) {
+  const visited = new Set();
+  const queue = [targetId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const p of prereqOf[cur])
+      if (!visited.has(p)) { visited.add(p); queue.push(p); }
+  }
+  return visited;
+}
+
+function topoSort(nodeSet) {
+  const inDeg = {};
+  nodeSet.forEach(n => inDeg[n] = 0);
+  nodeSet.forEach(n => { for (const p of prereqOf[n]) if (nodeSet.has(p)) inDeg[n]++; });
+  const reach = {};
+  nodeSet.forEach(n => {
+    let r = 0;
+    nodeSet.forEach(m => { if (m !== n && getAncestors(m).has(n)) r++; });
+    reach[n] = r;
+  });
+  const heap = [];
+  nodeSet.forEach(n => { if (inDeg[n] === 0) heap.push(n); });
+  heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+  const result = [];
+  while (heap.length) {
+    const node = heap.shift();
+    result.push(node);
+    for (const succ of dependsOn[node]) {
+      if (!nodeSet.has(succ)) continue;
+      if (--inDeg[succ] === 0) {
+        heap.push(succ);
+        heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+      }
+    }
+  }
+  return result;
+}
+
+// Read once, up front — used both for the network's own edge-curvature
+// hint below and by _layoutTimeline() later. Settings-page preference
+// (src/pages/Settings.js's getTimelineOrientation()); irrelevant for the
+// default "graph" layout.
+let TIMELINE_ORIENTATION = 'vertical';
+try {
+  TIMELINE_ORIENTATION = localStorage.getItem('cb-timeline-orientation') === 'horizontal' ? 'horizontal' : 'vertical';
+} catch (_) {}
+
+// ── vis.js network ──────────────────────────────────────────────────────────
+const container = document.getElementById('graph-container');
+// vis-network renders a node's `title` tooltip via the DOM node's
+// innerText (verified against the vis-network@9.1.9 bundle itself — it
+// does NOT interpret the string as HTML), so no escaping is needed here;
+// escaping it (an earlier version of this code did) actively backfires,
+// since innerText doesn't decode HTML entities back to characters —
+// "it's" would show up literally as "it&#39;s". Wrapping is handled by
+// the .vis-tooltip CSS override below, not here.
+const visNodes = new vis.DataSet(RAW.nodes.map(n => ({
+  id: n.id,
+  label: n.label.replace(/ /g, '\n'),
+  level: bfsLevels[n.id] !== undefined ? bfsLevels[n.id] : n.tier,
+  color: n.color,
+  font: n.font,
+  shape: n.kind === 'concept' ? 'ellipse' : 'box',
+  title: n.defines || undefined,
+})));
+const visEdges = new vis.DataSet(RAW.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  arrows: 'to', color: {color: '#c8ccd4'}, width: 1,
+})));
+// Edge curvature direction should follow whichever axis is the *main*
+// (sequence) axis — vertical for the default graph layout and a
+// vertical-orientation timeline, horizontal for a horizontal-orientation
+// timeline — otherwise the zig-zag connectors look bowed the wrong way.
+const _edgeForceDirection = (GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal') ? 'horizontal' : 'vertical';
+// hierarchical.enabled stays false: _layoutGraph()/_layoutTimeline() below
+// already set every node's final x/y explicitly via moveNode() once
+// 'afterDrawing' fires, so vis-network's own hierarchical engine would be
+// redundant — worse, vis-network re-runs that engine on every DataSet
+// change (selectNode()'s visNodes.update()/visEdges.update() calls when
+// highlighting a clicked node's path), which silently overwrote the
+// manual timeline positions and collapsed every node onto the same
+// cross-axis column the moment a node was clicked. Positions are fully
+// hand-computed below; the built-in layout engine has nothing to add and
+// only fights the manual one if left on.
+const network = new vis.Network(container, {nodes: visNodes, edges: visEdges}, {
+  layout: { hierarchical: { enabled: false } },
+  physics: { enabled: false },
+  interaction: { hover: true, tooltipDelay: 150 },
+  edges: { smooth: { type: 'cubicBezier', forceDirection: _edgeForceDirection } },
+});
+
+// Group nodes by their BFS tier — shared by both layouts below. Using the
+// *rank* of each distinct tier value (ti), not the raw tier number itself,
+// is what already made the compact layout's spacing even regardless of
+// gaps in the YAML's tier numbering — the timeline layout leans on that
+// same property to satisfy "don't treat the axis as a literal time scale".
+function _groupByTier() {
+  const byTier = {};
+  RAW.nodes.forEach(n => {
+    const tier = bfsLevels[n.id] ?? n.tier ?? 0;
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(n.id);
+  });
+  const tiers = Object.keys(byTier).map(Number).sort((a, b) => a - b);
+  return { byTier, tiers };
+}
+
+// Compact layout (default "graph"): group by tier, sort alphabetically,
+// left-align all nodes — a hierarchical prerequisite DAG.
+function _layoutGraph() {
+  const { byTier, tiers } = _groupByTier();
+  const spacing = 140;
+  const tierSep = 85;
+  _mainAxisSpacing = tierSep;
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const y = ti * tierSep;
+    ids.forEach((id, i) => {
+      network.moveNode(id, i * spacing, y);
+    });
+  });
+}
+
+// Timeline layout ("layout: timeline" in graph.yaml): a linear chain of
+// stops — main axis position is the tier's *rank* (evenly spaced, not
+// scaled to any real date/duration — see graph.yaml's own tier field,
+// which is just a sequence index here, not a year), alternating to either
+// side of the centerline on the cross axis so consecutive stops zig-zag
+// rather than overlap. The zig-zag path traced by the connecting edges
+// *is* the visual timeline — no separate straight guide line is drawn.
+// Orientation (vertical: top-to-bottom main axis, or horizontal:
+// left-to-right) is a Settings-page preference (src/pages/Settings.js's
+// getTimelineOrientation()), read from localStorage here since it can
+// change without regenerating this static page.
+function _layoutTimeline() {
+  const { byTier, tiers } = _groupByTier();
+  const mainSep = 140;
+  const crossOffset = 90;
+  const withinTierSpacing = 60;
+  _mainAxisSpacing = mainSep;
+
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const main = ti * mainSep;
+    const cross = (ti % 2 === 0 ? -1 : 1) * crossOffset;
+    ids.forEach((id, i) => {
+      // More than one event sharing a tier: spread them along the cross
+      // axis around that tier's alternating offset instead of stacking.
+      const spread = (i - (ids.length - 1) / 2) * withinTierSpacing;
+      if (TIMELINE_ORIENTATION === 'horizontal') {
+        network.moveNode(id, main, cross + spread);
+      } else {
+        network.moveNode(id, cross + spread, main);
+      }
+    });
+  });
+}
+
+// network.fit() alone zooms out to fit every node/tier in the viewport —
+// fine for a small graph, but for a large one it shrinks nodes/labels past
+// legibility. This floors the scale so the initial view shows roughly
+// DESIRED_VISIBLE_TIERS tiers along the layout's main axis instead of the
+// whole graph crammed in: a small graph that already fits within that many
+// tiers is untouched (fit's own scale wins), a large one defaults to a
+// legible subset instead of the whole graph in miniature. Sized off
+// _mainAxisSpacing (set by whichever of _layoutGraph/_layoutTimeline just
+// ran) rather than a sampled node's pixel size — a single sampled node
+// (e.g. a short-label primitive) previously over- or under-estimated the
+// scale needed for the graph's *typical* node size.
+let _mainAxisSpacing = 140;
+function _applyLegibleFloor() {
+  if (RAW.nodes.length === 0) return;
+  const fitScale = network.getScale();
+  const container = document.getElementById('graph-container');
+  const horizontal = GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal';
+  const viewportMain = horizontal ? container.clientWidth : container.clientHeight;
+  const DESIRED_VISIBLE_TIERS = 4;
+  const targetScale = viewportMain / (_mainAxisSpacing * DESIRED_VISIBLE_TIERS);
+  const minLegibleScale = Math.min(targetScale, 1);
+  if (fitScale < minLegibleScale) {
+    network.moveTo({ scale: minLegibleScale, animation: false });
+  }
+}
+
+network.once('afterDrawing', function() {
+  if (GRAPH_LAYOUT === 'timeline') {
+    _layoutTimeline();
+  } else {
+    _layoutGraph();
+  }
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+});
+
+// A true fit-to-everything, regardless of graph size — what the Re-Center
+// button explicitly promises ("re-fit the graph to the viewport").
+function reCenterGraph() {
+  network.fit({ animation: true });
+}
+
+// Same fit, but re-applies the legibility floor — used by GraphViewer.js's
+// automatic post-layout re-fit (once the parent app's CSS relayout has
+// settled the iframe's real container size) so a large graph's default
+// view stays readable instead of being reset to the full, tiny-node fit.
+function fitLegible() {
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+}
+
+// The parent app's own CSS relayout (hiding graph.html's own chrome,
+// slotting the Notes drawer below the graph) doesn't necessarily finish
+// resizing #graph-container in a single frame — a further layout pass can
+// resize it again after GraphViewer.js's one requestAnimationFrame call to
+// fitLegible() already ran, and vis-network's own internal handling of a
+// container resize after the fact can leave the view at a scale neither
+// fit() nor our floor ever asked for. Re-applying the floor once the
+// container's size has actually stopped changing (debounced) catches
+// that; disconnecting after the first settle avoids overriding a user's
+// own manual zoom/pan on every later resize (e.g. dragging the Notes
+// drawer's gutter).
+if (typeof ResizeObserver !== 'undefined') {
+  const _graphContainer = document.getElementById('graph-container');
+  let _resizeSettleTimer = null;
+  const _ro = new ResizeObserver(() => {
+    clearTimeout(_resizeSettleTimer);
+    _resizeSettleTimer = setTimeout(() => {
+      _ro.disconnect();
+      try { fitLegible(); } catch (_) {}
+    }, 200);
+  });
+  _ro.observe(_graphContainer);
+}
+
+const C_PATH   = {background: '#fff9c4', border: '#f9a825'};
+const C_TARGET = {background: '#ffe082', border: '#e65100'};
+
+function resetColors() {
+  visNodes.update(RAW.nodes.map(n => ({id: n.id, color: n.color})));
+  visEdges.update(RAW.edges.map((e, i) => ({id: i, color: {color: '#c8ccd4'}, width: 1})));
+}
+
+// ── explanation panel ───────────────────────────────────────────────────────
+function renderExplanation(node) {
+  const kclass = node.kind;
+  const prereqChips = (node.prereqs || []).map(p =>
+    `<span class="prereq-chip" onclick="selectNode('${p}')">${p.replace(/_/g,' ')}</span>`
+  ).join('');
+  const metaItems = [
+    node.verifier ? `<span class="meta-item"><b>Verifier:</b> ${node.verifier}</span>` : '',
+    node.lab      ? `<span class="meta-item"><b>Lab:</b> ${node.lab}</span>` : '',
+  ].filter(Boolean).join('');
+  const playHtml = node.play
+    ? `<div class="section-label">Try it</div><div class="play-hint">${node.play}</div>`
+    : '';
+
+  const panel = document.getElementById('explain-panel');
+  panel.innerHTML = `
+    <div class="node-title">
+      <h2>${node.label}</h2>
+      <span class="badge ${kclass}">${kclass}</span>
+      <span class="tier-tag">BFS level ${bfsLevels[node.id] ?? node.tier}</span>
+    </div>
+    ${node.defines ? `<div class="defines">${node.defines}</div>` : ''}
+    ${prereqChips ? `<div class="section-label">Prerequisites</div><div class="prereq-list">${prereqChips}</div>` : ''}
+    ${metaItems ? `<div class="meta-row">${metaItems}</div>` : ''}
+    ${playHtml}
+  `;
+
+  // ── concept HTML detail ──
+  const conceptsBase = window.__cb_CONCEPTS_BASE;
+  const conceptUrls = window.__cb_CONCEPT_URLS || {};
+  const mappedUrl = conceptUrls[node.id];
+  if (mappedUrl || conceptsBase) {
+    const conceptUrl = mappedUrl || (conceptsBase + 'concept_' + encodeURIComponent(node.id) + '.html');
+    const detail = document.createElement('div');
+    detail.id = 'concept-detail';
+    detail.innerHTML = '<div class="section-label">Concept Detail</div><div class="concept-loading" style="color:#aaa;font-size:12px;padding:6px 0">Loading…</div>';
+    panel.appendChild(detail);
+    fetch(conceptUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.text();
+      })
+      .then(html => {
+        const slot = detail.querySelector('.concept-loading');
+        if (!slot) return;
+        // Vite dev server returns the SPA index.html (200) for missing static files.
+        // Verify we got a real concept page by checking for a known marker.
+        if (html.includes('spl-credit') || html.includes('Powered by')) {
+          const iframe = document.createElement('iframe');
+          iframe.id = 'concept-iframe';
+          iframe.src = conceptUrl;
+          slot.replaceWith(iframe);
+        } else {
+          slot.className = 'concept-not-found';
+          slot.textContent = 'Content not found — generate it first.';
+        }
+      })
+      .catch(() => {
+        const slot = detail.querySelector('.concept-loading');
+        if (slot) { slot.className = 'concept-not-found'; slot.textContent = 'Content not found — generate it first.'; }
+      });
+  }
+}
+
+// ── learning path sidebar ───────────────────────────────────────────────────
+function renderPathSidebar(orderedPath, targetId) {
+  const stepsEl = document.getElementById('path-steps');
+  const countEl = document.getElementById('path-count');
+  countEl.textContent = orderedPath.length
+    ? `${orderedPath.length} step${orderedPath.length !== 1 ? 's' : ''} to learn first`
+    : 'Root concept — no prerequisites';
+
+  const target = nodeIndex[targetId];
+  const kc = k => `${k.charAt(0).toUpperCase() + k.slice(1)}`;
+
+  stepsEl.innerHTML = orderedPath.map((n, i) => {
+    const nd = nodeIndex[n];
+    return `<div class="step-item" onclick="selectNode('${n}')">
+      <span class="step-num">${i + 1}.</span>
+      <div>
+        <div class="step-label">${nd.label}
+          <span class="step-kind ${nd.kind}-k">${nd.kind}</span>
+        </div>
+        ${nd.defines ? `<div class="step-def">${nd.defines}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div class="step-item target">
+    <span class="step-num">▶</span>
+    <div>
+      <div class="step-label">${target.label}
+        <span class="step-kind ${target.kind}-k">${target.kind}</span>
+      </div>
+      ${target.defines ? `<div class="step-def">${target.defines}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── notes (localStorage) ────────────────────────────────────────────────────
+// Each node's notes are an append-only history of timestamped entries, not
+// a single overwritable value — Save (explicit, not triggered on every
+// keystroke) appends a new entry and clears the input, so writing a
+// follow-up thought later never clobbers what was already saved for that
+// node. See _parseEntries for the migration from the old single-note
+// format this replaces.
+let currentNodeId = null;
+
+function noteKey(nodeId) { return `concept_notes_${DOMAIN_KEY}_${nodeId}`; }
+
+function _parseEntries(raw) {
+  if (!raw) return [];
+  try {
+    const d = JSON.parse(raw);
+    if (Array.isArray(d)) return d;
+    // Legacy single-note format ({text, ts}) written before notes became
+    // an entry history — migrate it in place as a one-entry history
+    // instead of silently discarding whatever was already saved there.
+    if (d && typeof d === 'object' && d.text) return [{ text: d.text, ts: d.ts || '' }];
+    return [];
+  } catch (_) {
+    return raw ? [{ text: raw, ts: '' }] : [];
+  }
+}
+
+// Used by GraphViewer.js's _wireNoteHistoryBridge (parent app embed) to
+// pull one specific past entry's full text into the "Note Detail" tab —
+// a top-level `function` declaration so it lands on this iframe's window
+// (see that file's comment on why `const`/`let` don't).
+function getEntryText(nodeId, ts) {
+  const entry = _parseEntries(localStorage.getItem(noteKey(nodeId))).find(e => e.ts === ts);
+  return entry ? entry.text : '';
+}
+
+function saveNoteEntry() {
+  if (!currentNodeId) return;
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value;
+  if (!text.trim()) return;
+  const entries = _parseEntries(localStorage.getItem(noteKey(currentNodeId)));
+  entries.push({ text, ts: new Date().toISOString() });
+  localStorage.setItem(noteKey(currentNodeId), JSON.stringify(entries));
+  ta.value = '';
+  renderNoteHistory(currentNodeId);
+  const btn = document.getElementById('nb-save-btn');
+  if (btn) { btn.textContent = 'Saved!'; setTimeout(() => { btn.textContent = 'Save'; }, 1000); }
+}
+
+// Clears the draft in the input box only — the saved entry history is
+// untouched (there's no single "the note" to delete any more, just past
+// entries, none of which this button targets).
+function clearNoteInput() {
+  document.getElementById('notes-textarea').value = '';
+}
+
+function _fmtTs(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+// A note's text is whatever the reader typed into the textarea, stored
+// straight to localStorage with no sanitization — so renderNoteHistory's
+// preview has to escape it before it goes into innerHTML, even though
+// today's writer/reader is the same person in the same browser. Same
+// reasoning as this app's own src/lib/html.js escapeHtml.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// All saved entries for ONE node (the currently-selected one), most recent
+// first — not a cross-node index. data-node-id/data-ts on each row are read
+// by GraphViewer.js's _wireNoteHistoryBridge (the app embed's "click a past
+// entry to view its full text in the Note Detail tab" feature) via
+// getEntryText() above; unused, harmless in the standalone page.
+function renderNoteHistory(nodeId) {
+  const container = document.getElementById('notes-with-entries');
+  const entries = _parseEntries(localStorage.getItem(noteKey(nodeId)));
+  if (!entries.length) {
+    container.innerHTML = '<div class="note-empty-hint">No saved entries yet for this concept.</div>';
+    return;
+  }
+  container.innerHTML = entries.slice().reverse().map(e =>
+    `<div class="note-entry" data-node-id="${_escHtml(nodeId)}" data-ts="${_escHtml(e.ts)}">
+      <div class="note-node"><span class="note-ts">${_fmtTs(e.ts)}</span></div>
+      <div class="note-preview">${_escHtml(e.text.slice(0, 80))}</div>
+    </div>`
+  ).join('');
+}
+
+function switchNotes(nodeId) {
+  // No implicit carry-over save of whatever's in the input when switching
+  // nodes — Save is explicit now (see saveNoteEntry), so an unsaved draft
+  // is intentionally discarded, same as closing a document without saving.
+  currentNodeId = nodeId;
+  document.getElementById('notes-textarea').value = '';
+  document.getElementById('notes-node-label').textContent =
+    nodeIndex[nodeId]?.label || nodeId;
+  renderNoteHistory(nodeId);
+}
+
+function exportNotes() {
+  const notes = {};
+  RAW.nodes.forEach(n => {
+    const v = localStorage.getItem(noteKey(n.id));
+    if (v) notes[n.id] = v;
+  });
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${DOMAIN_KEY}_notes.json`;
+  a.click();
+}
+
+// ── unified node select ─────────────────────────────────────────────────────
+function selectNode(nodeId) {
+  if (!nodeIndex[nodeId]) return;
+  network.selectNodes([nodeId]);
+  handleSelect(nodeId);
+}
+
+function handleSelect(targetId) {
+  const node = nodeIndex[targetId];
+
+  renderExplanation(node);
+  switchNotes(targetId);
+
+  const ancestors = getAncestors(targetId);
+  const pathSet = new Set([...ancestors]);
+  const orderedPath = topoSort(pathSet);
+
+  renderPathSidebar(orderedPath, targetId);
+
+  resetColors();
+  visNodes.update(orderedPath.map(n => ({id: n, color: C_PATH})));
+  visNodes.update([{id: targetId, color: C_TARGET}]);
+  visEdges.update(RAW.edges.map((e, i) => {
+    const inPath = pathSet.has(e.from) && (pathSet.has(e.to) || e.to === targetId);
+    return {id: i, color: {color: inPath ? '#f9a825' : '#c8ccd4'}, width: inPath ? 2 : 1};
+  }));
+}
+
+network.on('click', params => {
+  if (params.nodes.length) handleSelect(params.nodes[0]);
+});
+
+// initial empty state — real content loads once a node is selected (see
+// switchNotes -> renderNoteHistory)
+document.getElementById('notes-with-entries').innerHTML =
+  '<div class="note-empty-hint">Select a concept to see or add notes.</div>';
+
+// When viewed directly (not in an iframe), inject a back link next to the
+// "Learning Path" heading so it doesn't look like a title-bar element.
+if (window.parent === window) {
+  var h1 = document.querySelector('#path-header h1');
+  if (h1) {
+    var backLink = document.createElement('a');
+    backLink.href = '../../';
+    backLink.textContent = '← App';
+    backLink.style.cssText = [
+      'font-size:10px','color:#2563eb','font-family:system-ui,sans-serif',
+      'text-decoration:none','font-weight:400','letter-spacing:normal',
+      'text-transform:none','white-space:nowrap','flex-shrink:0'
+    ].join(';');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:baseline;gap:8px;';
+    h1.parentNode.insertBefore(row, h1);
+    row.appendChild(h1);
+    row.appendChild(backLink);
+  }
+}
+</script>
+</body>
+</html>

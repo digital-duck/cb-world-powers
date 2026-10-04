@@ -1,0 +1,144 @@
+domain: 200years_7powers_ch12
+layout: timeline
+primitives:
+  russia_1945_victory_eastern_bloc_formation:
+    defines: |
+      (1945) Victory & Eastern Bloc Formation — The USSR emerges as a global superpower and
+      installs communist governments across Eastern Europe, forming the postwar Eastern Bloc.
+    tier: 0
+concepts:
+  russia_1949_soviet_atomic_bomb:
+    composed_of:
+    - russia_1945_victory_eastern_bloc_formation
+    defines: |
+      (1949) Soviet Atomic Bomb — The USSR tests its first nuclear weapon, ending the US
+      atomic monopoly and formalizing the Cold War arms race.
+    tier: 1
+  russia_1953_death_stalin:
+    composed_of:
+    - russia_1949_soviet_atomic_bomb
+    defines: |
+      (1953) Death of Stalin — Stalin's death ends over two decades of totalitarian rule; a
+      power struggle eventually brings Nikita Khrushchev to leadership.
+    tier: 2
+  russia_1956_secret_speech_hungarian_uprising:
+    composed_of:
+    - russia_1953_death_stalin
+    defines: |
+      (1956) Secret Speech & Hungarian Uprising — Khrushchev denounces Stalin's crimes in a
+      "Secret Speech," fueling reform hopes in Eastern Europe; the USSR crushes a Hungarian
+      uprising for independence the same year.
+    tier: 3
+  russia_1957_sputnik_launch:
+    composed_of:
+    - russia_1956_secret_speech_hungarian_uprising
+    defines: |
+      (1957) Sputnik Launch — The USSR launches the first artificial satellite, triggering the
+      Space Race with the United States.
+    tier: 4
+  russia_1961_gagarins_spaceflight_berlin_wall:
+    composed_of:
+    - russia_1957_sputnik_launch
+    defines: |
+      (1961) Gagarin's Spaceflight & Berlin Wall — Yuri Gagarin becomes the first human in
+      space; East Germany, backed by the USSR, builds the Berlin Wall the same year.
+    tier: 5
+  russia_1962_cuban_missile_crisis:
+    composed_of:
+    - russia_1961_gagarins_spaceflight_berlin_wall
+    defines: |
+      (1962) Cuban Missile Crisis — Soviet missiles placed in Cuba bring the world to the
+      brink of nuclear war with the US before a tense resolution.
+    tier: 6
+  russia_1968_prague_spring_invasion:
+    composed_of:
+    - russia_1962_cuban_missile_crisis
+    defines: |
+      (1968) Prague Spring Invasion — The USSR leads a Warsaw Pact invasion of Czechoslovakia
+      to crush liberalizing reforms, reasserting Soviet control over the Eastern Bloc.
+    tier: 7
+  russia_1979_soviet_afghan_war:
+    composed_of:
+    - russia_1968_prague_spring_invasion
+    defines: |
+      (1979–1989) Soviet-Afghan War — The USSR invades Afghanistan to prop up a communist
+      government; a costly decade-long war ends in withdrawal, weakening Soviet prestige and
+      finances.
+    tier: 8
+  russia_1985_gorbachevs_glasnost_perestroika:
+    composed_of:
+    - russia_1979_soviet_afghan_war
+    defines: |
+      (1985) Gorbachev's Glasnost & Perestroika — Mikhail Gorbachev introduces political
+      openness and economic restructuring, unintentionally accelerating the Soviet system's
+      collapse.
+    tier: 9
+  russia_1986_chernobyl_disaster:
+    composed_of:
+    - russia_1985_gorbachevs_glasnost_perestroika
+    defines: |
+      (1986) Chernobyl Disaster — A catastrophic nuclear accident exposes systemic failures
+      and secrecy, further eroding public trust in the Soviet government.
+    tier: 10
+  russia_1991_collapse_soviet_union:
+    composed_of:
+    - russia_1986_chernobyl_disaster
+    defines: |
+      (1991) Collapse of the Soviet Union — The USSR formally dissolves into 15 independent
+      states; Boris Yeltsin becomes president of the newly independent Russian Federation.
+    tier: 11
+  russia_1990_yeltsin_era_economic_shock_therapy:
+    composed_of:
+    - russia_1991_collapse_soviet_union
+    defines: |
+      (1990s) Yeltsin Era & Economic Shock Therapy — Rapid, chaotic privatization and market
+      reforms cause severe economic hardship, the rise of oligarchs, and political
+      instability.
+    tier: 12
+  russia_2000_vladimir_putin_becomes_president:
+    composed_of:
+    - russia_1990_yeltsin_era_economic_shock_therapy
+    defines: |
+      (2000) Vladimir Putin Becomes President — Putin begins consolidating political power,
+      curbing independent media and oligarch influence while overseeing an oil-fueled economic
+      recovery.
+    tier: 13
+  russia_2008_russo_georgian_war:
+    composed_of:
+    - russia_2000_vladimir_putin_becomes_president
+    defines: |
+      (2008) Russo-Georgian War — Russia intervenes militarily in Georgia, signaling a more
+      assertive post-Soviet foreign policy in its near abroad.
+    tier: 14
+  russia_2014_annexation_crimea:
+    composed_of:
+    - russia_2008_russo_georgian_war
+    defines: |
+      (2014) Annexation of Crimea — Russia annexes Crimea from Ukraine following the
+      Euromaidan revolution, triggering international sanctions and a prolonged conflict in
+      eastern Ukraine.
+    tier: 15
+  russia_2022_full_scale_invasion_ukraine:
+    composed_of:
+    - russia_2014_annexation_crimea
+    defines: |
+      (2022) Full-Scale Invasion of Ukraine — Russia launches a major invasion of Ukraine,
+      triggering Europe's largest war since WWII and sweeping international sanctions against
+      Russia.
+    tier: 16
+  russia_2023_wagner_group_mutiny:
+    composed_of:
+    - russia_2022_full_scale_invasion_ukraine
+    defines: |
+      (2023) Wagner Group Mutiny — Mercenary leader Yevgeny Prigozhin marches his Wagner
+      forces toward Moscow in an armed mutiny before standing down; he dies in a plane crash
+      two months later, widely seen as retaliation.
+    tier: 17
+  russia_2024_navalnys_death_putins:
+    composed_of:
+    - russia_2023_wagner_group_mutiny
+    defines: |
+      (2024) Navalny's Death & Putin's Re-election — Opposition leader Alexei Navalny dies in
+      an Arctic penal colony weeks before Putin wins another six-year presidential term in an
+      election with no genuine opposition.
+    tier: 18

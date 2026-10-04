@@ -1,0 +1,188 @@
+domain: 200years_7powers_ch02
+layout: timeline
+primitives:
+  france_1848_february_revolution_second_republic:
+    defines: |
+      (1848) February Revolution & Second Republic — A revolution topples King Louis-Philippe;
+      the Second Republic is declared, and Louis-Napoleon Bonaparte is elected president.
+    tier: 0
+concepts:
+  france_1852_second_empire_proclaimed:
+    composed_of:
+    - france_1848_february_revolution_second_republic
+    defines: |
+      (1852) Second Empire Proclaimed — Louis-Napoleon stages a coup and declares himself
+      Emperor Napoleon III, ending the Republic and launching an era of authoritarian
+      modernization and colonial expansion.
+    tier: 1
+  france_1853_crimean_war:
+    composed_of:
+    - france_1852_second_empire_proclaimed
+    defines: |
+      (1853–1856) Crimean War — France allies with Britain and the Ottoman Empire against
+      Russia, reasserting itself as a leading European military power.
+    tier: 2
+  france_1858_conquest_cochinchina:
+    composed_of:
+    - france_1853_crimean_war
+    defines: |
+      (1858–1862) Conquest of Cochinchina — France begins its conquest of southern Vietnam,
+      the opening phase of what becomes French Indochina.
+    tier: 3
+  france_1859_war_austria:
+    composed_of:
+    - france_1858_conquest_cochinchina
+    defines: |
+      (1859) War with Austria — France backs Piedmont-Sardinia against Austria, aiding Italian
+      unification and expanding French influence in Europe.
+    tier: 4
+  france_1863_cambodia_becomes_french_protectorate:
+    composed_of:
+    - france_1859_war_austria
+    defines: |
+      (1863) Cambodia Becomes a French Protectorate — France extends its Indochinese holdings
+      by establishing a protectorate over Cambodia.
+    tier: 5
+  france_1870_franco_prussian_war_fall_second:
+    composed_of:
+    - france_1863_cambodia_becomes_french_protectorate
+    defines: |
+      (1870–1871) Franco-Prussian War & Fall of the Second Empire — Prussia decisively defeats
+      France; Napoleon III is captured, the Empire collapses, and the Third Republic is
+      proclaimed amid the Paris Commune uprising.
+    tier: 6
+  france_1871_treaty_frankfurt:
+    composed_of:
+    - france_1870_franco_prussian_war_fall_second
+    defines: |
+      (1871) Treaty of Frankfurt — France cedes Alsace-Lorraine to the new German Empire and
+      pays a heavy war indemnity, fueling decades of French revanchism.
+    tier: 7
+  france_1881_tunisia_becomes_french_protectorate:
+    composed_of:
+    - france_1871_treaty_frankfurt
+    defines: |
+      (1881) Tunisia Becomes a French Protectorate — France expands its North African
+      holdings, establishing a protectorate over Tunisia.
+    tier: 8
+  france_1884_berlin_conference_scramble_africa:
+    composed_of:
+    - france_1881_tunisia_becomes_french_protectorate
+    defines: |
+      (1884–1885) Berlin Conference & Scramble for Africa — France participates in formalizing
+      the European partition of Africa, rapidly expanding its colonial holdings in West and
+      Central Africa.
+    tier: 9
+  france_1885_sino_french_war_full_colonization:
+    composed_of:
+    - france_1884_berlin_conference_scramble_africa
+    defines: |
+      (1885) Sino-French War & Full Colonization of Vietnam — France defeats Qing China in a
+      war over Vietnam, cementing colonial control over the entire country.
+    tier: 10
+  france_1887_french_indochina_union_formed:
+    composed_of:
+    - france_1885_sino_french_war_full_colonization
+    defines: |
+      (1887) French Indochina Union Formed — France consolidates Vietnam, Cambodia, and later
+      Laos into a single colonial administrative union.
+    tier: 11
+  france_1894_dreyfus_affair:
+    composed_of:
+    - france_1887_french_indochina_union_formed
+    defines: |
+      (1894–1906) The Dreyfus Affair — A Jewish army officer, Alfred Dreyfus, is wrongly
+      convicted of treason; the scandal exposes deep antisemitism and divides French society
+      for over a decade before his exoneration.
+    tier: 12
+  france_1898_fashoda_incident:
+    composed_of:
+    - france_1894_dreyfus_affair
+    defines: |
+      (1898) Fashoda Incident — A tense standoff between French and British forces in Sudan
+      nearly triggers war, ultimately resolved diplomatically in Britain's favor.
+    tier: 13
+  france_1904_entente_cordiale:
+    composed_of:
+    - france_1898_fashoda_incident
+    defines: |
+      (1904) Entente Cordiale — France and Britain resolve colonial disputes and form a
+      diplomatic understanding, realigning European alliances ahead of WWI.
+    tier: 14
+  france_1905_law_separation_church_state:
+    composed_of:
+    - france_1904_entente_cordiale
+    defines: |
+      (1905) Law on the Separation of Church and State — France formally separates church and
+      state, establishing the principle of *laïcité* (secularism) still central to French
+      politics today.
+    tier: 15
+  france_1912_morocco_becomes_french_protectorate:
+    composed_of:
+    - france_1905_law_separation_church_state
+    defines: |
+      (1912) Morocco Becomes a French Protectorate — France completes its North African
+      colonial arc, adding Morocco to its empire.
+    tier: 16
+  france_1914_world_war_i:
+    composed_of:
+    - france_1912_morocco_becomes_french_protectorate
+    defines: |
+      (1914–1918) World War I — France suffers catastrophic losses (roughly 1.4 million dead)
+      as the primary Western Front battleground, including the devastating Battle of Verdun
+      (1916).
+    tier: 17
+  france_1919_treaty_versailles:
+    composed_of:
+    - france_1914_world_war_i
+    defines: |
+      (1919) Treaty of Versailles — France regains Alsace-Lorraine and imposes harsh
+      reparations on Germany, seeking security guarantees against future invasion.
+    tier: 18
+  france_1923_occupation_ruhr:
+    composed_of:
+    - france_1919_treaty_versailles
+    defines: |
+      (1923) Occupation of the Ruhr — France and Belgium occupy Germany's industrial Ruhr
+      region after Germany defaults on reparations payments; the occupation fails to extract
+      the payments and instead helps trigger Germany's ruinous hyperinflation, deepening
+      Franco-German bitterness.
+    tier: 19
+  france_1936_popular_front:
+    composed_of:
+    - france_1923_occupation_ruhr
+    defines: |
+      (1936) The Popular Front — A left-wing coalition government under Léon Blum enacts major
+      labor reforms (paid vacation, 40-hour week) amid rising political polarization.
+    tier: 20
+  france_1940_fall_france_vichy_regime:
+    composed_of:
+    - france_1936_popular_front
+    defines: |
+      (1940) Fall of France & Vichy Regime — Nazi Germany rapidly defeats France; the country
+      is divided between German occupation in the north and the collaborationist Vichy regime
+      in the south.
+    tier: 21
+  france_1940_free_france_resistance:
+    composed_of:
+    - france_1940_fall_france_vichy_regime
+    defines: |
+      (1940–1944) Free France & the Resistance — Charles de Gaulle leads the Free French
+      forces from exile while the domestic Resistance conducts sabotage and intelligence work
+      against the occupation.
+    tier: 22
+  france_1944_liberation_paris:
+    composed_of:
+    - france_1940_free_france_resistance
+    defines: |
+      (1944) Liberation of Paris — Allied forces and the French Resistance liberate Paris; de
+      Gaulle establishes a provisional government.
+    tier: 23
+  france_1945_end_wwii:
+    composed_of:
+    - france_1944_liberation_paris
+    defines: |
+      (1945) End of WWII — Germany surrenders; France, though liberated and among the victors,
+      emerges economically devastated and politically fractured, setting the stage for
+      post-war reconstruction and decolonization struggles.
+    tier: 24

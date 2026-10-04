@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concept Graph — graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f2f5;overflow:hidden;height:100vh}
+.app{
+  display:grid;
+  grid-template-columns:230px 1fr 210px;
+  grid-template-rows:60vh 40vh;
+  height:100vh;
+  gap:0;
+}
+/* ── Left sidebar: learning path ── */
+#path-sidebar{
+  grid-column:1;grid-row:1/3;
+  background:#f5f6f8;color:#2a2a2a;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid #dde0e6;
+}
+#path-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid #dde0e6;
+  flex-shrink:0;
+}
+#path-header h1{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:2px;font-weight:700}
+#path-header .domain-name{font-size:11px;color:#555;margin-top:4px}
+#path-steps{flex:1;overflow-y:auto;padding:8px 0}
+#path-steps .hint{color:#aaa;font-size:12px;text-align:center;padding:24px 12px;line-height:1.5}
+.step-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 12px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s;
+}
+.step-item:hover{background:#ebebf0}
+.step-item.active{background:#e8eef8;border-left-color:#4a90d9}
+.step-item.target{background:#eaf5ea;border-left-color:#4caf50}
+.step-num{min-width:20px;font-size:10px;font-weight:700;color:#bbb;padding-top:2px;flex-shrink:0}
+.step-item.target .step-num{color:#4caf50}
+.step-label{font-size:12px;font-weight:600;color:#333;line-height:1.4}
+.step-def{font-size:10px;color:#888;margin-top:2px;line-height:1.4}
+.step-kind{display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+#path-count{font-size:10px;color:#aaa;margin-top:3px}
+/* vis-network's own default tooltip CSS sets white-space:nowrap with no
+   width cap, so a node's `defines` text (a full sentence) renders as one
+   unbroken line stretching across the whole canvas — override both here. */
+.vis-tooltip{white-space:normal!important;max-width:280px;line-height:1.4}
+/* ── Graph panel ── */
+#graph-panel{
+  grid-column:2;grid-row:1;
+  position:relative;background:#fff;
+  border-bottom:2px solid #dde;
+}
+#graph-container{width:100%;height:100%}
+.graph-recenter-btn{
+  position:absolute;right:16px;bottom:16px;z-index:50;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid #1e3a5f;background:#1e3a5f;color:#fff;
+  font-size:12px;font-weight:600;font-family:system-ui,sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+}
+.graph-recenter-btn:hover{background:#28496f;border-color:#28496f}
+/* ── Explanation panel ── */
+#explain-panel{
+  grid-column:2;grid-row:2;
+  background:#fff;overflow-y:auto;
+  padding:16px 20px;
+}
+#explain-panel .empty{color:#aaa;font-size:13px;padding:20px 0;text-align:center}
+#explain-panel .node-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+#explain-panel .node-title h2{font-size:16px;color:#1e3a5f}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;
+}
+.badge.primitive{background:#e8f5e9;color:#2e7d32}
+.badge.concept{background:#e3f2fd;color:#1565c0}
+.badge.application{background:#fff3e0;color:#ef6c00}
+.tier-tag{font-size:11px;color:#999;margin-left:auto}
+#explain-panel .defines{
+  font-size:14px;color:#333;line-height:1.6;margin-bottom:12px;
+  padding:10px 12px;background:#f8f9fb;border-radius:6px;
+  border-left:3px solid #90b4e8;
+}
+#explain-panel .section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#999;margin-bottom:6px;
+}
+#explain-panel .prereq-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prereq-chip{
+  padding:3px 9px;border-radius:12px;font-size:11px;
+  background:#e3f2fd;color:#1565c0;cursor:pointer;
+  border:1px solid #90caf9;transition:background .12s;
+}
+.prereq-chip:hover{background:#bbdefb}
+#explain-panel .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{font-size:12px;color:#555}
+.meta-item b{color:#1e3a5f}
+#explain-panel .play-hint{
+  font-size:12px;color:#5a5a5a;line-height:1.6;
+  padding:8px 12px;background:#fffde7;border-radius:6px;
+  border-left:3px solid #ffd54f;margin-bottom:8px;
+}
+/* ── Notes sidebar ── */
+#notes-sidebar{
+  grid-column:3;grid-row:1/3;
+  background:#fafaf8;
+  border-left:2px solid #e8e8e0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notes-header{
+  padding:10px 12px 8px;
+  border-bottom:1px solid #e0e0d8;
+  flex-shrink:0;
+}
+#notes-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+#notes-header h2{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin:0}
+#notes-node-label{font-size:11px;color:#999;margin-top:2px}
+.nb-btn{font-size:10px;padding:2px 7px;border-radius:3px;
+  border:1px solid #ddd;background:#f0f0ea;cursor:pointer;color:#777;
+  font-family:system-ui,sans-serif}
+.nb-btn:hover{background:#e0e0d8;color:#444}
+#notes-textarea{
+  /* 40:60 entry:history split of the sidebar's remaining height (below the
+     fixed header) — flex-grow ratio 2:3 against #notes-with-entries below,
+     not a fixed height, so both panes scale together as the sidebar is
+     resized (see GraphViewer.js's resizable-pane embed). */
+  flex:2 1 0;min-height:0;border:none;resize:none;
+  padding:12px;font-size:12px;line-height:1.6;
+  font-family:inherit;background:#fafaf8;color:#333;
+  outline:none;
+}
+#notes-with-entries{
+  border-top:1px solid #e8e8e0;flex:3 1 0;min-height:0;overflow-y:auto;
+}
+.note-empty-hint{padding:12px;color:#aaa;font-size:11px;font-style:italic}
+.note-entry{
+  padding:6px 12px;cursor:pointer;
+  border-bottom:1px solid #f0f0e8;
+  font-size:11px;
+}
+.note-entry:hover{background:#f0efe8}
+.note-entry .note-node{font-weight:600;color:#555;display:flex;justify-content:space-between;align-items:center}
+.note-entry .note-ts{font-weight:400;color:#bbb;font-size:10px}
+.note-entry .note-preview{color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── kind badge colours in sidebar ── */
+.primitive-k{background:#e8f5e9;color:#2e7d32}
+.concept-k{background:#e3f2fd;color:#1565c0}
+.application-k{background:#fff3e0;color:#ef6c00}
+/* ── concept detail panel ── */
+#concept-detail{margin-top:14px;border-top:1px solid #e8e8e0;padding-top:10px;}
+#concept-iframe{width:100%;height:500px;border:1px solid #e0e0d8;border-radius:4px;margin-top:6px;display:block;}
+.concept-not-found{color:#e57373;font-size:12px;padding:6px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT: learning path sidebar -->
+<aside id="path-sidebar">
+  <div id="path-header">
+    <h1>Learning Path</h1>
+    <div class="domain-name">graph</div>
+    <div id="path-count"></div>
+  </div>
+  <div id="path-steps">
+    <div class="hint">Click any node in the graph<br>to see its learning path</div>
+  </div>
+</aside>
+
+<!-- CENTRE TOP: concept graph -->
+<div id="graph-panel">
+  <div id="graph-container"></div>
+  <button class="graph-recenter-btn" onclick="reCenterGraph()" title="Re-fit the graph to the viewport">Re-Center</button>
+</div>
+
+<!-- CENTRE BOTTOM: explanation panel -->
+<div id="explain-panel">
+  <div class="empty">Select a node to see its definition, prerequisites, and learning context.</div>
+</div>
+
+<!-- RIGHT: notes sidebar -->
+<aside id="notes-sidebar">
+  <div id="notes-header">
+    <div id="notes-header-top">
+      <h2>Notes</h2>
+      <div>
+        <button class="nb-btn" id="nb-save-btn" onclick="saveNoteEntry()">Save</button>
+        <button class="nb-btn" id="nb-clear-btn" onclick="clearNoteInput()">Clear</button>
+        <button class="nb-btn" onclick="exportNotes()">Export</button>
+      </div>
+    </div>
+    <div id="notes-node-label">no node selected</div>
+  </div>
+  <textarea id="notes-textarea" placeholder="Type notes here, then click Save"></textarea>
+  <div id="notes-with-entries"></div>
+</aside>
+
+</div><!-- .app -->
+
+<script>
+const RAW = {"nodes": [{"id": "china_1842_treaty_nanjing", "label": "china 1842 treaty nanjing", "kind": "primitive", "tier": 0, "defines": "(1842) Treaty of Nanjing — Ends the First Opium War; China cedes Hong Kong to Britain,\nopens treaty ports, and pays a large indemnity, beginning the \"Century of Humiliation.\"\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "china_1850_taiping_rebellion", "label": "china 1850 taiping rebellion", "kind": "concept", "tier": 1, "defines": "(1850–1864) Taiping Rebellion — A massive civil war led by Hong Xiuquan against the Qing\nDynasty; an estimated 20–30 million die, making it one of the deadliest conflicts in\nhuman history.\n", "prereqs": ["china_1842_treaty_nanjing"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1856_second_opium_war", "label": "china 1856 second opium war", "kind": "concept", "tier": 2, "defines": "(1856–1860) Second Opium War — Britain and France defeat the Qing again; the Treaty of\nTientsin and the burning of the Summer Palace force further concessions, including\nlegalized opium trade and more treaty ports.\n", "prereqs": ["china_1850_taiping_rebellion"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1861_self_strengthening_movement_begins", "label": "china 1861 self strengthening movement begins", "kind": "concept", "tier": 3, "defines": "(1861) Self-Strengthening Movement Begins — Qing officials pursue limited industrial and\nmilitary modernization (arsenals, shipyards) while leaving the political system\nunchanged.\n", "prereqs": ["china_1856_second_opium_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1894_first_sino_japanese_war", "label": "china 1894 first sino japanese war", "kind": "concept", "tier": 4, "defines": "(1894–1895) First Sino-Japanese War — China loses control of Korea and is decisively\ndefeated by Japan; the Treaty of Shimonoseki cedes Taiwan and the Liaodong Peninsula and\nreveals the failure of self-strengthening reforms.\n", "prereqs": ["china_1861_self_strengthening_movement_begins"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1898_hundred_days_reform", "label": "china 1898 hundred days reform", "kind": "concept", "tier": 5, "defines": "(1898) Hundred Days' Reform — Emperor Guangxu attempts sweeping modernization reforms,\nbut Empress Dowager Cixi stages a coup and reverses them within 103 days.\n", "prereqs": ["china_1894_first_sino_japanese_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1899_boxer_rebellion", "label": "china 1899 boxer rebellion", "kind": "concept", "tier": 6, "defines": "(1899–1901) Boxer Rebellion — An anti-foreign, anti-Christian uprising is crushed by the\nEight-Nation Alliance; the Boxer Protocol imposes crushing indemnities and further\nforeign military presence.\n", "prereqs": ["china_1898_hundred_days_reform"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1905_abolition_imperial_examination_system", "label": "china 1905 abolition imperial examination system", "kind": "concept", "tier": 7, "defines": "(1905) Abolition of the Imperial Examination System — The centuries-old civil service\nexam is ended as part of late Qing reforms, dismantling the traditional path to\nbureaucratic power.\n", "prereqs": ["china_1899_boxer_rebellion"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1911_xinhai_revolution_qing_abdication", "label": "china 1911 xinhai revolution qing abdication", "kind": "concept", "tier": 8, "defines": "(1911–1912) Xinhai Revolution & Qing Abdication — A revolution topples the Qing Dynasty;\nthe last emperor, Puyi, abdicates, and the Republic of China is established under Sun\nYat-sen, ending over two millennia of imperial rule.\n", "prereqs": ["china_1905_abolition_imperial_examination_system"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1915_twenty_one_demands", "label": "china 1915 twenty one demands", "kind": "concept", "tier": 9, "defines": "(1915) Twenty-One Demands — Japan issues a secret ultimatum seeking to extend control\nover Manchuria and Shandong, effectively reducing China toward a Japanese protectorate.\n", "prereqs": ["china_1911_xinhai_revolution_qing_abdication"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1916_warlord_era", "label": "china 1916 warlord era", "kind": "concept", "tier": 10, "defines": "(1916–1928) Warlord Era — Following Yuan Shikai's death, China fragments as regional\nmilitary commanders (warlords) vie for control, weakening central authority.\n", "prereqs": ["china_1915_twenty_one_demands"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1919_may_fourth_movement", "label": "china 1919 may fourth movement", "kind": "concept", "tier": 11, "defines": "(1919) May Fourth Movement — Student-led protests erupt over the Treaty of Versailles\nawarding Shandong to Japan instead of returning it to China, sparking a broader cultural\nand political awakening.\n", "prereqs": ["china_1916_warlord_era"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1921_chinese_communist_party_founded", "label": "china 1921 chinese communist party founded", "kind": "concept", "tier": 12, "defines": "(1921) Chinese Communist Party Founded — The CCP is established in Shanghai, laying the\ngroundwork for decades of political conflict with the Nationalists (Kuomintang).\n", "prereqs": ["china_1919_may_fourth_movement"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1926_northern_expedition", "label": "china 1926 northern expedition", "kind": "concept", "tier": 13, "defines": "(1926–1928) Northern Expedition — The Kuomintang, led by Chiang Kai-shek, launches a\nmilitary campaign to defeat the warlords and reunify China under Nationalist rule.\n", "prereqs": ["china_1921_chinese_communist_party_founded"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1927_shanghai_massacre_start_civil_war", "label": "china 1927 shanghai massacre start civil war", "kind": "concept", "tier": 14, "defines": "(1927) Shanghai Massacre & Start of the Civil War — Chiang Kai-shek purges Communists\nfrom the Kuomintang alliance, triggering the long Chinese Civil War between Nationalists\nand Communists.\n", "prereqs": ["china_1926_northern_expedition"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1931_mukden_incident_invasion_manchuria", "label": "china 1931 mukden incident invasion manchuria", "kind": "concept", "tier": 15, "defines": "(1931) Mukden Incident & Invasion of Manchuria — Japan stages a pretext to invade and\noccupy Manchuria, establishing the puppet state of Manchukuo.\n", "prereqs": ["china_1927_shanghai_massacre_start_civil_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1934_long_march", "label": "china 1934 long march", "kind": "concept", "tier": 16, "defines": "(1934–1935) The Long March — Communist forces retreat roughly 9,000 km under Nationalist\npressure; Mao Zedong emerges as the CCP's paramount leader.\n", "prereqs": ["china_1931_mukden_incident_invasion_manchuria"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1937_marco_polo_bridge_incident_nanjing", "label": "china 1937 marco polo bridge incident nanjing", "kind": "concept", "tier": 17, "defines": "(1937) Marco Polo Bridge Incident & Nanjing Massacre — A skirmish near Beijing ignites\nfull-scale war with Japan (Second Sino-Japanese War); Japanese forces capture Nanjing\nand massacre hundreds of thousands of civilians and disarmed soldiers.\n", "prereqs": ["china_1934_long_march"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1937_second_sino_japanese_war", "label": "china 1937 second sino japanese war", "kind": "concept", "tier": 18, "defines": "(1937–1945) Second Sino-Japanese War — China fights a prolonged, devastating war against\nJapanese occupation, with Nationalists and Communists forming an uneasy united front\nagainst the common enemy.\n", "prereqs": ["china_1937_marco_polo_bridge_incident_nanjing"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_1945_japans_surrender", "label": "china 1945 japans surrender", "kind": "concept", "tier": 19, "defines": "(1945) Japan's Surrender — Japan's defeat in WWII ends its occupation of China, but\nfighting between Nationalists and Communists resumes almost immediately, setting up the\nfinal phase of the Chinese Civil War.\n", "prereqs": ["china_1937_second_sino_japanese_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}], "edges": [{"from": "china_1842_treaty_nanjing", "to": "china_1850_taiping_rebellion"}, {"from": "china_1850_taiping_rebellion", "to": "china_1856_second_opium_war"}, {"from": "china_1856_second_opium_war", "to": "china_1861_self_strengthening_movement_begins"}, {"from": "china_1861_self_strengthening_movement_begins", "to": "china_1894_first_sino_japanese_war"}, {"from": "china_1894_first_sino_japanese_war", "to": "china_1898_hundred_days_reform"}, {"from": "china_1898_hundred_days_reform", "to": "china_1899_boxer_rebellion"}, {"from": "china_1899_boxer_rebellion", "to": "china_1905_abolition_imperial_examination_system"}, {"from": "china_1905_abolition_imperial_examination_system", "to": "china_1911_xinhai_revolution_qing_abdication"}, {"from": "china_1911_xinhai_revolution_qing_abdication", "to": "china_1915_twenty_one_demands"}, {"from": "china_1915_twenty_one_demands", "to": "china_1916_warlord_era"}, {"from": "china_1916_warlord_era", "to": "china_1919_may_fourth_movement"}, {"from": "china_1919_may_fourth_movement", "to": "china_1921_chinese_communist_party_founded"}, {"from": "china_1921_chinese_communist_party_founded", "to": "china_1926_northern_expedition"}, {"from": "china_1926_northern_expedition", "to": "china_1927_shanghai_massacre_start_civil_war"}, {"from": "china_1927_shanghai_massacre_start_civil_war", "to": "china_1931_mukden_incident_invasion_manchuria"}, {"from": "china_1931_mukden_incident_invasion_manchuria", "to": "china_1934_long_march"}, {"from": "china_1934_long_march", "to": "china_1937_marco_polo_bridge_incident_nanjing"}, {"from": "china_1937_marco_polo_bridge_incident_nanjing", "to": "china_1937_second_sino_japanese_war"}, {"from": "china_1937_second_sino_japanese_war", "to": "china_1945_japans_surrender"}]};
+const DOMAIN_KEY = "graph";
+const GRAPH_LAYOUT = "timeline";
+
+// ── index ──────────────────────────────────────────────────────────────────
+const nodeIndex = {};
+RAW.nodes.forEach(n => nodeIndex[n.id] = n);
+
+const prereqOf  = {};  // id → ids that are direct prerequisites OF id
+const dependsOn = {};  // id → ids that id feeds into
+RAW.nodes.forEach(n => { prereqOf[n.id] = []; dependsOn[n.id] = []; });
+RAW.edges.forEach(e => {
+  prereqOf[e.to].push(e.from);
+  dependsOn[e.from].push(e.to);
+});
+
+// ── BFS longest-path levels (fixes application nodes at wrong tier) ─────────
+const bfsLevels = (() => {
+  const levels = {};
+  const successors = {};
+  RAW.nodes.forEach(n => { levels[n.id] = -1; successors[n.id] = []; });
+  RAW.edges.forEach(e => successors[e.from].push(e.to));
+  const sources = RAW.nodes.filter(n => !RAW.edges.some(e => e.to === n.id));
+  const queue = sources.map(n => n.id);
+  queue.forEach(n => levels[n] = 0);
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const succ of successors[cur]) {
+      const nl = levels[cur] + 1;
+      if (levels[succ] < nl) { levels[succ] = nl; queue.push(succ); }
+    }
+  }
+  return levels;
+})();
+
+// ── graph algorithms ────────────────────────────────────────────────────────
+function getAncestors(targetId) {
+  const visited = new Set();
+  const queue = [targetId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const p of prereqOf[cur])
+      if (!visited.has(p)) { visited.add(p); queue.push(p); }
+  }
+  return visited;
+}
+
+function topoSort(nodeSet) {
+  const inDeg = {};
+  nodeSet.forEach(n => inDeg[n] = 0);
+  nodeSet.forEach(n => { for (const p of prereqOf[n]) if (nodeSet.has(p)) inDeg[n]++; });
+  const reach = {};
+  nodeSet.forEach(n => {
+    let r = 0;
+    nodeSet.forEach(m => { if (m !== n && getAncestors(m).has(n)) r++; });
+    reach[n] = r;
+  });
+  const heap = [];
+  nodeSet.forEach(n => { if (inDeg[n] === 0) heap.push(n); });
+  heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+  const result = [];
+  while (heap.length) {
+    const node = heap.shift();
+    result.push(node);
+    for (const succ of dependsOn[node]) {
+      if (!nodeSet.has(succ)) continue;
+      if (--inDeg[succ] === 0) {
+        heap.push(succ);
+        heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+      }
+    }
+  }
+  return result;
+}
+
+// Read once, up front — used both for the network's own edge-curvature
+// hint below and by _layoutTimeline() later. Settings-page preference
+// (src/pages/Settings.js's getTimelineOrientation()); irrelevant for the
+// default "graph" layout.
+let TIMELINE_ORIENTATION = 'vertical';
+try {
+  TIMELINE_ORIENTATION = localStorage.getItem('cb-timeline-orientation') === 'horizontal' ? 'horizontal' : 'vertical';
+} catch (_) {}
+
+// ── vis.js network ──────────────────────────────────────────────────────────
+const container = document.getElementById('graph-container');
+// vis-network renders a node's `title` tooltip via the DOM node's
+// innerText (verified against the vis-network@9.1.9 bundle itself — it
+// does NOT interpret the string as HTML), so no escaping is needed here;
+// escaping it (an earlier version of this code did) actively backfires,
+// since innerText doesn't decode HTML entities back to characters —
+// "it's" would show up literally as "it&#39;s". Wrapping is handled by
+// the .vis-tooltip CSS override below, not here.
+const visNodes = new vis.DataSet(RAW.nodes.map(n => ({
+  id: n.id,
+  label: n.label.replace(/ /g, '\n'),
+  level: bfsLevels[n.id] !== undefined ? bfsLevels[n.id] : n.tier,
+  color: n.color,
+  font: n.font,
+  shape: n.kind === 'concept' ? 'ellipse' : 'box',
+  title: n.defines || undefined,
+})));
+const visEdges = new vis.DataSet(RAW.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  arrows: 'to', color: {color: '#c8ccd4'}, width: 1,
+})));
+// Edge curvature direction should follow whichever axis is the *main*
+// (sequence) axis — vertical for the default graph layout and a
+// vertical-orientation timeline, horizontal for a horizontal-orientation
+// timeline — otherwise the zig-zag connectors look bowed the wrong way.
+const _edgeForceDirection = (GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal') ? 'horizontal' : 'vertical';
+// hierarchical.enabled stays false: _layoutGraph()/_layoutTimeline() below
+// already set every node's final x/y explicitly via moveNode() once
+// 'afterDrawing' fires, so vis-network's own hierarchical engine would be
+// redundant — worse, vis-network re-runs that engine on every DataSet
+// change (selectNode()'s visNodes.update()/visEdges.update() calls when
+// highlighting a clicked node's path), which silently overwrote the
+// manual timeline positions and collapsed every node onto the same
+// cross-axis column the moment a node was clicked. Positions are fully
+// hand-computed below; the built-in layout engine has nothing to add and
+// only fights the manual one if left on.
+const network = new vis.Network(container, {nodes: visNodes, edges: visEdges}, {
+  layout: { hierarchical: { enabled: false } },
+  physics: { enabled: false },
+  interaction: { hover: true, tooltipDelay: 150 },
+  edges: { smooth: { type: 'cubicBezier', forceDirection: _edgeForceDirection } },
+});
+
+// Group nodes by their BFS tier — shared by both layouts below. Using the
+// *rank* of each distinct tier value (ti), not the raw tier number itself,
+// is what already made the compact layout's spacing even regardless of
+// gaps in the YAML's tier numbering — the timeline layout leans on that
+// same property to satisfy "don't treat the axis as a literal time scale".
+function _groupByTier() {
+  const byTier = {};
+  RAW.nodes.forEach(n => {
+    const tier = bfsLevels[n.id] ?? n.tier ?? 0;
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(n.id);
+  });
+  const tiers = Object.keys(byTier).map(Number).sort((a, b) => a - b);
+  return { byTier, tiers };
+}
+
+// Compact layout (default "graph"): group by tier, sort alphabetically,
+// left-align all nodes — a hierarchical prerequisite DAG.
+function _layoutGraph() {
+  const { byTier, tiers } = _groupByTier();
+  const spacing = 140;
+  const tierSep = 85;
+  _mainAxisSpacing = tierSep;
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const y = ti * tierSep;
+    ids.forEach((id, i) => {
+      network.moveNode(id, i * spacing, y);
+    });
+  });
+}
+
+// Timeline layout ("layout: timeline" in graph.yaml): a linear chain of
+// stops — main axis position is the tier's *rank* (evenly spaced, not
+// scaled to any real date/duration — see graph.yaml's own tier field,
+// which is just a sequence index here, not a year), alternating to either
+// side of the centerline on the cross axis so consecutive stops zig-zag
+// rather than overlap. The zig-zag path traced by the connecting edges
+// *is* the visual timeline — no separate straight guide line is drawn.
+// Orientation (vertical: top-to-bottom main axis, or horizontal:
+// left-to-right) is a Settings-page preference (src/pages/Settings.js's
+// getTimelineOrientation()), read from localStorage here since it can
+// change without regenerating this static page.
+function _layoutTimeline() {
+  const { byTier, tiers } = _groupByTier();
+  const mainSep = 140;
+  const crossOffset = 90;
+  const withinTierSpacing = 60;
+  _mainAxisSpacing = mainSep;
+
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const main = ti * mainSep;
+    const cross = (ti % 2 === 0 ? -1 : 1) * crossOffset;
+    ids.forEach((id, i) => {
+      // More than one event sharing a tier: spread them along the cross
+      // axis around that tier's alternating offset instead of stacking.
+      const spread = (i - (ids.length - 1) / 2) * withinTierSpacing;
+      if (TIMELINE_ORIENTATION === 'horizontal') {
+        network.moveNode(id, main, cross + spread);
+      } else {
+        network.moveNode(id, cross + spread, main);
+      }
+    });
+  });
+}
+
+// network.fit() alone zooms out to fit every node/tier in the viewport —
+// fine for a small graph, but for a large one it shrinks nodes/labels past
+// legibility. This floors the scale so the initial view shows roughly
+// DESIRED_VISIBLE_TIERS tiers along the layout's main axis instead of the
+// whole graph crammed in: a small graph that already fits within that many
+// tiers is untouched (fit's own scale wins), a large one defaults to a
+// legible subset instead of the whole graph in miniature. Sized off
+// _mainAxisSpacing (set by whichever of _layoutGraph/_layoutTimeline just
+// ran) rather than a sampled node's pixel size — a single sampled node
+// (e.g. a short-label primitive) previously over- or under-estimated the
+// scale needed for the graph's *typical* node size.
+let _mainAxisSpacing = 140;
+function _applyLegibleFloor() {
+  if (RAW.nodes.length === 0) return;
+  const fitScale = network.getScale();
+  const container = document.getElementById('graph-container');
+  const horizontal = GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal';
+  const viewportMain = horizontal ? container.clientWidth : container.clientHeight;
+  const DESIRED_VISIBLE_TIERS = 4;
+  const targetScale = viewportMain / (_mainAxisSpacing * DESIRED_VISIBLE_TIERS);
+  const minLegibleScale = Math.min(targetScale, 1);
+  if (fitScale < minLegibleScale) {
+    network.moveTo({ scale: minLegibleScale, animation: false });
+  }
+}
+
+network.once('afterDrawing', function() {
+  if (GRAPH_LAYOUT === 'timeline') {
+    _layoutTimeline();
+  } else {
+    _layoutGraph();
+  }
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+});
+
+// A true fit-to-everything, regardless of graph size — what the Re-Center
+// button explicitly promises ("re-fit the graph to the viewport").
+function reCenterGraph() {
+  network.fit({ animation: true });
+}
+
+// Same fit, but re-applies the legibility floor — used by GraphViewer.js's
+// automatic post-layout re-fit (once the parent app's CSS relayout has
+// settled the iframe's real container size) so a large graph's default
+// view stays readable instead of being reset to the full, tiny-node fit.
+function fitLegible() {
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+}
+
+// The parent app's own CSS relayout (hiding graph.html's own chrome,
+// slotting the Notes drawer below the graph) doesn't necessarily finish
+// resizing #graph-container in a single frame — a further layout pass can
+// resize it again after GraphViewer.js's one requestAnimationFrame call to
+// fitLegible() already ran, and vis-network's own internal handling of a
+// container resize after the fact can leave the view at a scale neither
+// fit() nor our floor ever asked for. Re-applying the floor once the
+// container's size has actually stopped changing (debounced) catches
+// that; disconnecting after the first settle avoids overriding a user's
+// own manual zoom/pan on every later resize (e.g. dragging the Notes
+// drawer's gutter).
+if (typeof ResizeObserver !== 'undefined') {
+  const _graphContainer = document.getElementById('graph-container');
+  let _resizeSettleTimer = null;
+  const _ro = new ResizeObserver(() => {
+    clearTimeout(_resizeSettleTimer);
+    _resizeSettleTimer = setTimeout(() => {
+      _ro.disconnect();
+      try { fitLegible(); } catch (_) {}
+    }, 200);
+  });
+  _ro.observe(_graphContainer);
+}
+
+const C_PATH   = {background: '#fff9c4', border: '#f9a825'};
+const C_TARGET = {background: '#ffe082', border: '#e65100'};
+
+function resetColors() {
+  visNodes.update(RAW.nodes.map(n => ({id: n.id, color: n.color})));
+  visEdges.update(RAW.edges.map((e, i) => ({id: i, color: {color: '#c8ccd4'}, width: 1})));
+}
+
+// ── explanation panel ───────────────────────────────────────────────────────
+function renderExplanation(node) {
+  const kclass = node.kind;
+  const prereqChips = (node.prereqs || []).map(p =>
+    `<span class="prereq-chip" onclick="selectNode('${p}')">${p.replace(/_/g,' ')}</span>`
+  ).join('');
+  const metaItems = [
+    node.verifier ? `<span class="meta-item"><b>Verifier:</b> ${node.verifier}</span>` : '',
+    node.lab      ? `<span class="meta-item"><b>Lab:</b> ${node.lab}</span>` : '',
+  ].filter(Boolean).join('');
+  const playHtml = node.play
+    ? `<div class="section-label">Try it</div><div class="play-hint">${node.play}</div>`
+    : '';
+
+  const panel = document.getElementById('explain-panel');
+  panel.innerHTML = `
+    <div class="node-title">
+      <h2>${node.label}</h2>
+      <span class="badge ${kclass}">${kclass}</span>
+      <span class="tier-tag">BFS level ${bfsLevels[node.id] ?? node.tier}</span>
+    </div>
+    ${node.defines ? `<div class="defines">${node.defines}</div>` : ''}
+    ${prereqChips ? `<div class="section-label">Prerequisites</div><div class="prereq-list">${prereqChips}</div>` : ''}
+    ${metaItems ? `<div class="meta-row">${metaItems}</div>` : ''}
+    ${playHtml}
+  `;
+
+  // ── concept HTML detail ──
+  const conceptsBase = window.__cb_CONCEPTS_BASE;
+  const conceptUrls = window.__cb_CONCEPT_URLS || {};
+  const mappedUrl = conceptUrls[node.id];
+  if (mappedUrl || conceptsBase) {
+    const conceptUrl = mappedUrl || (conceptsBase + 'concept_' + encodeURIComponent(node.id) + '.html');
+    const detail = document.createElement('div');
+    detail.id = 'concept-detail';
+    detail.innerHTML = '<div class="section-label">Concept Detail</div><div class="concept-loading" style="color:#aaa;font-size:12px;padding:6px 0">Loading…</div>';
+    panel.appendChild(detail);
+    fetch(conceptUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.text();
+      })
+      .then(html => {
+        const slot = detail.querySelector('.concept-loading');
+        if (!slot) return;
+        // Vite dev server returns the SPA index.html (200) for missing static files.
+        // Verify we got a real concept page by checking for a known marker.
+        if (html.includes('spl-credit') || html.includes('Powered by')) {
+          const iframe = document.createElement('iframe');
+          iframe.id = 'concept-iframe';
+          iframe.src = conceptUrl;
+          slot.replaceWith(iframe);
+        } else {
+          slot.className = 'concept-not-found';
+          slot.textContent = 'Content not found — generate it first.';
+        }
+      })
+      .catch(() => {
+        const slot = detail.querySelector('.concept-loading');
+        if (slot) { slot.className = 'concept-not-found'; slot.textContent = 'Content not found — generate it first.'; }
+      });
+  }
+}
+
+// ── learning path sidebar ───────────────────────────────────────────────────
+function renderPathSidebar(orderedPath, targetId) {
+  const stepsEl = document.getElementById('path-steps');
+  const countEl = document.getElementById('path-count');
+  countEl.textContent = orderedPath.length
+    ? `${orderedPath.length} step${orderedPath.length !== 1 ? 's' : ''} to learn first`
+    : 'Root concept — no prerequisites';
+
+  const target = nodeIndex[targetId];
+  const kc = k => `${k.charAt(0).toUpperCase() + k.slice(1)}`;
+
+  stepsEl.innerHTML = orderedPath.map((n, i) => {
+    const nd = nodeIndex[n];
+    return `<div class="step-item" onclick="selectNode('${n}')">
+      <span class="step-num">${i + 1}.</span>
+      <div>
+        <div class="step-label">${nd.label}
+          <span class="step-kind ${nd.kind}-k">${nd.kind}</span>
+        </div>
+        ${nd.defines ? `<div class="step-def">${nd.defines}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div class="step-item target">
+    <span class="step-num">▶</span>
+    <div>
+      <div class="step-label">${target.label}
+        <span class="step-kind ${target.kind}-k">${target.kind}</span>
+      </div>
+      ${target.defines ? `<div class="step-def">${target.defines}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── notes (localStorage) ────────────────────────────────────────────────────
+// Each node's notes are an append-only history of timestamped entries, not
+// a single overwritable value — Save (explicit, not triggered on every
+// keystroke) appends a new entry and clears the input, so writing a
+// follow-up thought later never clobbers what was already saved for that
+// node. See _parseEntries for the migration from the old single-note
+// format this replaces.
+let currentNodeId = null;
+
+function noteKey(nodeId) { return `concept_notes_${DOMAIN_KEY}_${nodeId}`; }
+
+function _parseEntries(raw) {
+  if (!raw) return [];
+  try {
+    const d = JSON.parse(raw);
+    if (Array.isArray(d)) return d;
+    // Legacy single-note format ({text, ts}) written before notes became
+    // an entry history — migrate it in place as a one-entry history
+    // instead of silently discarding whatever was already saved there.
+    if (d && typeof d === 'object' && d.text) return [{ text: d.text, ts: d.ts || '' }];
+    return [];
+  } catch (_) {
+    return raw ? [{ text: raw, ts: '' }] : [];
+  }
+}
+
+// Used by GraphViewer.js's _wireNoteHistoryBridge (parent app embed) to
+// pull one specific past entry's full text into the "Note Detail" tab —
+// a top-level `function` declaration so it lands on this iframe's window
+// (see that file's comment on why `const`/`let` don't).
+function getEntryText(nodeId, ts) {
+  const entry = _parseEntries(localStorage.getItem(noteKey(nodeId))).find(e => e.ts === ts);
+  return entry ? entry.text : '';
+}
+
+function saveNoteEntry() {
+  if (!currentNodeId) return;
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value;
+  if (!text.trim()) return;
+  const entries = _parseEntries(localStorage.getItem(noteKey(currentNodeId)));
+  entries.push({ text, ts: new Date().toISOString() });
+  localStorage.setItem(noteKey(currentNodeId), JSON.stringify(entries));
+  ta.value = '';
+  renderNoteHistory(currentNodeId);
+  const btn = document.getElementById('nb-save-btn');
+  if (btn) { btn.textContent = 'Saved!'; setTimeout(() => { btn.textContent = 'Save'; }, 1000); }
+}
+
+// Clears the draft in the input box only — the saved entry history is
+// untouched (there's no single "the note" to delete any more, just past
+// entries, none of which this button targets).
+function clearNoteInput() {
+  document.getElementById('notes-textarea').value = '';
+}
+
+function _fmtTs(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+// A note's text is whatever the reader typed into the textarea, stored
+// straight to localStorage with no sanitization — so renderNoteHistory's
+// preview has to escape it before it goes into innerHTML, even though
+// today's writer/reader is the same person in the same browser. Same
+// reasoning as this app's own src/lib/html.js escapeHtml.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// All saved entries for ONE node (the currently-selected one), most recent
+// first — not a cross-node index. data-node-id/data-ts on each row are read
+// by GraphViewer.js's _wireNoteHistoryBridge (the app embed's "click a past
+// entry to view its full text in the Note Detail tab" feature) via
+// getEntryText() above; unused, harmless in the standalone page.
+function renderNoteHistory(nodeId) {
+  const container = document.getElementById('notes-with-entries');
+  const entries = _parseEntries(localStorage.getItem(noteKey(nodeId)));
+  if (!entries.length) {
+    container.innerHTML = '<div class="note-empty-hint">No saved entries yet for this concept.</div>';
+    return;
+  }
+  container.innerHTML = entries.slice().reverse().map(e =>
+    `<div class="note-entry" data-node-id="${_escHtml(nodeId)}" data-ts="${_escHtml(e.ts)}">
+      <div class="note-node"><span class="note-ts">${_fmtTs(e.ts)}</span></div>
+      <div class="note-preview">${_escHtml(e.text.slice(0, 80))}</div>
+    </div>`
+  ).join('');
+}
+
+function switchNotes(nodeId) {
+  // No implicit carry-over save of whatever's in the input when switching
+  // nodes — Save is explicit now (see saveNoteEntry), so an unsaved draft
+  // is intentionally discarded, same as closing a document without saving.
+  currentNodeId = nodeId;
+  document.getElementById('notes-textarea').value = '';
+  document.getElementById('notes-node-label').textContent =
+    nodeIndex[nodeId]?.label || nodeId;
+  renderNoteHistory(nodeId);
+}
+
+function exportNotes() {
+  const notes = {};
+  RAW.nodes.forEach(n => {
+    const v = localStorage.getItem(noteKey(n.id));
+    if (v) notes[n.id] = v;
+  });
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${DOMAIN_KEY}_notes.json`;
+  a.click();
+}
+
+// ── unified node select ─────────────────────────────────────────────────────
+function selectNode(nodeId) {
+  if (!nodeIndex[nodeId]) return;
+  network.selectNodes([nodeId]);
+  handleSelect(nodeId);
+}
+
+function handleSelect(targetId) {
+  const node = nodeIndex[targetId];
+
+  renderExplanation(node);
+  switchNotes(targetId);
+
+  const ancestors = getAncestors(targetId);
+  const pathSet = new Set([...ancestors]);
+  const orderedPath = topoSort(pathSet);
+
+  renderPathSidebar(orderedPath, targetId);
+
+  resetColors();
+  visNodes.update(orderedPath.map(n => ({id: n, color: C_PATH})));
+  visNodes.update([{id: targetId, color: C_TARGET}]);
+  visEdges.update(RAW.edges.map((e, i) => {
+    const inPath = pathSet.has(e.from) && (pathSet.has(e.to) || e.to === targetId);
+    return {id: i, color: {color: inPath ? '#f9a825' : '#c8ccd4'}, width: inPath ? 2 : 1};
+  }));
+}
+
+network.on('click', params => {
+  if (params.nodes.length) handleSelect(params.nodes[0]);
+});
+
+// initial empty state — real content loads once a node is selected (see
+// switchNotes -> renderNoteHistory)
+document.getElementById('notes-with-entries').innerHTML =
+  '<div class="note-empty-hint">Select a concept to see or add notes.</div>';
+
+// When viewed directly (not in an iframe), inject a back link next to the
+// "Learning Path" heading so it doesn't look like a title-bar element.
+if (window.parent === window) {
+  var h1 = document.querySelector('#path-header h1');
+  if (h1) {
+    var backLink = document.createElement('a');
+    backLink.href = '../../';
+    backLink.textContent = '← App';
+    backLink.style.cssText = [
+      'font-size:10px','color:#2563eb','font-family:system-ui,sans-serif',
+      'text-decoration:none','font-weight:400','letter-spacing:normal',
+      'text-transform:none','white-space:nowrap','flex-shrink:0'
+    ].join(';');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:baseline;gap:8px;';
+    h1.parentNode.insertBefore(row, h1);
+    row.appendChild(h1);
+    row.appendChild(backLink);
+  }
+}
+</script>
+</body>
+</html>

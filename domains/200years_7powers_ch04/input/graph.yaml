@@ -1,0 +1,215 @@
+domain: 200years_7powers_ch04
+layout: timeline
+primitives:
+  russia_1853_crimean_war:
+    defines: |
+      (1853–1856) Crimean War — Russia is defeated by an alliance of Britain, France, and the
+      Ottoman Empire, exposing its military and industrial backwardness and spurring calls for
+      reform.
+    tier: 0
+concepts:
+  russia_1855_alexander_ii_becomes_tsar:
+    composed_of:
+    - russia_1853_crimean_war
+    defines: |
+      (1855) Alexander II Becomes Tsar — The new Tsar, shaken by the Crimean defeat, begins an
+      era of "Great Reforms."
+    tier: 1
+  russia_1861_emancipation_serfs:
+    composed_of:
+    - russia_1855_alexander_ii_becomes_tsar
+    defines: |
+      (1861) Emancipation of the Serfs — Alexander II abolishes serfdom, freeing over 20
+      million peasants, though redemption payments and land shortages leave many in continued
+      poverty.
+    tier: 2
+  russia_1863_january_uprising_poland:
+    composed_of:
+    - russia_1861_emancipation_serfs
+    defines: |
+      (1863–1864) January Uprising (Poland) — A Polish rebellion against Russian rule is
+      crushed, leading to harsher Russification policies in Russian Poland.
+    tier: 3
+  russia_1864_judicial_zemstvo_reforms:
+    composed_of:
+    - russia_1863_january_uprising_poland
+    defines: |
+      (1864) Judicial & Zemstvo Reforms — Alexander II introduces independent courts and
+      elected local government councils (*zemstvos*), modernizing local administration.
+    tier: 4
+  russia_1870_reform_reaction:
+    composed_of:
+    - russia_1864_judicial_zemstvo_reforms
+    defines: |
+      (1870s) Reform and Reaction — Tsar Alexander II continues reforms, but assassination
+      attempts lead to a crackdown. Expansion into Central Asia ("The Great Game") continues.
+    tier: 5
+  russia_1881_assassination_alexander_ii:
+    composed_of:
+    - russia_1870_reform_reaction
+    defines: |
+      (1881) Assassination of Alexander II — The Tsar is killed by terrorists. His son,
+      Alexander III, rolls back reforms and initiates a policy of "Russification" to suppress
+      minority cultures.
+    tier: 6
+  russia_1891_russian_famine:
+    composed_of:
+    - russia_1881_assassination_alexander_ii
+    defines: |
+      (1891–1892) Russian Famine — Crop failure along the Volga kills roughly 375,000–500,000
+      people; the government's inadequate response fuels growing public criticism of the
+      autocracy.
+    tier: 7
+  russia_1894_nicholas_ii_becomes_tsar:
+    composed_of:
+    - russia_1891_russian_famine
+    defines: |
+      (1894) Nicholas II becomes Tsar — The last Tsar ascends the throne. He is reactionary
+      and ill-prepared to rule, refusing constitutional monarchy.
+    tier: 8
+  russia_1903_bolshevik_menshevik_split:
+    composed_of:
+    - russia_1894_nicholas_ii_becomes_tsar
+    defines: |
+      (1903) Bolshevik–Menshevik Split — The Russian Social Democratic Labour Party splits
+      over revolutionary strategy; Lenin's Bolshevik faction favors a small, disciplined
+      vanguard party, setting up the organizational core that seizes power in 1917.
+    tier: 9
+  russia_1904_russo_japanese_war:
+    composed_of:
+    - russia_1903_bolshevik_menshevik_split
+    defines: |
+      (1904–1905) Russo-Japanese War — Russia seeks a warm-water port but is shockingly
+      defeated by Japan. The defeat destroys the prestige of the Russian military and sparks
+      domestic unrest.
+    tier: 10
+  russia_1905_1905_revolution:
+    composed_of:
+    - russia_1904_russo_japanese_war
+    defines: |
+      (1905) The 1905 Revolution — "Bloody Sunday" massacre sparks nationwide strikes and
+      uprisings. Nicholas II is forced to create the Duma (parliament), though he later
+      limited its power.
+    tier: 11
+  russia_1906_stolypins_reforms:
+    composed_of:
+    - russia_1905_1905_revolution
+    defines: |
+      (1906–1911) Stolypin's Reforms — Prime Minister Pyotr Stolypin pushes land reforms
+      letting peasants leave the commune and own land individually, aiming to create a stable
+      landowning class and defuse revolutionary pressure; his assassination in 1911 cuts the
+      reform program short.
+    tier: 12
+  russia_1914_russia_enters_wwi:
+    composed_of:
+    - russia_1906_stolypins_reforms
+    defines: |
+      (1914) Russia enters WWI — Russia mobilizes to defend Serbia. Initial patriotism fades
+      as the Russian army suffers catastrophic defeats against Germany.
+    tier: 13
+  russia_1917_russian_revolution:
+    composed_of:
+    - russia_1914_russia_enters_wwi
+    defines: |
+      (1917) The Russian Revolution — February: Workers strike; Tsar Nicholas II abdicates.
+      October: Bolsheviks (led by Lenin) overthrow the Provisional Government, promising
+      "Peace, Land, and Bread."
+    tier: 14
+  russia_1918_russian_civil_war:
+    composed_of:
+    - russia_1917_russian_revolution
+    defines: |
+      (1918–1922) Russian Civil War — The Red Army (Bolsheviks) fights the White Army
+      (Royalists, capitalists, democrats) and foreign intervenors. The Reds win, but the
+      country is devastated.
+    tier: 15
+  russia_1918_treaty_brest_litovsk:
+    composed_of:
+    - russia_1918_russian_civil_war
+    defines: |
+      (1918) Treaty of Brest-Litovsk — Russia exits WWI by ceding massive territories to
+      Germany.
+    tier: 16
+  russia_1921_kronstadt_rebellion_new_economic_policy:
+    composed_of:
+    - russia_1918_treaty_brest_litovsk
+    defines: |
+      (1921) Kronstadt Rebellion & the New Economic Policy — Sailors at the Kronstadt naval
+      base revolt against Bolshevik War Communism; Lenin crushes the rebellion but
+      simultaneously adopts the New Economic Policy (NEP), reintroducing limited private trade
+      and small-scale enterprise to revive the shattered economy.
+    tier: 17
+  russia_1922_formation_ussr:
+    composed_of:
+    - russia_1921_kronstadt_rebellion_new_economic_policy
+    defines: |
+      (1922) Formation of the USSR — The Union of Soviet Socialist Republics is officially
+      established.
+    tier: 18
+  russia_1924_death_lenin:
+    composed_of:
+    - russia_1922_formation_ussr
+    defines: |
+      (1924) Death of Lenin — Lenin dies. A power struggle begins between Leon Trotsky
+      (intellectual revolutionary) and Joseph Stalin (party bureaucrat).
+    tier: 19
+  russia_1928_first_five_year_plan:
+    composed_of:
+    - russia_1924_death_lenin
+    defines: |
+      (1928) First Five-Year Plan — Stalin abandons the NEP and launches a state-controlled
+      economy to force rapid industrialization. Private farms are collectivized, sparking mass
+      peasant resistance.
+    tier: 20
+  russia_1932_holodomor:
+    composed_of:
+    - russia_1928_first_five_year_plan
+    defines: |
+      (1932–1933) The Holodomor — Forced collectivization and punitive grain requisitioning
+      cause a devastating famine in Ukraine and other grain-producing regions, killing an
+      estimated 3–5 million people.
+    tier: 21
+  russia_1936_great_purge:
+    composed_of:
+    - russia_1932_holodomor
+    defines: |
+      (1936–1938) The Great Purge — Stalin eliminates perceived enemies. The Red Army
+      leadership is decimated (executed/imprisoned), weakening the military before WWII.
+      Millions sent to the Gulag.
+    tier: 22
+  russia_1939_molotov_ribbentrop_pact:
+    composed_of:
+    - russia_1936_great_purge
+    defines: |
+      (1939) Molotov-Ribbentrop Pact — USSR signs a non-aggression pact with Nazi Germany,
+      agreeing to divide Poland between them. The USSR also invades Finland (Winter War).
+    tier: 23
+  russia_1941_operation_barbarossa:
+    composed_of:
+    - russia_1939_molotov_ribbentrop_pact
+    defines: |
+      (1941) Operation Barbarossa — Hitler breaks the pact and invades the USSR. The Germans
+      advance rapidly, capturing huge territories. The Siege of Leningrad begins.
+    tier: 24
+  russia_1942_turning_point_stalingrad:
+    composed_of:
+    - russia_1941_operation_barbarossa
+    defines: |
+      (1942–1943) Turning Point (Stalingrad) — The Battle of Stalingrad ends in a decisive
+      Soviet victory, destroying the German 6th Army. The momentum shifts against Germany.
+    tier: 25
+  russia_1943_battle_kursk:
+    composed_of:
+    - russia_1942_turning_point_stalingrad
+    defines: |
+      (1943) Battle of Kursk — The largest tank battle in history. The Soviets win, ensuring
+      permanent strategic initiative on the Eastern Front.
+    tier: 26
+  russia_1945_victory_superpower_status:
+    composed_of:
+    - russia_1943_battle_kursk
+    defines: |
+      (1945) Victory & Superpower Status — The Red Army captures Berlin. The USSR suffers
+      roughly 27 million deaths but occupies Eastern Europe. Stalin meets FDR and Churchill at
+      Yalta.
+    tier: 27

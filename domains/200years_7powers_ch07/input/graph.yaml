@@ -1,0 +1,210 @@
+domain: 200years_7powers_ch07
+layout: timeline
+primitives:
+  usa_1845_annexation_texas:
+    defines: |
+      (1845) Annexation of Texas — The US annexes the Republic of Texas, inflaming tensions
+      with Mexico over the disputed southern border and slavery's expansion.
+    tier: 0
+concepts:
+  usa_1846_mexican_american_war:
+    composed_of:
+    - usa_1845_annexation_texas
+    defines: |
+      (1846–1848) Mexican-American War — The US defeats Mexico; the Treaty of Guadalupe
+      Hidalgo cedes California, Nevada, Utah, and most of Arizona/New Mexico — the Mexican
+      Cession — reopening the fight over slavery in new territories.
+    tier: 1
+  usa_1848_california_gold_rush:
+    composed_of:
+    - usa_1846_mexican_american_war
+    defines: |
+      (1848–1855) California Gold Rush — Gold discovery at Sutter's Mill triggers mass
+      migration west, rapid statehood for California (1850), and displacement of Native
+      peoples.
+    tier: 2
+  usa_1854_kansas_nebraska_act:
+    composed_of:
+    - usa_1848_california_gold_rush
+    defines: |
+      (1854) Kansas–Nebraska Act — Repeals the Missouri Compromise line, letting new
+      territories decide slavery by popular sovereignty; sparks violent conflict ("Bleeding
+      Kansas") and the founding of the Republican Party.
+    tier: 3
+  usa_1857_dred_scott_v_sandford:
+    composed_of:
+    - usa_1854_kansas_nebraska_act
+    defines: |
+      (1857) Dred Scott v. Sandford — The Supreme Court rules that Black Americans cannot be
+      citizens and Congress cannot ban slavery in the territories, deepening the sectional
+      crisis.
+    tier: 4
+  usa_1860_secession_crisis:
+    composed_of:
+    - usa_1857_dred_scott_v_sandford
+    defines: |
+      (1860–1861) Secession Crisis — Abraham Lincoln's election triggers eleven Southern
+      states to secede and form the Confederate States of America.
+    tier: 5
+  usa_1861_american_civil_war:
+    composed_of:
+    - usa_1860_secession_crisis
+    defines: |
+      (1861–1865) The American Civil War — War between the Union and the Confederacy over
+      slavery and states' rights. Over 600,000 die, making it the deadliest conflict in US
+      history.
+    tier: 6
+  usa_1863_emancipation_proclamation:
+    composed_of:
+    - usa_1861_american_civil_war
+    defines: |
+      (1863) Emancipation Proclamation — Lincoln declares enslaved people in Confederate
+      states free, reframing the war as a fight to end slavery and clearing the way for Black
+      enlistment in the Union Army.
+    tier: 7
+  usa_1865_union_victory_lincolns_assassination:
+    composed_of:
+    - usa_1863_emancipation_proclamation
+    defines: |
+      (1865) Union Victory, Lincoln's Assassination & 13th Amendment — The Confederacy
+      surrenders at Appomattox; Lincoln is assassinated days later; the 13th Amendment
+      abolishes slavery nationwide.
+    tier: 8
+  usa_1865_reconstruction:
+    composed_of:
+    - usa_1865_union_victory_lincolns_assassination
+    defines: |
+      (1865–1877) Reconstruction — The South is reorganized and reintegrated; the 14th and
+      15th Amendments grant citizenship and voting rights to Black men, but Reconstruction
+      ends with the Compromise of 1877, ushering in Jim Crow segregation.
+    tier: 9
+  usa_1867_alaska_purchase:
+    composed_of:
+    - usa_1865_reconstruction
+    defines: |
+      (1867) Alaska Purchase — The US buys Alaska from Russia, expanding its territory and
+      foreshadowing later Pacific-facing ambitions.
+    tier: 10
+  usa_1869_transcontinental_railroad_completed:
+    composed_of:
+    - usa_1867_alaska_purchase
+    defines: |
+      (1869) Transcontinental Railroad Completed — The Golden Spike links the eastern and
+      western US by rail, accelerating westward settlement, trade, and Native displacement.
+    tier: 11
+  usa_1870_gilded_age:
+    composed_of:
+    - usa_1869_transcontinental_railroad_completed
+    defines: |
+      (1870–1890) The Gilded Age — Era of rapid industrial growth, railroad expansion, and the
+      rise of "Robber Barons" (captains of industry). Massive immigration fueled the labor
+      force, creating significant wealth inequality.
+    tier: 12
+  usa_1890_closing_frontier:
+    composed_of:
+    - usa_1870_gilded_age
+    defines: |
+      (1890) Closing of the Frontier — The US Census Bureau declared the American frontier
+      "closed." This shifted American attention from domestic expansion to overseas
+      imperialism.
+    tier: 13
+  usa_1898_spanish_american_war:
+    composed_of:
+    - usa_1890_closing_frontier
+    defines: |
+      (1898) Spanish-American War — The US defeated Spain, acquiring Puerto Rico, Guam, and
+      the Philippines, and granting independence to Cuba (under US supervision). This marked
+      the debut of the US as a major imperial power.
+    tier: 14
+  usa_1901_progressive_era:
+    composed_of:
+    - usa_1898_spanish_american_war
+    defines: |
+      (1901–1909) The Progressive Era — Under Presidents Theodore Roosevelt and Taft, the
+      government began regulating big business (trust-busting), conserving natural resources,
+      and enacting consumer protection laws.
+    tier: 15
+  usa_1914_world_war_i_neutrality:
+    composed_of:
+    - usa_1901_progressive_era
+    defines: |
+      (1914–1917) World War I (Neutrality) — Initially neutral, the US profited from selling
+      arms to the Allies. Unrestricted submarine warfare by Germany eventually drew the US
+      into the war.
+    tier: 16
+  usa_1917_wwi_involvement:
+    composed_of:
+    - usa_1914_world_war_i_neutrality
+    defines: |
+      (1917–1918) WWI Involvement — The American Expeditionary Forces arrived in Europe,
+      providing fresh troops that helped break the stalemate and lead to an Allied victory.
+    tier: 17
+  usa_1920_19th_amendment_prohibition:
+    composed_of:
+    - usa_1917_wwi_involvement
+    defines: |
+      (1920) 19th Amendment & Prohibition — Women gained the right to vote nationwide.
+      Prohibition began, banning the sale of alcohol, leading to the rise of organized crime.
+    tier: 18
+  usa_1920_roaring_twenties:
+    composed_of:
+    - usa_1920_19th_amendment_prohibition
+    defines: |
+      (1920s) The Roaring Twenties — A period of economic prosperity, a booming stock market,
+      automobile culture (Ford Model T), and Jazz. However, it ended with the stock market
+      crash.
+    tier: 19
+  usa_1924_immigration_act_japanese_exclusion:
+    composed_of:
+    - usa_1920_roaring_twenties
+    defines: |
+      (1924) Immigration Act (Japanese Exclusion) — A national-origins quota law bars nearly
+      all immigration from Asia, including Japan; the exclusion of Japanese immigrants
+      specifically becomes a lasting grievance cited by Japanese nationalists in the run-up to
+      WWII.
+    tier: 20
+  usa_1929_great_depression:
+    composed_of:
+    - usa_1924_immigration_act_japanese_exclusion
+    defines: |
+      (1929) The Great Depression — The stock market crash triggered the worst economic
+      downturn in history. Banks failed, unemployment soared to 25%, and drought caused the
+      Dust Bowl.
+    tier: 21
+  usa_1933_new_deal:
+    composed_of:
+    - usa_1929_great_depression
+    defines: |
+      (1933–1939) The New Deal — President Franklin D. Roosevelt (FDR) launched a series of
+      government programs (Social Security, Works Progress Administration) to provide relief,
+      recovery, and reform.
+    tier: 22
+  usa_1939_neutrality_arsenal_democracy:
+    composed_of:
+    - usa_1933_new_deal
+    defines: |
+      (1939–1941) Neutrality to Arsenal of Democracy — While officially neutral in WWII, the
+      US passed the Lend-Lease Act to supply the Allies with food and weapons.
+    tier: 23
+  usa_1941_pearl_harbor:
+    composed_of:
+    - usa_1939_neutrality_arsenal_democracy
+    defines: |
+      (1941) Pearl Harbor — Japan attacked the US naval base in Hawaii. The US declared war on
+      Japan, and Germany/Italy declared war on the US, officially entering WWII.
+    tier: 24
+  usa_1944_d_day_g_i_bill:
+    composed_of:
+    - usa_1941_pearl_harbor
+    defines: |
+      (1944) D-Day & G.I. Bill — Allied forces invaded Normandy. The G.I. Bill was passed,
+      offering education and housing benefits to veterans, spurring post-war economic growth.
+    tier: 25
+  usa_1945_end_wwii_un_charter:
+    composed_of:
+    - usa_1944_d_day_g_i_bill
+    defines: |
+      (1945) End of WWII & UN Charter — Germany surrenders in May (V-E Day). US drops atomic
+      bombs on Hiroshima and Nagasaki; Japan surrenders in September (V-J Day). The US becomes
+      a founding member of the UN.
+    tier: 26
