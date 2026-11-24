@@ -1,0 +1,346 @@
+domain: 200years_7powers_ch05
+layout: timeline
+primitives:
+  japan_1853_perry_expedition_convention_kanagawa:
+    defines: |
+      (1853–1854) Perry Expedition & Convention of Kanagawa — US Commodore Matthew Perry's
+      fleet forces Japan to end over two centuries of isolation (*sakoku*) and open ports to
+      trade.
+    tier: 0
+concepts:
+  japan_1858_unequal_treaties:
+    composed_of:
+    - japan_1853_perry_expedition_convention_kanagawa
+    defines: |
+      (1858) Unequal Treaties — Japan is pressured into treaties (Harris Treaty and similar
+      with other powers) granting foreign extraterritoriality and fixed low tariffs, fueling
+      anti-shogunate sentiment.
+    tier: 1
+  japan_1866_satsuma_ch_sh_alliance:
+    composed_of:
+    - japan_1858_unequal_treaties
+    defines: |
+      (1866) Satsuma-Chōshū Alliance — Rival domains Satsuma and Chōshū secretly ally to
+      overthrow the Tokugawa Shogunate, setting up the Meiji Restoration.
+    tier: 2
+  japan_1868_meiji_restoration:
+    composed_of:
+    - japan_1866_satsuma_ch_sh_alliance
+    defines: |
+      (1868) Meiji Restoration — The Tokugawa Shogunate is overthrown and imperial rule is
+      restored under Emperor Meiji, launching rapid Westernization and industrialization.
+    tier: 3
+  japan_1871_abolition_han_system:
+    composed_of:
+    - japan_1868_meiji_restoration
+    defines: |
+      (1871) Abolition of the Han System — Feudal domains are replaced with centrally
+      controlled prefectures, consolidating national authority.
+    tier: 4
+  japan_1873_conscription_law_iwakura_missions:
+    composed_of:
+    - japan_1871_abolition_han_system
+    defines: |
+      (1873) Conscription Law & Iwakura Mission's Return — Japan adopts universal military
+      conscription; the returning Iwakura Mission pushes further modernization after studying
+      Western institutions abroad.
+    tier: 5
+  japan_1874_expedition_taiwan:
+    composed_of:
+    - japan_1873_conscription_law_iwakura_missions
+    defines: |
+      (1874) Expedition to Taiwan — Japan launches a punitive expedition against Taiwan in
+      retaliation for the murder of Ryukyuan sailors, testing its military modernization
+      against China's Qing Dynasty.
+    tier: 6
+  japan_1889_meiji_constitution:
+    composed_of:
+    - japan_1874_expedition_taiwan
+    defines: |
+      (1889) Meiji Constitution — Japan adopts a Prussian-modeled constitution granting the
+      military direct access to the Emperor independent of civilian cabinet oversight — the
+      specific institutional flaw that later lets the army bypass elected government in the
+      1930s.
+    tier: 7
+  japan_1894_first_sino_japanese_war:
+    composed_of:
+    - japan_1889_meiji_constitution
+    defines: |
+      (1894–1895) First Sino-Japanese War — Conflict over control of Korea. Japan decisively
+      defeats China.
+    tier: 8
+  japan_1895_treaty_shimonoseki:
+    composed_of:
+    - japan_1894_first_sino_japanese_war
+    defines: |
+      (1895) Treaty of Shimonoseki — China recognizes Korea's independence (paving the way for
+      Japanese annexation), and cedes Taiwan, the Pescadores, and the Liaodong Peninsula to
+      Japan.
+    tier: 9
+  japan_1900_boxer_rebellion:
+    composed_of:
+    - japan_1895_treaty_shimonoseki
+    defines: |
+      (1900) Boxer Rebellion — Japan joins the Eight-Nation Alliance to suppress the rebellion
+      in China. Japan provides the largest number of troops and gains a significant foothold
+      on the mainland.
+    tier: 10
+  japan_1904_russo_japanese_war:
+    composed_of:
+    - japan_1900_boxer_rebellion
+    defines: |
+      (1904–1905) Russo-Japanese War — Japan fights Russia for control of Manchuria and Korea.
+      Japan wins, becoming the first modern Asian power to defeat a European power.
+    tier: 11
+  japan_1910_annexation_korea:
+    composed_of:
+    - japan_1904_russo_japanese_war
+    defines: |
+      (1910) Annexation of Korea — Japan formally annexes the Korean Peninsula, beginning a
+      period of harsh colonial rule that lasts until 1945.
+    tier: 12
+  japan_1914_world_war_i_asia:
+    composed_of:
+    - japan_1910_annexation_korea
+    defines: |
+      (1914–1918) World War I in Asia — Japan seizes German colonial possessions in China
+      (Shandong Province) and the Pacific islands, expanding its sphere of influence.
+    tier: 13
+  japan_1915_twenty_one_demands:
+    composed_of:
+    - japan_1914_world_war_i_asia
+    defines: |
+      (1915) Twenty-One Demands — Japan issues a secret ultimatum to China, attempting to
+      extend its control over Manchuria and Shandong, effectively reducing China to a Japanese
+      protectorate (ultimately partially successful).
+    tier: 14
+  japan_1921_washington_naval_treaty:
+    composed_of:
+    - japan_1915_twenty_one_demands
+    defines: |
+      (1921–1922) Washington Naval Treaty — The treaty caps Japan's capital-ship tonnage at a
+      5:5:3 ratio against Britain and the USA, a settlement Japanese nationalists and the navy
+      resented as an imposed inferiority and later cited to justify rearmament.
+    tier: 15
+  japan_1923_great_kant_earthquake:
+    composed_of:
+    - japan_1921_washington_naval_treaty
+    defines: |
+      (1923) Great Kantō Earthquake — A massive earthquake devastates Tokyo and Yokohama,
+      killing over 100,000 people; the ensuing chaos includes mass violence against Korean and
+      Chinese residents and destabilizes the economy for years.
+    tier: 16
+  japan_1924_us_immigration_act_japanese_exclusion:
+    composed_of:
+    - japan_1923_great_kant_earthquake
+    defines: |
+      (1924) US Immigration Act (Japanese Exclusion) — The United States bars further Japanese
+      immigration outright, a diplomatic insult that Japanese nationalists cite for years
+      afterward as evidence the West would never treat Japan as an equal.
+    tier: 17
+  japan_1929_great_depression_japan:
+    composed_of:
+    - japan_1924_us_immigration_act_japanese_exclusion
+    defines: |
+      (1929–1931) The Great Depression in Japan — Collapsing silk exports and global demand
+      devastate the rural economy, fueling support for ultranationalist and militarist
+      movements that blame party politicians and business elites for the crisis.
+    tier: 18
+  japan_1931_mukden_incident:
+    composed_of:
+    - japan_1929_great_depression_japan
+    defines: |
+      (1931) Mukden Incident — Japanese agents stage a railway explosion in Manchuria as a
+      pretext to invade. Japan establishes the puppet state of Manchukuo in 1932.
+    tier: 19
+  japan_1932_unit_731:
+    composed_of:
+    - japan_1931_mukden_incident
+    defines: |
+      (1932–1945) Unit 731 — Under cover of the new puppet state of Manchukuo, the Imperial
+      Japanese Army's Kwantung Army establishes a biological- and chemical-warfare research
+      unit (formalized as Unit 731 in 1936) at Pingfang near Harbin, under Shirō Ishii. Over
+      the next thirteen years it conducts lethal experiments — vivisection without anesthesia,
+      deliberate infection with plague, cholera, anthrax, and typhoid, frostbite trials — on
+      thousands of Chinese, Soviet, Korean, and Allied prisoners, with field trials also
+      releasing plague-infected fleas over Chinese towns, killing many more beyond the
+      facility's walls. After Japan's surrender, US occupation authorities grant Ishii and most
+      senior staff immunity in exchange for their research data, and no one from the unit is
+      prosecuted at the Tokyo war crimes tribunal.
+    tier: 20
+  japan_1932_comfort_women_system:
+    composed_of:
+    - japan_1932_unit_731
+    defines: |
+      (1932–1945) Comfort Women System — Beginning in Shanghai in 1932 in the wake of Japanese
+      troops' mass rape of Chinese women there, the Imperial Japanese Army establishes and
+      expands a network of military-run brothels ("comfort stations") across every territory
+      it occupies — China, Korea, Taiwan, the Philippines, the Dutch East Indies, Malaya,
+      Thailand, Burma, Hong Kong, and French Indochina. Historians estimate 20,000 to
+      200,000-plus women and girls, many recruited by deception (false job advertisements for
+      factory or nursing work), coercion, or outright abduction, were forced into sexual
+      slavery for Japanese soldiers; Korean women, drawn from a colony Japan had annexed since
+      1910, make up the largest documented share, alongside large numbers of Chinese women and
+      victims from Taiwan, the Philippines, and elsewhere in occupied Asia. Japan denied the
+      system's existence for decades until survivor Kim Hak-sun's 1991 public testimony in
+      South Korea broke the postwar silence and launched an international redress movement;
+      Japan's government issued a formal acknowledgment of military involvement and coercion in
+      the 1993 Kōno Statement and funded the Asian Women's Fund (1995) for survivors, but
+      subsequent Japanese officials have periodically walked back or minimized that
+      acknowledgment, and most survivors and advocates regard neither gesture as the direct
+      state apology and reparation they have sought.
+    tier: 21
+  japan_1932_january_28_incident:
+    composed_of:
+    - japan_1932_comfort_women_system
+    defines: |
+      (1932) January 28 Incident — Japan attacks Shanghai to divert international attention
+      from Manchuria.
+    tier: 22
+  japan_1932_may_15_incident:
+    composed_of:
+    - japan_1932_january_28_incident
+    defines: |
+      (1932) May 15 Incident — Young naval officers assassinate Prime Minister Inukai
+      Tsuyoshi, ending the era of party-led civilian cabinets and marking the military's
+      growing willingness to seize power by force.
+    tier: 23
+  japan_1933_tanggu_truce:
+    composed_of:
+    - japan_1932_may_15_incident
+    defines: |
+      (1933) Tanggu Truce — China is forced to sign a ceasefire, creating a demilitarized zone
+      south of the Great Wall, effectively ceding control of Rehe (Jehol) province to Japan.
+    tier: 24
+  japan_1936_february_26_incident:
+    composed_of:
+    - japan_1933_tanggu_truce
+    defines: |
+      (1936) February 26 Incident — Army officers attempt a coup, assassinating several senior
+      officials before being suppressed; the aftermath purges moderates and further tightens
+      the military's grip on government policy.
+    tier: 25
+  japan_1937_marco_polo_bridge_incident:
+    composed_of:
+    - japan_1936_february_26_incident
+    defines: |
+      (1937) Marco Polo Bridge Incident — A skirmish near Beijing escalates into the Second
+      Sino-Japanese War (full-scale invasion).
+    tier: 26
+  japan_1937_battle_shanghai:
+    composed_of:
+    - japan_1937_marco_polo_bridge_incident
+    defines: |
+      (Aug–Nov 1937) Battle of Shanghai — Japan escalates the Marco Polo Bridge skirmish into
+      full-scale war by attacking Shanghai. Three months of brutal, building-to-building
+      fighting cost both sides hundreds of thousands of casualties before Japan breaks through
+      using naval bombardment, air superiority, and amphibious landings, forcing a costly
+      Chinese retreat toward the capital, Nanjing.
+    tier: 27
+  japan_1937_rape_of_nanking:
+    composed_of:
+    - japan_1937_battle_shanghai
+    defines: |
+      (Dec 1937 – Jan 1938) Rape of Nanking (Nanjing Massacre) — Pursuing the retreating
+      Chinese army, Japanese forces take Nanjing on December 13, 1937, then spend roughly six
+      weeks killing an estimated 200,000–300,000 civilians and disarmed prisoners of war and
+      committing widespread, systematic sexual violence, including mass rape, against women and
+      girls. Foreign residents (John Rabe and others) shelter tens of thousands of civilians
+      inside an improvised Nanjing Safety Zone and smuggle out eyewitness accounts and
+      photographs; postwar tribunals, including the Tokyo war crimes trial, document the
+      killings, though exact totals remain disputed because Japanese units destroyed many
+      records. Iris Chang's 1997 book *The Rape of Nanking* draws on Rabe's diaries, missionary
+      records, and survivor testimony to bring the massacre to wide English-language attention
+      and remains a focal point of ongoing Japan–China historical-memory disputes, including
+      denial and minimization by some Japanese nationalist politicians and textbooks. Chang, who
+      spent years immersed in survivor testimony and archival horror to write the book, fell
+      into severe depression and died by suicide in 2004 at age 36 — a cost of the work that is
+      itself now part of how the book, and the massacre's place in public memory, are discussed.
+    tier: 28
+  japan_1938_battle_wuhan:
+    composed_of:
+    - japan_1937_rape_of_nanking
+    defines: |
+      (1938) Battle of Wuhan — Japanese forces capture Wuhan, securing control of the Yangtze
+      River, but the war bogs down into a stalemate that lasts for years.
+    tier: 29
+  japan_1939_nomonhan_incident:
+    composed_of:
+    - japan_1938_battle_wuhan
+    defines: |
+      (1939) Nomonhan Incident — Border clashes with the Soviet Union result in a decisive
+      defeat for Japan, leading Japan to look south (Southeast Asia) for expansion rather than
+      north.
+    tier: 30
+  japan_1940_invasion_french_indochina:
+    composed_of:
+    - japan_1939_nomonhan_incident
+    defines: |
+      (1940) Invasion of French Indochina — Japan occupies northern Vietnam, Laos, and
+      Cambodia to block supplies to China and extend its reach toward Southeast Asia.
+    tier: 31
+  japan_1940_tripartite_pact:
+    composed_of:
+    - japan_1940_invasion_french_indochina
+    defines: |
+      (1940) Tripartite Pact — Japan formally allies with Nazi Germany and Fascist Italy,
+      forming the Axis and committing Japan to a shared war against the Allied powers.
+    tier: 32
+  japan_1941_pacific_war_begins:
+    composed_of:
+    - japan_1940_tripartite_pact
+    defines: |
+      (1941) Pacific War Begins — Following the US oil embargo, Japan attacks Pearl Harbor and
+      simultaneously invades British Malaya, Hong Kong, the Philippines, the Dutch East
+      Indies, and other Pacific territories.
+    tier: 33
+  japan_1942_expansion_peak:
+    composed_of:
+    - japan_1941_pacific_war_begins
+    defines: |
+      (1942) Expansion Peak — Japan reaches the zenith of its empire, controlling vast swathes
+      of China, Southeast Asia, and the Pacific.
+    tier: 34
+  japan_1942_battle_midway:
+    composed_of:
+    - japan_1942_expansion_peak
+    defines: |
+      (1942) Battle of Midway — A decisive US naval victory destroys four Japanese aircraft
+      carriers, ending Japan's offensive capability in the Pacific and marking the war's
+      turning point in the Allies' favor.
+    tier: 35
+  japan_1944_operation_ichi_go:
+    composed_of:
+    - japan_1942_battle_midway
+    defines: |
+      (1944) Operation Ichi-Go — A massive Japanese offensive in China to connect occupied
+      territories and destroy Allied airbases. Japan succeeds tactically but overextends its
+      lines.
+    tier: 36
+  japan_1945_manila_massacre:
+    composed_of:
+    - japan_1944_operation_ichi_go
+    defines: |
+      (Feb–Mar 1945) Battle of Manila & Manila Massacre — As US and Filipino forces retake the
+      city, trapped Japanese naval troops under Rear Admiral Sanji Iwabuchi, defying orders to
+      withdraw, instead massacre an estimated 100,000 Filipino civilians over several weeks —
+      mass shootings, bayoneting, arson, and systematic rape — while also destroying much of
+      Manila's historic core. It stands as the single deadliest urban atrocity of the Pacific
+      War against a civilian population and, along with Nanjing, is cited in the postwar
+      war-crimes trial of General Yamashita, who was convicted and executed partly on this
+      basis (Iwabuchi died during the battle).
+    tier: 37
+  japan_1945_soviet_invasion_atomic_bombs:
+    composed_of:
+    - japan_1945_manila_massacre
+    defines: |
+      (1945) Soviet Invasion & Atomic Bombs — The Soviet Union invades Manchuria and Korea.
+      The US drops atomic bombs on Hiroshima and Nagasaki.
+    tier: 38
+  japan_1945_formal_surrender:
+    composed_of:
+    - japan_1945_soviet_invasion_atomic_bombs
+    defines: |
+      (Sep 1945) Formal Surrender — Japan officially surrenders aboard the USS *Missouri*,
+      ending its imperial aggression and occupation of Asia.
+    tier: 39

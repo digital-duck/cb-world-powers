@@ -1,0 +1,495 @@
+domain: 200years_7powers_ch16
+primitives:
+  uk_postwar_settlement_1945:
+    defines: |
+      Britain in 1945: victorious but financially exhausted, electing a Labour government that
+      begins building the welfare state (NHS) while still holding the largest colonial empire
+      in the world.
+    tier: 0
+  france_liberation_1945:
+    defines: |
+      France in 1945: liberated but economically devastated and politically fractured, about
+      to draft a new republic while still holding a large colonial empire in Indochina and
+      Africa.
+    tier: 0
+  germany_occupation_1945:
+    defines: |
+      Germany in 1945: defeated, divided into four Allied occupation zones, its political
+      future undecided between the emerging US and Soviet camps.
+    tier: 0
+  russia_soviet_superpower_1945:
+    defines: |
+      The USSR in 1945: a victorious global superpower occupying Eastern Europe, about to
+      convert wartime alliance with the West into Cold War rivalry.
+    tier: 0
+  japan_occupation_1945:
+    defines: |
+      Japan in 1945: defeated and under US-led Allied occupation (SCAP), its political and
+      military structure about to be rebuilt under a new pacifist constitution.
+    tier: 0
+  china_civil_war_resumption_1945:
+    defines: |
+      China in 1945: Japan's defeat ends foreign occupation but the Nationalist-Communist
+      alliance immediately collapses back into civil war.
+    tier: 0
+  usa_postwar_superpower_1945:
+    defines: |
+      The USA in 1945: the only major power to emerge from WWII economically strengthened
+      rather than devastated, about to underwrite a new international order (UN, Bretton
+      Woods) as the other global superpower.
+    tier: 0
+  cold_war_bipolar_order:
+    defines: |
+      The post-1945 international system organized around two rival superpower blocs (US-led
+      and Soviet-led), each building alliances, client states, and nuclear arsenals against
+      the other.
+    tier: 0
+  science_atomic_age_and_computing_dawn:
+    defines: |
+      Science at the 1945 threshold: the atomic bomb has proven that theoretical physics can
+      decide wars; ENIAC (1945) has just demonstrated programmable computing; penicillin is
+      being mass-produced for the first time. Three converging capabilities — nuclear,
+      digital, biological — define the scientific starting point for the postwar era and seed
+      each of the country threads above.
+    tier: 0
+concepts:
+  uk_decolonization_wave:
+    composed_of:
+    - uk_postwar_settlement_1945
+    tier: 1
+    defines: |
+      Britain grants India independence in 1947 and then, through the 1960s, independence to
+      most of its African and Caribbean colonies, rapidly winding down the empire within two
+      postwar decades.
+  uk_suez_humiliation:
+    composed_of:
+    - uk_decolonization_wave
+    tier: 2
+    defines: |
+      The 1956 Suez Crisis: Britain, France, and Israel invade Egypt over the nationalized
+      canal, then withdraw under US pressure — read at the time as the moment Britain's
+      independent great-power status effectively ended.
+  uk_eec_membership:
+    composed_of:
+    - uk_suez_humiliation
+    tier: 3
+    defines: |
+      Britain joins the European Economic Community in 1973, tying its post-empire economic
+      future to European integration after two earlier applications were vetoed by France.
+  uk_thatcher_restructuring:
+    composed_of:
+    - uk_eec_membership
+    tier: 4
+    defines: |
+      Margaret Thatcher's 1979-90 government pursues privatization and confronts the trade
+      unions (the 1984-85 miners' strike), reshaping the British economy away from its postwar
+      nationalized-industry model.
+  uk_brexit_realignment:
+    composed_of:
+    - uk_thatcher_restructuring
+    tier: 5
+    defines: |
+      Britain votes to leave the EU in 2016 and formally exits in 2020, reversing the 1973
+      integration decision after nearly five decades of membership.
+  france_indochina_defeat:
+    composed_of:
+    - france_liberation_1945
+    tier: 1
+    defines: |
+      France fights to retain colonial Indochina from 1946, losing decisively at Dien Bien Phu
+      in 1954 and withdrawing under the Geneva Accords.
+  france_algerian_war:
+    composed_of:
+    - france_indochina_defeat
+    tier: 2
+    defines: |
+      The 1954-62 Algerian War of Independence nearly triggers civil war in France itself
+      before ending in Algerian independence and the exodus of over a million settlers.
+  france_fifth_republic_eu_integration:
+    composed_of:
+    - france_algerian_war
+    tier: 3
+    defines: |
+      Amid the Algerian crisis, de Gaulle establishes the Fifth Republic (1958) while France
+      co-founds the EEC (Treaty of Rome, 1957), anchoring its postwar recovery in European
+      integration rather than colonial retention.
+  france_may68_social_change:
+    composed_of:
+    - france_fifth_republic_eu_integration
+    tier: 4
+    defines: |
+      The May 1968 protests and strikes nearly topple the de Gaulle government, reshaping
+      French social and labor politics for a generation.
+  france_recent_instability:
+    composed_of:
+    - france_may68_social_change
+    tier: 5
+    defines: |
+      The 2018-19 Yellow Vest protests and the 2024 snap election's hung parliament mark a
+      period of unusual political fragmentation under Macron.
+  germany_division_and_wall:
+    composed_of:
+    - germany_occupation_1945
+    - cold_war_bipolar_order
+    tier: 1
+    defines: |
+      Germany splits into the US/NATO-aligned Federal Republic and the Soviet-aligned
+      Democratic Republic (1949); East Germany builds the Berlin Wall in 1961 to stop mass
+      emigration, making the division physical.
+  germany_wirtschaftswunder:
+    composed_of:
+    - germany_division_and_wall
+    tier: 2
+    defines: |
+      West Germany's postwar 'economic miracle,' NATO membership (1955), and EEC founding
+      membership (1957) rebuild it into Western Europe's largest economy within little more
+      than a decade of total defeat.
+  germany_reunification_1990:
+    composed_of:
+    - germany_wirtschaftswunder
+    tier: 3
+    defines: |
+      The Berlin Wall falls in 1989 and Germany formally reunifies in 1990, ending over four
+      decades of division as the Soviet bloc that had enforced it collapses.
+  germany_merkel_era:
+    composed_of:
+    - germany_reunification_1990
+    tier: 4
+    defines: |
+      Angela Merkel's 2005-2021 chancellorship spans the Eurozone crisis and the 2015 refugee
+      crisis, during which Germany accepts over a million refugees mostly from Syria.
+  germany_zeitenwende_2022:
+    composed_of:
+    - germany_merkel_era
+    tier: 5
+    defines: |
+      Chancellor Scholz declares a 'Zeitenwende' (turning point) in 2022, reversing decades of
+      restrained German defense policy in direct response to Russia's invasion of Ukraine.
+  russia_cold_war_buildup:
+    composed_of:
+    - russia_soviet_superpower_1945
+    - cold_war_bipolar_order
+    tier: 1
+    defines: |
+      The USSR tests an atomic bomb (1949), launches Sputnik (1957), and forms the Warsaw Pact
+      (1955), building the military and technological counterweight to the US-led bloc.
+  russia_soviet_interventions:
+    composed_of:
+    - russia_cold_war_buildup
+    tier: 2
+    defines: |
+      The USSR intervenes militarily to preserve Soviet-bloc control — Hungary (1956),
+      Czechoslovakia's Prague Spring (1968), and a decade-long war in Afghanistan (1979-89) —
+      at rising cost to its own resources and prestige.
+  russia_soviet_collapse_1991:
+    composed_of:
+    - russia_soviet_interventions
+    tier: 3
+    defines: |
+      Gorbachev's Glasnost and Perestroika reforms (from 1985) unintentionally accelerate the
+      Soviet system's collapse; the USSR formally dissolves in 1991 into 15 independent
+      states.
+  russia_putin_consolidation:
+    composed_of:
+    - russia_soviet_collapse_1991
+    tier: 4
+    defines: |
+      Vladimir Putin, president from 2000, steadily consolidates political power through the
+      2000s-2010s, curbing independent media and reshaping Russia's post-Soviet institutions
+      around a single long-tenured leader.
+  russia_ukraine_war_2022:
+    composed_of:
+    - russia_putin_consolidation
+    tier: 5
+    defines: |
+      Russia annexes Crimea in 2014 and launches a full-scale invasion of Ukraine in 2022,
+      triggering Europe's largest war since WWII and sweeping international sanctions.
+  japan_postwar_constitution_pacifism:
+    composed_of:
+    - japan_occupation_1945
+    - usa_postwar_superpower_1945
+    tier: 1
+    defines: |
+      Japan adopts a US-drafted constitution (1947) renouncing war, regains full sovereignty
+      via the 1951-52 San Francisco Peace Treaty, and rebuilds under the LDP's dominant 'JAPAN
+      1955 system.'
+  japan_economic_miracle:
+    composed_of:
+    - japan_postwar_constitution_pacifism
+    tier: 2
+    defines: |
+      Japan achieves extraordinary industrial growth from the 1960s-1980s, hosting the 1964
+      Tokyo Olympics and becoming the world's second-largest economy by the 1980s.
+  japan_bubble_and_lost_decade:
+    composed_of:
+    - japan_economic_miracle
+    tier: 3
+    defines: |
+      The 1985 Plaza Accord contributes to a Japanese asset-price bubble whose 1990s collapse
+      triggers prolonged economic stagnation — the 'Lost Decade.'
+  japan_disasters_and_resilience:
+    composed_of:
+    - japan_bubble_and_lost_decade
+    tier: 4
+    defines: |
+      The 1995 Kobe earthquake and the 2011 Tōhoku earthquake/tsunami/Fukushima nuclear
+      disaster test Japan's disaster-response and energy policy in the midst of prolonged
+      economic stagnation.
+  japan_abe_era:
+    composed_of:
+    - japan_disasters_and_resilience
+    tier: 5
+    defines: |
+      Shinzo Abe, Japan's longest-serving PM (2012-2020), pursues 'Abenomics' monetary and
+      structural reform to break the deflationary stagnation, before his 2022 assassination
+      shocks the country.
+  china_communist_consolidation:
+    composed_of:
+    - china_civil_war_resumption_1945
+    - usa_postwar_superpower_1945
+    tier: 1
+    defines: |
+      The Communists win the civil war and found the PRC in 1949; China then fights US-led UN
+      forces to a stalemate in the Korean War (1950-53), its first major confrontation with
+      the American-led postwar order.
+  china_maoist_upheaval:
+    composed_of:
+    - china_communist_consolidation
+    tier: 2
+    defines: |
+      Mao's Great Leap Forward (1958-62) causes catastrophic famine, and the Cultural
+      Revolution (1966-76) causes massive social upheaval and persecution — two self-inflicted
+      crises with no external cause in the source chain.
+  china_reform_and_opening:
+    composed_of:
+    - china_maoist_upheaval
+    tier: 3
+    defines: |
+      Deng Xiaoping launches market-oriented reform and opening in 1978 after Mao's death, and
+      China joins the WTO in 2001, integrating rapidly into the global economy over the
+      following two decades.
+  china_rise_as_power:
+    composed_of:
+    - china_reform_and_opening
+    tier: 4
+    defines: |
+      China hosts the 2008 Olympics, launches the Belt and Road Initiative (2013), and
+      consolidates power under Xi Jinping, including the 2018 abolition of presidential term
+      limits.
+  china_hongkong_and_covid:
+    composed_of:
+    - china_rise_as_power
+    tier: 5
+    defines: |
+      Hong Kong's 2019-20 protests are followed by a national security law curtailing its
+      autonomy; the COVID-19 pandemic, first identified in Wuhan in 2020, becomes a defining
+      global and domestic event.
+  usa_cold_war_containment:
+    composed_of:
+    - usa_postwar_superpower_1945
+    - cold_war_bipolar_order
+    tier: 1
+    defines: |
+      The USA commits to containing communism (Truman Doctrine, Marshall Plan, NATO, 1947-49)
+      and fights the Korean War (1950-53) to a stalemate, its first direct Cold War military
+      commitment.
+  usa_civil_rights_and_vietnam:
+    composed_of:
+    - usa_cold_war_containment
+    tier: 2
+    defines: |
+      The 1955-68 Civil Rights Movement dismantles legal segregation at home while the 1961-75
+      Vietnam War becomes a prolonged, divisive Cold War military commitment abroad.
+  usa_cold_war_endgame:
+    composed_of:
+    - usa_civil_rights_and_vietnam
+    tier: 3
+    defines: |
+      Reagan-era military buildup and later engagement with Gorbachev culminate in the 1989
+      fall of the Berlin Wall and 1991 Soviet collapse, leaving the USA as the sole global
+      superpower.
+  usa_war_on_terror:
+    composed_of:
+    - usa_cold_war_endgame
+    tier: 4
+    defines: |
+      The September 11, 2001 attacks trigger a two-decade 'War on Terror,' including wars in
+      Afghanistan (2001-21) and Iraq (2003-11).
+  usa_polarization_era:
+    composed_of:
+    - usa_war_on_terror
+    - china_rise_as_power
+    tier: 5
+    defines: |
+      The 2008 financial crisis, rising economic competition with a rapidly risen China, the
+      COVID-19 pandemic, and the 2021 Capitol attack mark a period of deepening domestic
+      political polarization.
+  # ── Science Thread (cross-cutting, 1945–2025) ──────────────────
+  science_dna_and_transistor:
+    composed_of:
+    - science_atomic_age_and_computing_dawn
+    tier: 1
+    defines: |
+      (1947–1953) Bell Labs invents the transistor (1947), replacing vacuum tubes and enabling
+      miniaturized electronics; Watson and Crick solve the DNA double helix structure (1953),
+      opening molecular biology. Two foundations — digital computing and genetic science —
+      are established within a single postwar decade, seeding the technology and biomedical
+      industries that will define the era.
+  science_space_race_and_microprocessor:
+    composed_of:
+    - science_dna_and_transistor
+    tier: 2
+    defines: |
+      (1957–1971) Sputnik (1957) launches the US-Soviet space race; Armstrong walks on the
+      Moon (1969); Intel's 4004 microprocessor (1971) concentrates a programmable computer
+      onto a single chip. The space race is simultaneously a scientific achievement and a
+      Cold War prestige competition — its funding directly seeds GPS, satellite
+      communications, and the computing infrastructure of the following decades.
+  science_personal_computer_and_internet:
+    composed_of:
+    - science_space_race_and_microprocessor
+    tier: 3
+    defines: |
+      (1976–1991) Apple II (1977) and IBM PC (1981) bring computing to individuals;
+      Tim Berners-Lee invents the World Wide Web at CERN (1989), published freely in 1991.
+      The internet and personal computer together collapse the cost of information,
+      communication, and commerce — the technical infrastructure of globalization and the
+      precondition for the economic disruptions the country chains record in the 2000s–2020s.
+  science_genomics_and_smartphones:
+    composed_of:
+    - science_personal_computer_and_internet
+    tier: 4
+    defines: |
+      (2000–2012) The Human Genome Project publishes a complete human DNA sequence (2003);
+      the iPhone (2007) puts a networked computer in every pocket; CRISPR-Cas9 (2012) enables
+      precise, cheap gene editing. Biology and digital technology begin converging — the
+      precondition for mRNA vaccines, digital surveillance infrastructure, and AI-driven drug
+      discovery.
+  science_ai_and_mrna:
+    composed_of:
+    - science_genomics_and_smartphones
+    tier: 5
+    defines: |
+      (2016–2023) DeepMind's AlphaGo defeats world champion Go player (2016), demonstrating
+      AI surpassing human expert performance; Pfizer-BioNTech and Moderna deploy the first
+      mRNA vaccines at mass scale in 90 days (2020–21); ChatGPT (2022) triggers rapid global
+      adoption of large language models. Artificial intelligence becomes the defining
+      economic and geopolitical technology race, with the USA and China as primary competitors.
+applications:
+  cold_war_bipolar_order_pattern:
+    needs:
+    - usa_cold_war_containment
+    - russia_cold_war_buildup
+    tier: 2
+    defines: |
+      Observation traceable to the USA and Russia/USSR chains above: both powers' dated events
+      (alliance-building, proxy wars, arms races) mirror each other for four decades after
+      1945 — recorded here as what the two chains show, not as a general law about superpower
+      rivalry.
+  decolonization_wave_pattern:
+    needs:
+    - uk_decolonization_wave
+    - france_indochina_defeat
+    - france_algerian_war
+    tier: 3
+    defines: |
+      Observation spanning the UK and France chains: both European empires wind down within
+      roughly the same two postwar decades (1947-1962 in the dated events above), whatever
+      weight a reader assigns to shared versus independent causes.
+  economic_integration_pattern:
+    needs:
+    - germany_wirtschaftswunder
+    - france_fifth_republic_eu_integration
+    - uk_eec_membership
+    tier: 4
+    defines: |
+      Observation spanning the Germany, France, and UK chains: all three converge on the same
+      European-integration institutions (EEC/EU) within the dated events above, despite each
+      starting from a very different 1945 position (occupied, defeated-colonial-power, and
+      victorious-but-exhausted, respectively).
+  authoritarian_consolidation_pattern:
+    needs:
+    - russia_putin_consolidation
+    - china_rise_as_power
+    tier: 5
+    defines: |
+      Observation traceable to the Russia and China chains: both show a shift in the
+      2010s-2020s toward long-tenured, term-limit-extending leadership (recorded in each
+      chain's dated events), concurrent in the source data though arising from different
+      starting systems (post-Soviet Russia vs. one-party China).
+  globalization_backlash_pattern:
+    needs:
+    - china_rise_as_power
+    - usa_polarization_era
+    - uk_brexit_realignment
+    tier: 6
+    defines: |
+      Observation spanning the China, USA, and UK chains: the same roughly 2008-2020 window
+      contains the financial crisis, the UK's Brexit vote, and rising US political
+      polarization tied partly to China's economic rise — concurrent events in the source
+      chains, not an asserted single cause.
+  vigilance_2045_synthesis:
+    needs:
+    - cold_war_bipolar_order_pattern
+    - decolonization_wave_pattern
+    - economic_integration_pattern
+    - authoritarian_consolidation_pattern
+    - globalization_backlash_pattern
+    tier: 7
+    defines: |
+      The five patterns above are a checklist derived from this era's traced event chains, not
+      a prediction about 2026-2045 — each is falsifiable against the underlying
+      primitives/concepts it cites and each should be re-examined, not assumed, as new rows
+      are added to the living ch09-15 chapters year by year.
+  # ── Science cross-cutting applications ─────────────────────────
+  science_space_race_as_cold_war_proxy:
+    needs:
+    - science_space_race_and_microprocessor
+    - russia_cold_war_buildup
+    - usa_cold_war_containment
+    tier: 3
+    defines: |
+      Observation spanning the science, USSR, and USA chains: Sputnik and Apollo appear in
+      both the science chain and both superpower chains simultaneously — the space race is
+      the clearest case in this dataset where a scientific competition and a geopolitical
+      competition are the same event. The science chain's outcome (Moon landing, 1969)
+      directly shapes the Cold War supremacy perception recorded in both country chains.
+  science_internet_and_globalization_backlash:
+    needs:
+    - science_personal_computer_and_internet
+    - globalization_backlash_pattern
+    - china_rise_as_power
+    tier: 7
+    defines: |
+      Observation connecting the science chain to the globalization-backlash application:
+      the internet and personal computing are the infrastructure that made China's
+      manufacturing integration into the world economy possible — and the same infrastructure
+      that enabled the social-media dynamics recorded in the USA polarization and UK Brexit
+      nodes. The science chain's 1989–2007 events are a precondition for the economic and
+      political disruptions the country chains record in the 2010s–2020s.
+  science_ai_as_new_great_power_axis:
+    needs:
+    - science_ai_and_mrna
+    - usa_polarization_era
+    - china_rise_as_power
+    tier: 6
+    defines: |
+      Observation spanning the science, USA, and China chains: the generative AI events of
+      2022–23 appear in the science chain at the same time as the USA polarization and China
+      rise nodes — making AI the first technology since nuclear weapons to appear
+      simultaneously as a scientific breakthrough and an explicit great-power competition
+      axis in the source data.
+  science_cross_cutting_synthesis_1945_2025:
+    needs:
+    - science_dna_and_transistor
+    - science_space_race_as_cold_war_proxy
+    - science_internet_and_globalization_backlash
+    - science_ai_as_new_great_power_axis
+    tier: 8
+    defines: |
+      Cross-cutting science thread, 1945–2025: three technology waves intersect the country
+      chains at leverage points — computing and the internet reshape which economies lead
+      globalization; genomics enables a new biomedical industry; AI concentrates economic and
+      security power in whoever leads it. As in 1845–1945, science is not background context
+      here — it is an actor whose trajectory reshaped all seven powers' trajectories, and
+      whose open payoff node (AI) is the defining uncertainty of the next chapter.

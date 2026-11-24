@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Prussian Model Emulation | 200Years 7Powers Ch08</title>
+<script>
+MathJax = {
+  loader: { load: ['[tex]/mathtools'] },
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']],
+         packages: { '[+]': ['mathtools'] } },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'neutral' });</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#fafaf8;color:#1a1a1a;line-height:1.7}
+h2{font-size:1.45rem;color:#1e3a5f;margin-bottom:12px}
+h3{font-size:1.1rem;color:#2e4a7f;margin:20px 0 8px}
+h4{font-size:1rem;color:#3a5a8f;margin:16px 0 6px}
+p{margin-bottom:16px;font-size:1rem}
+li{margin-bottom:6px;margin-left:24px;font-size:1rem}
+pre{background:#f4f4f0;border:1px solid #d8d8d0;border-radius:6px;
+    padding:16px 20px;overflow-x:auto;margin:16px 0}
+code{font-family:Menlo,Consolas,monospace;font-size:.87em}
+p code{background:#f0f0ea;padding:1px 4px;border-radius:3px}
+footer.spl-credit{margin-top:32px;padding-top:16px;border-top:1px solid #e0e0d8;
+      font-family:system-ui,sans-serif;font-size:.78rem;color:#999;text-align:center}
+footer.spl-credit a{color:#2563eb;text-decoration:none}
+footer.spl-credit span{display:block}
+footer.spl-credit .spl-credit__meta{margin-bottom:4px}
+.cb-figure{margin:24px 0;text-align:center}
+.cb-figure img{max-width:100%;height:auto;border:1px solid #e0e0d8;border-radius:6px}
+figcaption{font-size:.82rem;color:#666;margin-top:8px;font-style:italic;text-align:center}
+pre.mermaid{background:none;border:none;padding:0;overflow:visible;margin:16px 0}
+.page{padding:40px 24px}
+section{margin-bottom:48px;border-top:1px solid #e0e0d8;padding-top:36px}
+section:first-of-type{border-top:none;padding-top:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <main>
+    <h2 id="japan-prussian-model-emulation">Japan Prussian Model Emulation</h2>
+<p>1889年颁布的《大日本帝国宪法》（明治宪法）并非日本自主发明的制度，而是伊藤博文等明治精英在1882—1883年赴欧考察后，有意识地选定普鲁士式宪政作为蓝本加以移植的产物。伊藤博文在维也纳师从法学家洛伦茨·冯·施泰因、在柏林研习鲁道夫·冯·格奈斯特的国家学说后得出结论：英美式议会主权模式会削弱天皇权威与士族主导的政府控制力，而1871年俾斯麦统一德国后确立的德意志帝国宪法——保留君主实权、议会权力有限、行政权凌驾于立法权之上——更适合日本"富国强兵"的现实需要。明治宪法因此复制了德意志帝国的核心架构：天皇（对应德皇）总揽统治大权，内阁大臣只对天皇负责而非对议会（帝国议会）负责，贵族院制衡由选举产生的众议院。</p>
+<p>这种模仿甚至完整复制了德国体制的一个致命缺陷：军队统帅权（统帅权）独立于内阁，直属天皇本人，史称"统帅权独立"。这一条款直接对应德意志帝国宪法中参谋总长可绕过帝国宰相直接上奏皇帝的军令权安排。其后果是深远的——文官内阁在法理上无权节制陆海军的行动决策。1930年代，关东军可以在未经东京内阁批准、甚至违背其意愿的情况下于中国东北自行发动军事行动（如1931年九一八事变），而内阁事后只能被动追认，正是这一制度设计留下的漏洞被军部逐步利用、最终导致文官政府对军部失控的历史根源。</p>
+<p>将两国宪法并置分析，可以看到制度移植如何原样搬运了其原生的结构性风险：普鲁士模式本身即产生于俾斯麦时代军方与容克贵族对文官政府的强势地位，日本在效仿其"效率"时，未能预见（或未加改造）同一套军权独立机制，一旦脱离了俾斯麦本人的政治掌控力，会在制度上失去制衡。</p>
+<pre class="mermaid">graph TD
+    A[普鲁士-德意志帝国宪法 1871] -->|伊藤博文考察借鉴| B[大日本帝国宪法 1889]
+    A --> C[皇帝总揽统治权]
+    A --> D[军队统帅权独立于宰相]
+    B --> E[天皇总揽统治权]
+    B --> F[统帅权独立于内阁]
+    D -->|制度缺陷复制| F
+    F --> G[1930年代军部失控 如关东军擅自行动]</pre>
+<p><em>该图展示明治宪法如何从德意志帝国宪法直接移植统治权结构，并连带复制了军权独立于文官政府这一结构性缺陷，为后续军部坐大埋下伏笔。</em></p>
+  </main>
+  <footer class="spl-credit"><span class="spl-credit__meta">200Years 7Powers Ch08 (Level: College &middot; Language: ZH &middot; Model: sonnet)</span><span class="spl-credit__powered">Generated and Powered by <a href="https://github.com/digital-duck/SPL.py" target="_blank" rel="noopener">SPL</a></span></footer>
+</div>
+</body>
+</html>

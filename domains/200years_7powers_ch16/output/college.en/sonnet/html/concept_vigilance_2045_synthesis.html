@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vigilance 2045 Synthesis | 200Years 7Powers Ch16</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:#fafaf8;color:#1a1a1a;line-height:1.7}
+h2{font-size:1.45rem;color:#1e3a5f;margin-bottom:12px}
+h3{font-size:1.1rem;color:#2e4a7f;margin:20px 0 8px}
+h4{font-size:1rem;color:#3a5a8f;margin:16px 0 6px}
+p{margin-bottom:16px;font-size:1rem}
+li{margin-bottom:6px;margin-left:24px;font-size:1rem}
+pre{background:#f4f4f0;border:1px solid #d8d8d0;border-radius:6px;
+    padding:16px 20px;overflow-x:auto;margin:16px 0}
+code{font-family:Menlo,Consolas,monospace;font-size:.87em}
+p code{background:#f0f0ea;padding:1px 4px;border-radius:3px}
+footer.spl-credit{margin-top:32px;padding-top:16px;border-top:1px solid #e0e0d8;
+      font-family:system-ui,sans-serif;font-size:.78rem;color:#999;text-align:center}
+footer.spl-credit a{color:#2563eb;text-decoration:none}
+footer.spl-credit span{display:block}
+footer.spl-credit .spl-credit__meta{margin-bottom:4px}
+.page{padding:40px 24px}
+section{margin-bottom:48px;border-top:1px solid #e0e0d8;padding-top:36px}
+section:first-of-type{border-top:none;padding-top:0}
+</style>
+</head>
+<body>
+<div class="page">
+  <main>
+    <h2 id="vigilance-2045-synthesis">Vigilance 2045 Synthesis</h2>
+<p>The five patterns compiled in this chapter are not a forecast — they are a checklist assembled by tracing actual event chains through the primitives introduced in ch09–15, then asking which recurring structures showed up often enough to name. Treating them as predictions would be a category error: a prediction claims something about the future, while a checklist item makes a narrower, testable claim about the present — "this structure, built from these specific primitives, recurs across the traced chains we have so far." That claim is falsifiable in a precise sense: for each pattern, you can point to the primitives it depends on and ask whether new traced chains still exhibit the pattern once those primitives are re-examined or updated.</p>
+<p>Consider a concrete instance. Suppose Pattern 3 in the chapter claims that "resource-contention chains resolve via priority inheritance within three hops of the blocking node." This is falsifiable because you can define exactly what would break it: a newly traced chain where a resource-contention event resolves in more than three hops, or resolves through some mechanism other than priority inheritance. If ch09–15 add ten new rows next year and one violates the three-hop bound, the pattern is not "mostly right" — it is falsified as stated and must be revised or narrowed (e.g., restricted to chains below a certain contention depth).</p>
+<p>The discipline this demands is procedural, not mathematical: each time a new row is appended to the living chapters, re-run the pattern against it rather than assuming the pattern still holds. This is the same falsification logic used throughout empirical science — a rule earns its place in the checklist by surviving repeated attempts to break it, not by having been true once.</p>
+<p>Practically, this means the five patterns should be read with an implicit tag: "true of the traced chains as of the last audit date." When you use this checklist — say, to decide whether a new incident matches a known failure mode — first check whether the primitives the matching pattern cites have themselves changed since the chapter was last updated. If primitive P4 (the definition of a "blocking node," for instance) was revised in ch12, any pattern built on P4 needs re-verification before you trust it, even if no one has explicitly retracted it yet.</p>
+  </main>
+  <footer class="spl-credit"><span class="spl-credit__meta">200Years 7Powers Ch16 (Level: College &middot; Language: EN &middot; Model: sonnet)</span><span class="spl-credit__powered">Generated and Powered by <a href="https://github.com/digital-duck/SPL.py" target="_blank" rel="noopener">SPL</a></span></footer>
+</div>
+</body>
+</html>

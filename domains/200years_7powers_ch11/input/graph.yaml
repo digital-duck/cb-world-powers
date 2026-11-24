@@ -1,0 +1,132 @@
+domain: 200years_7powers_ch11
+layout: timeline
+primitives:
+  germany_1945_defeat_occupation:
+    defines: |
+      (1945) Defeat & Occupation — Germany surrenders unconditionally and is divided into four
+      Allied occupation zones (US, UK, France, USSR); the Nuremberg Trials begin prosecuting
+      Nazi leaders.
+    tier: 0
+concepts:
+  germany_1945_nuremberg_trials:
+    composed_of:
+    - germany_1945_defeat_occupation
+    defines: |
+      (Nov 1945 – Oct 1946) Nuremberg Trials — The four occupying powers (US, UK, France,
+      USSR), acting under the London Charter they signed in August 1945, convene an
+      International Military Tribunal in Nuremberg to try 24 senior Nazi leaders — including
+      Hermann Göring, Rudolf Hess, Albert Speer, and Joachim von Ribbentrop — for conspiracy,
+      crimes against peace, war crimes, and crimes against humanity; Hitler, Himmler, and
+      Goebbels are already dead by suicide and never stand trial. Twelve defendants are
+      sentenced to death (Göring escapes hanging only by taking cyanide the night before his
+      scheduled execution on October 16, 1946), three to life imprisonment, four to lesser
+      prison terms, and three are acquitted. Its lasting significance is legal, not just
+      punitive: the tribunal establishes that individuals, including heads of state, can be
+      held personally criminally liable for state-sanctioned atrocities, and its "crimes
+      against humanity" framework becomes the template the Tokyo War Crimes Trial (see Japan's
+      chapters) follows the following year.
+    tier: 1
+  germany_1948_berlin_blockade_airlift:
+    composed_of:
+    - germany_1945_nuremberg_trials
+    defines: |
+      (1948–1949) Berlin Blockade & Airlift — The USSR blockades West Berlin; the US and
+      allies supply the city by air for nearly a year, an early flashpoint of the Cold War.
+    tier: 2
+  germany_1949_division_into_east_west_germany:
+    composed_of:
+    - germany_1948_berlin_blockade_airlift
+    defines: |
+      (1949) Division into East and West Germany — The Federal Republic of Germany (West,
+      allied with the US/NATO) and the German Democratic Republic (East, allied with the USSR)
+      are formally established.
+    tier: 3
+  germany_1955_west_germany_joins_nato:
+    composed_of:
+    - germany_1949_division_into_east_west_germany
+    defines: |
+      (1955) West Germany Joins NATO — West Germany rearms and joins NATO, formalizing its
+      role as a Western Cold War ally.
+    tier: 4
+  germany_1957_founding_member_eec:
+    composed_of:
+    - germany_1955_west_germany_joins_nato
+    defines: |
+      (1957) Founding Member of the EEC — West Germany becomes a founding member of the
+      European Economic Community, anchoring post-war European economic integration.
+    tier: 5
+  germany_1961_berlin_wall_built:
+    composed_of:
+    - germany_1957_founding_member_eec
+    defines: |
+      (1961) Berlin Wall Built — East Germany erects the Berlin Wall to stop mass emigration
+      to the West, becoming the Cold War's starkest physical symbol of division.
+    tier: 6
+  germany_1972_ostpolitik_basic_treaty:
+    composed_of:
+    - germany_1961_berlin_wall_built
+    defines: |
+      (1972) Ostpolitik & Basic Treaty — Chancellor Willy Brandt's policy of engagement with
+      the East leads to mutual recognition between West and East Germany.
+    tier: 7
+  germany_1989_fall_berlin_wall:
+    composed_of:
+    - germany_1972_ostpolitik_basic_treaty
+    defines: |
+      (1989) Fall of the Berlin Wall — Mass protests and East German reforms lead to the
+      opening of the Wall, ending decades of division almost overnight.
+    tier: 8
+  germany_1990_german_reunification:
+    composed_of:
+    - germany_1989_fall_berlin_wall
+    defines: |
+      (1990) German Reunification — East and West Germany formally reunify, becoming Europe's
+      largest economy and a central power in the newly reshaping continent.
+    tier: 9
+  germany_1999_euro_introduced:
+    composed_of:
+    - germany_1990_german_reunification
+    defines: |
+      (1999–2002) Euro Introduced — Germany adopts the euro as its currency (physical
+      notes/coins from 2002), deepening European economic integration.
+    tier: 10
+  germany_2005_angela_merkel_becomes_chancellor:
+    composed_of:
+    - germany_1999_euro_introduced
+    defines: |
+      (2005) Angela Merkel Becomes Chancellor — Merkel becomes Germany's first female
+      chancellor, leading the country through the Eurozone crisis, the refugee crisis, and
+      COVID-19 over 16 years.
+    tier: 11
+  germany_2015_european_refugee_crisis:
+    composed_of:
+    - germany_2005_angela_merkel_becomes_chancellor
+    defines: |
+      (2015) European Refugee Crisis — Germany accepts over a million refugees, mostly from
+      Syria, under Merkel's "Wir schaffen das" ("We can do this") policy, reshaping domestic
+      politics.
+    tier: 12
+  germany_2022_zeitenwende_turning_point:
+    composed_of:
+    - germany_2015_european_refugee_crisis
+    defines: |
+      (2022) Zeitenwende (Turning Point) — Following Russia's invasion of Ukraine, Chancellor
+      Scholz announces a historic shift in German defense policy, including major increases in
+      military spending.
+    tier: 13
+  germany_2022_energy_crisis_recession:
+    composed_of:
+    - germany_2022_zeitenwende_turning_point
+    defines: |
+      (2022–2023) Energy Crisis & Recession — The loss of cheap Russian pipeline gas after the
+      invasion of Ukraine drives an energy-price shock and pushes Germany's export-dependent
+      economy into recession.
+    tier: 14
+  germany_2025_federal_election_merz_chancellorship:
+    composed_of:
+    - germany_2022_energy_crisis_recession
+    defines: |
+      (2025) Federal Election & Merz Chancellorship — The CDU/CSU wins a snap federal election
+      after the Scholz coalition collapses; Friedrich Merz becomes Chancellor, forming a new
+      coalition government.
+    tier: 15

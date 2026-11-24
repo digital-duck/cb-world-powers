@@ -1,0 +1,124 @@
+domain: 200years_7powers_ch13
+layout: timeline
+primitives:
+  japan_1945_surrender_us_occupation_begins:
+    defines: |
+      (1945) Surrender & US Occupation Begins — Following the atomic bombings and Soviet
+      invasion of Manchuria, Japan surrenders; General MacArthur leads the Allied occupation
+      (SCAP).
+    tier: 0
+concepts:
+  japan_1946_tokyo_war_crimes_trial:
+    composed_of:
+    - japan_1945_surrender_us_occupation_begins
+    defines: |
+      (Apr 1946 – Nov 1948) Tokyo War Crimes Trial — The International Military Tribunal for
+      the Far East (IMTFE), with judges from eleven Allied nations, tries 28 Japanese military
+      and government leaders (Class A) for crimes against peace, conventional war crimes, and
+      crimes against humanity, over 2.5 years hearing 419 witnesses and reviewing 4,336 pieces
+      of evidence. Seven defendants, including former Prime Minister Hideki Tōjō, are sentenced
+      to death and hanged at Sugamo Prison on December 23, 1948; sixteen receive life
+      imprisonment; two die during the trial and one is ruled mentally unfit to stand. Emperor
+      Hirohito is never charged — a deliberate decision, like Unit 731's staff receiving
+      immunity, to preserve stability for the incoming occupation rather than prosecute every
+      chain of command. Separate, smaller tribunals across Asia go on to convict over 5,500
+      more Japanese personnel for wartime atrocities, including the Nanjing and Manila
+      massacres.
+    tier: 1
+  japan_1947_new_constitution:
+    composed_of:
+    - japan_1946_tokyo_war_crimes_trial
+    defines: |
+      (1947) New Constitution — Japan adopts a US-drafted constitution, including Article 9,
+      which renounces war and the maintenance of offensive military forces.
+    tier: 2
+  japan_1951_san_francisco_peace_treaty:
+    composed_of:
+    - japan_1947_new_constitution
+    defines: |
+      (1951–1952) San Francisco Peace Treaty — Japan signs a peace treaty with most Allied
+      powers, formally ending the occupation and restoring sovereignty in 1952.
+    tier: 3
+  japan_1955_ldp_formed_1955_system:
+    composed_of:
+    - japan_1951_san_francisco_peace_treaty
+    defines: |
+      (1955) LDP Formed & the "1955 System" — The Liberal Democratic Party is founded and
+      dominates Japanese politics for decades, providing political stability during rapid
+      economic growth.
+    tier: 4
+  japan_1956_un_membership:
+    composed_of:
+    - japan_1955_ldp_formed_1955_system
+    defines: |
+      (1956) UN Membership — Japan joins the United Nations, marking its full return to the
+      international community.
+    tier: 5
+  japan_1960_economic_miracle:
+    composed_of:
+    - japan_1956_un_membership
+    defines: |
+      (1960s–1980s) Economic Miracle — Japan achieves extraordinary industrial and
+      technological growth, becoming the world's second-largest economy by the 1980s.
+    tier: 6
+  japan_1964_tokyo_olympics:
+    composed_of:
+    - japan_1960_economic_miracle
+    defines: |
+      (1964) Tokyo Olympics — Japan hosts the Summer Olympics, symbolizing its post-war
+      recovery and re-emergence as a modern global power.
+    tier: 7
+  japan_1990_lost_decade:
+    composed_of:
+    - japan_1964_tokyo_olympics
+    defines: |
+      (1990s) The Lost Decade — The bursting of Japan's asset price bubble triggers prolonged
+      economic stagnation and deflation, reshaping economic policy debates for decades.
+    tier: 8
+  japan_1995_kobe_earthquake_aum_shinrikyo_attack:
+    composed_of:
+    - japan_1990_lost_decade
+    defines: |
+      (1995) Kobe Earthquake & Aum Shinrikyo Attack — The Great Hanshin earthquake kills over
+      6,000 people; months later, the Aum Shinrikyo cult's sarin gas attack on the Tokyo
+      subway kills 13 and injures thousands, shaking public security confidence.
+    tier: 9
+  japan_2011_tohoku_earthquake_tsunami_fukushima:
+    composed_of:
+    - japan_1995_kobe_earthquake_aum_shinrikyo_attack
+    defines: |
+      (2011) Tōhoku Earthquake, Tsunami & Fukushima Disaster — A massive earthquake and
+      tsunami kill roughly 18,000 people and trigger a nuclear meltdown at Fukushima Daiichi,
+      prompting a major rethink of Japan's energy policy.
+    tier: 10
+  japan_2019_reiwa_era_begins:
+    composed_of:
+    - japan_2011_tohoku_earthquake_tsunami_fukushima
+    defines: |
+      (2019) Reiwa Era Begins — Emperor Akihito abdicates and Naruhito ascends the throne,
+      beginning the Reiwa era.
+    tier: 11
+  japan_2020_covid_19_delayed_tokyo_olympics:
+    composed_of:
+    - japan_2019_reiwa_era_begins
+    defines: |
+      (2020) COVID-19 & Delayed Tokyo Olympics — Japan manages the pandemic with comparatively
+      low restrictions; the 2020 Tokyo Olympics are postponed to 2021 and held without
+      spectators.
+    tier: 12
+  japan_2022_assassination_shinzo_abe:
+    composed_of:
+    - japan_2020_covid_19_delayed_tokyo_olympics
+    defines: |
+      (2022) Assassination of Shinzo Abe — Japan's longest-serving prime minister is shot and
+      killed while campaigning; the assassination shocks a country with historically very low
+      gun violence.
+    tier: 13
+  japan_2024_bank_japan_ends_negative_interest:
+    composed_of:
+    - japan_2022_assassination_shinzo_abe
+    defines: |
+      (2024) Bank of Japan Ends Negative Interest Rates — The BOJ raises rates for the first
+      time since 2007, ending an era of negative interest rates and unconventional monetary
+      easing aimed at fighting deflation.
+    tier: 14

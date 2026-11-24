@@ -1,0 +1,216 @@
+domain: 200years_7powers_ch03
+layout: timeline
+primitives:
+  germany_1848_revolutions_1848_frankfurt_parliament:
+    defines: |
+      (1848–1849) Revolutions of 1848 & Frankfurt Parliament — Liberal and nationalist
+      uprisings sweep the German states; the Frankfurt Parliament drafts a constitution for a
+      unified Germany but collapses after Prussia's king refuses the offered crown.
+    tier: 0
+concepts:
+  germany_1862_bismarck_becomes_prussian_minister_president:
+    composed_of:
+    - germany_1848_revolutions_1848_frankfurt_parliament
+    defines: |
+      (1862) Bismarck Becomes Prussian Minister-President — Otto von Bismarck begins his
+      "blood and iron" policy, using war and diplomacy to unify Germany under Prussian
+      leadership.
+    tier: 1
+  germany_1864_second_schleswig_war:
+    composed_of:
+    - germany_1862_bismarck_becomes_prussian_minister_president
+    defines: |
+      (1864) Second Schleswig War — Prussia and Austria jointly defeat Denmark over the
+      Schleswig-Holstein duchies, a first step in Bismarck's unification strategy.
+    tier: 2
+  germany_1866_austro_prussian_war_north_german:
+    composed_of:
+    - germany_1864_second_schleswig_war
+    defines: |
+      (1866) Austro-Prussian War & North German Confederation — Prussia defeats Austria,
+      excluding it from German affairs and forming the Prussian-led North German
+      Confederation.
+    tier: 3
+  germany_1870_franco_prussian_war:
+    composed_of:
+    - germany_1866_austro_prussian_war_north_german
+    defines: |
+      (1870–1871) Franco-Prussian War — Prussia and its German allies defeat France; the
+      victory directly precipitates German unification.
+    tier: 4
+  germany_1871_german_unification:
+    composed_of:
+    - germany_1870_franco_prussian_war
+    defines: |
+      (1871) German Unification — The German Empire is proclaimed in the Hall of Mirrors at
+      Versailles after defeating France. This shifts the balance of power in Europe.
+    tier: 5
+  germany_1884_scramble_africa:
+    composed_of:
+    - germany_1871_german_unification
+    defines: |
+      (1884–1885) Scramble for Africa — Germany acquires colonies in Africa (e.g., German
+      South-West Africa, Togoland) and the Pacific, challenging British and French dominance.
+    tier: 6
+  germany_1890_wilhelm_ii_dismisses_bismarck:
+    composed_of:
+    - germany_1884_scramble_africa
+    defines: |
+      (1890) Wilhelm II dismisses Bismarck — The Kaiser abandons Bismarck's cautious diplomacy
+      for an aggressive, expansionist foreign policy (*Weltpolitik*).
+    tier: 7
+  germany_1905_moroccan_crises:
+    composed_of:
+    - germany_1890_wilhelm_ii_dismisses_bismarck
+    defines: |
+      (1905 & 1911) Moroccan Crises — Germany attempts to test the strength of the
+      Anglo-French alliance by provoking France in Morocco, increasing tensions in Europe.
+    tier: 8
+  germany_1914_blank_check_wwi:
+    composed_of:
+    - germany_1905_moroccan_crises
+    defines: |
+      (1914) The "Blank Check" & WWI — Germany encourages Austria-Hungary to be harsh on
+      Serbia after the Archduke's assassination. Germany invades neutral Belgium (Schlieffen
+      Plan) to attack France, dragging Britain into the war.
+    tier: 9
+  germany_1917_unrestricted_submarine_warfare:
+    composed_of:
+    - germany_1914_blank_check_wwi
+    defines: |
+      (1917) Unrestricted Submarine Warfare — Germany resumes sinking merchant ships without
+      warning, leading the USA to enter the war against Germany.
+    tier: 10
+  germany_1919_treaty_versailles:
+    composed_of:
+    - germany_1917_unrestricted_submarine_warfare
+    defines: |
+      (1919) Treaty of Versailles — Germany accepts blame for WWI and loses territory
+      (Alsace-Lorraine, Polish Corridor), its military is restricted, and heavy reparations
+      are imposed.
+    tier: 11
+  germany_1918_german_revolution_weimar_republic:
+    composed_of:
+    - germany_1919_treaty_versailles
+    defines: |
+      (1918–1919) German Revolution & the Weimar Republic — The Kaiser abdicates amid naval
+      mutinies and mass unrest; a new democratic constitution establishes the Weimar Republic,
+      a fragile parliamentary system that Hitler will later dismantle from within rather than
+      overthrow from without.
+    tier: 12
+  germany_1923_ruhr_occupation_hyperinflation_beer_hall:
+    composed_of:
+    - germany_1918_german_revolution_weimar_republic
+    defines: |
+      (1923) Ruhr Occupation, Hyperinflation & Beer Hall Putsch — France and Belgium occupy
+      the Ruhr over missed reparations payments; the resulting hyperinflation wipes out
+      middle-class savings, and Hitler's failed Munich coup (the Beer Hall Putsch) first
+      brings him to national attention.
+    tier: 13
+  germany_1925_locarno_treaties_golden_twenties:
+    composed_of:
+    - germany_1923_ruhr_occupation_hyperinflation_beer_hall
+    defines: |
+      (1925) Locarno Treaties & the "Golden Twenties" — Under Foreign Minister Gustav
+      Stresemann, Germany accepts its western borders and enters a brief period of currency
+      stabilization and relative prosperity — the calm that makes the 1929 collapse legible as
+      a collapse.
+    tier: 14
+  germany_1929_great_depression_germany:
+    composed_of:
+    - germany_1925_locarno_treaties_golden_twenties
+    defines: |
+      (1929–1932) The Great Depression in Germany — The Wall Street Crash triggers mass
+      unemployment (over 6 million by 1932) and the withdrawal of US loans that had propped up
+      the Weimar economy, radicalizing voters toward the Nazi and Communist parties at the
+      ballot box.
+    tier: 15
+  germany_1933_hitler_becomes_chancellor:
+    composed_of:
+    - germany_1929_great_depression_germany
+    defines: |
+      (1933) Hitler becomes Chancellor — The Nazi Party seizes power; Germany begins
+      withdrawing from the League of Nations and rearming.
+    tier: 16
+  germany_1933_reichstag_fire_enabling_act:
+    composed_of:
+    - germany_1933_hitler_becomes_chancellor
+    defines: |
+      (1933) Reichstag Fire & Enabling Act — A fire at the Reichstag is used as pretext to
+      suspend civil liberties; the subsequent Enabling Act lets Hitler's government legislate
+      without the Reichstag, legally dismantling German democracy within weeks of taking
+      power.
+    tier: 17
+  germany_1934_night_long_knives:
+    composed_of:
+    - germany_1933_reichstag_fire_enabling_act
+    defines: |
+      (1934) Night of the Long Knives — Hitler purges the SA leadership and other rivals in a
+      series of extrajudicial killings, consolidating his control over the Nazi Party and
+      winning the army's loyalty.
+    tier: 18
+  germany_1935_nuremberg_laws:
+    composed_of:
+    - germany_1934_night_long_knives
+    defines: |
+      (1935) Nuremberg Laws — New race laws strip German Jews of citizenship and criminalize
+      marriage or relations between Jews and non-Jews, formalizing state antisemitism years
+      before the Holocaust's industrial phase.
+    tier: 19
+  germany_1936_remilitarization_rhineland:
+    composed_of:
+    - germany_1935_nuremberg_laws
+    defines: |
+      (1936) Remilitarization of the Rhineland — Germany sends troops into the demilitarized
+      Rhineland, violating the Treaty of Versailles. Britain and France do not react.
+    tier: 20
+  germany_1938_anschluss_sudetenland:
+    composed_of:
+    - germany_1936_remilitarization_rhineland
+    defines: |
+      (1938) Anschluss & Sudetenland — Germany annexes Austria (Anschluss) and then takes the
+      Sudetenland region of Czechoslovakia (Munich Agreement).
+    tier: 21
+  germany_1938_kristallnacht:
+    composed_of:
+    - germany_1938_anschluss_sudetenland
+    defines: |
+      (1938) Kristallnacht — A state-orchestrated pogrom destroys thousands of Jewish
+      businesses, synagogues, and homes across Germany and Austria, marking the shift from
+      legal persecution to open, organized violence against Jews.
+    tier: 22
+  germany_1939_invasion_poland:
+    composed_of:
+    - germany_1938_kristallnacht
+    defines: |
+      (1939) Invasion of Poland — Germany signs the Molotov-Ribbentrop Pact with the USSR and
+      invades Poland on September 1, starting World War II in Europe.
+    tier: 23
+  germany_1940_blitzkrieg_west:
+    composed_of:
+    - germany_1939_invasion_poland
+    defines: |
+      (1940) Blitzkrieg in the West — Germany invades Denmark, Norway, the Netherlands,
+      Belgium, and France. The "Blitzkrieg" tactic leads to the rapid fall of France.
+    tier: 24
+  germany_1941_operation_barbarossa:
+    composed_of:
+    - germany_1940_blitzkrieg_west
+    defines: |
+      (1941) Operation Barbarossa — Germany breaks its pact with the USSR and launches the
+      largest invasion in history, aiming to destroy the Soviet Union and seize resources.
+    tier: 25
+  germany_1942_holocaust:
+    composed_of:
+    - germany_1941_operation_barbarossa
+    defines: |
+      (1942) The Holocaust — The Wannsee Conference formalizes the "Final Solution," leading
+      to the industrial genocide of six million Jews and millions of others.
+    tier: 26
+  germany_1944_total_defeat:
+    composed_of:
+    - germany_1942_holocaust
+    defines: |
+      (1944–1945) Total Defeat — The Allies push back from the East (Soviets) and West
+      (US/UK). Germany surrenders unconditionally in May 1945.
+    tier: 27

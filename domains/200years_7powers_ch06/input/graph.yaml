@@ -1,0 +1,154 @@
+domain: 200years_7powers_ch06
+layout: timeline
+primitives:
+  china_1842_treaty_nanjing:
+    defines: |
+      (1842) Treaty of Nanjing — Ends the First Opium War; China cedes Hong Kong to Britain,
+      opens treaty ports, and pays a large indemnity, beginning the "Century of Humiliation."
+    tier: 0
+concepts:
+  china_1850_taiping_rebellion:
+    composed_of:
+    - china_1842_treaty_nanjing
+    defines: |
+      (1850–1864) Taiping Rebellion — A massive civil war led by Hong Xiuquan against the Qing
+      Dynasty; an estimated 20–30 million die, making it one of the deadliest conflicts in
+      human history.
+    tier: 1
+  china_1856_second_opium_war:
+    composed_of:
+    - china_1850_taiping_rebellion
+    defines: |
+      (1856–1860) Second Opium War — Britain and France defeat the Qing again; the Treaty of
+      Tientsin and the burning of the Summer Palace force further concessions, including
+      legalized opium trade and more treaty ports.
+    tier: 2
+  china_1861_self_strengthening_movement_begins:
+    composed_of:
+    - china_1856_second_opium_war
+    defines: |
+      (1861) Self-Strengthening Movement Begins — Qing officials pursue limited industrial and
+      military modernization (arsenals, shipyards) while leaving the political system
+      unchanged.
+    tier: 3
+  china_1894_first_sino_japanese_war:
+    composed_of:
+    - china_1861_self_strengthening_movement_begins
+    defines: |
+      (1894–1895) First Sino-Japanese War — China loses control of Korea and is decisively
+      defeated by Japan; the Treaty of Shimonoseki cedes Taiwan and the Liaodong Peninsula and
+      reveals the failure of self-strengthening reforms.
+    tier: 4
+  china_1898_hundred_days_reform:
+    composed_of:
+    - china_1894_first_sino_japanese_war
+    defines: |
+      (1898) Hundred Days' Reform — Emperor Guangxu attempts sweeping modernization reforms,
+      but Empress Dowager Cixi stages a coup and reverses them within 103 days.
+    tier: 5
+  china_1899_boxer_rebellion:
+    composed_of:
+    - china_1898_hundred_days_reform
+    defines: |
+      (1899–1901) Boxer Rebellion — An anti-foreign, anti-Christian uprising is crushed by the
+      Eight-Nation Alliance; the Boxer Protocol imposes crushing indemnities and further
+      foreign military presence.
+    tier: 6
+  china_1905_abolition_imperial_examination_system:
+    composed_of:
+    - china_1899_boxer_rebellion
+    defines: |
+      (1905) Abolition of the Imperial Examination System — The centuries-old civil service
+      exam is ended as part of late Qing reforms, dismantling the traditional path to
+      bureaucratic power.
+    tier: 7
+  china_1911_xinhai_revolution_qing_abdication:
+    composed_of:
+    - china_1905_abolition_imperial_examination_system
+    defines: |
+      (1911–1912) Xinhai Revolution & Qing Abdication — A revolution topples the Qing Dynasty;
+      the last emperor, Puyi, abdicates, and the Republic of China is established under Sun
+      Yat-sen, ending over two millennia of imperial rule.
+    tier: 8
+  china_1915_twenty_one_demands:
+    composed_of:
+    - china_1911_xinhai_revolution_qing_abdication
+    defines: |
+      (1915) Twenty-One Demands — Japan issues a secret ultimatum seeking to extend control
+      over Manchuria and Shandong, effectively reducing China toward a Japanese protectorate.
+    tier: 9
+  china_1916_warlord_era:
+    composed_of:
+    - china_1915_twenty_one_demands
+    defines: |
+      (1916–1928) Warlord Era — Following Yuan Shikai's death, China fragments as regional
+      military commanders (warlords) vie for control, weakening central authority.
+    tier: 10
+  china_1919_may_fourth_movement:
+    composed_of:
+    - china_1916_warlord_era
+    defines: |
+      (1919) May Fourth Movement — Student-led protests erupt over the Treaty of Versailles
+      awarding Shandong to Japan instead of returning it to China, sparking a broader cultural
+      and political awakening.
+    tier: 11
+  china_1921_chinese_communist_party_founded:
+    composed_of:
+    - china_1919_may_fourth_movement
+    defines: |
+      (1921) Chinese Communist Party Founded — The CCP is established in Shanghai, laying the
+      groundwork for decades of political conflict with the Nationalists (Kuomintang).
+    tier: 12
+  china_1926_northern_expedition:
+    composed_of:
+    - china_1921_chinese_communist_party_founded
+    defines: |
+      (1926–1928) Northern Expedition — The Kuomintang, led by Chiang Kai-shek, launches a
+      military campaign to defeat the warlords and reunify China under Nationalist rule.
+    tier: 13
+  china_1927_shanghai_massacre_start_civil_war:
+    composed_of:
+    - china_1926_northern_expedition
+    defines: |
+      (1927) Shanghai Massacre & Start of the Civil War — Chiang Kai-shek purges Communists
+      from the Kuomintang alliance, triggering the long Chinese Civil War between Nationalists
+      and Communists.
+    tier: 14
+  china_1931_mukden_incident_invasion_manchuria:
+    composed_of:
+    - china_1927_shanghai_massacre_start_civil_war
+    defines: |
+      (1931) Mukden Incident & Invasion of Manchuria — Japan stages a pretext to invade and
+      occupy Manchuria, establishing the puppet state of Manchukuo.
+    tier: 15
+  china_1934_long_march:
+    composed_of:
+    - china_1931_mukden_incident_invasion_manchuria
+    defines: |
+      (1934–1935) The Long March — Communist forces retreat roughly 9,000 km under Nationalist
+      pressure; Mao Zedong emerges as the CCP's paramount leader.
+    tier: 16
+  china_1937_marco_polo_bridge_incident_nanjing:
+    composed_of:
+    - china_1934_long_march
+    defines: |
+      (1937) Marco Polo Bridge Incident & Nanjing Massacre — A skirmish near Beijing ignites
+      full-scale war with Japan (Second Sino-Japanese War); Japanese forces capture Nanjing
+      and massacre hundreds of thousands of civilians and disarmed soldiers.
+    tier: 17
+  china_1937_second_sino_japanese_war:
+    composed_of:
+    - china_1937_marco_polo_bridge_incident_nanjing
+    defines: |
+      (1937–1945) Second Sino-Japanese War — China fights a prolonged, devastating war against
+      Japanese occupation, with Nationalists and Communists forming an uneasy united front
+      against the common enemy.
+    tier: 18
+  china_1945_japans_surrender:
+    composed_of:
+    - china_1937_second_sino_japanese_war
+    defines: |
+      (1945) Japan's Surrender — Japan's defeat in WWII ends its occupation of China, but
+      fighting between Nationalists and Communists resumes almost immediately, setting up the
+      final phase of the Chinese Civil War.
+    tier: 19

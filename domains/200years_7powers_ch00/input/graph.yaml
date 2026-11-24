@@ -1,0 +1,289 @@
+domain: 200years_7powers_ch00
+layout: timeline
+primitives:
+  agri_rev_1740s:
+    defines: |
+      (1740s–1780s) Agricultural Revolution — Enclosure acts and four-field crop rotation
+      transform British farming, freeing rural labor for the cities. Selective livestock
+      breeding increases food yields. Without this the factory workforce does not exist —
+      the hidden precondition for every other thread in this chapter.
+    tier: 0
+  enlightenment_philosophy_1748:
+    defines: |
+      (1748–1762) Enlightenment Philosophy — Montesquieu's Spirit of the Laws (1748)
+      articulates separation of powers; Rousseau's Social Contract (1762) grounds
+      legitimate government in popular consent. These ideas are the intellectual fuel for
+      the American, French, and Haitian revolutions — and the long 19th-century struggle
+      between liberalism and the old dynastic order.
+    tier: 0
+  franklin_electricity_1752:
+    defines: |
+      (1752) Franklin's Kite & Lightning Rod — Benjamin Franklin proves that lightning is
+      electrical and invents the lightning rod, demonstrating that natural phenomena obey
+      physical laws and can be tamed by experiment. The first practical application of
+      electrical science, and the opening event of the scientific thread that ends with
+      Faraday's electromagnetic induction.
+    tier: 1
+  seven_years_war_1756:
+    defines: |
+      (1756–1763) Seven Years' War — The first truly global conflict, fought across Europe,
+      the Americas, India, and the Pacific. Britain emerges as the world's dominant colonial
+      power (gaining Canada and effective control of India); France loses most of its
+      overseas empire and bankrupts its treasury — directly funding the grievances that
+      ignite the French Revolution.
+    tier: 1
+concepts:
+  # ── Thread A: Industrial Revolution ──────────────────────────────
+  watt_steam_engine_1769:
+    composed_of:
+    - agri_rev_1740s
+    defines: |
+      (1769) Watt's Improved Steam Engine — James Watt's separate condenser dramatically
+      improves efficiency, transforming steam from a mine pump into a universal power source
+      for mills, forges, and eventually locomotives. The founding technology of
+      industrialization, built on the surplus labor freed by the Agricultural Revolution.
+    tier: 3
+  mechanized_textile_mills_1785:
+    composed_of:
+    - watt_steam_engine_1769
+    defines: |
+      (1780s–1800s) Mechanized Textile Mills — Steam-powered spinning (jenny, water frame)
+      and weaving (power loom) concentrate production in English factory towns: Manchester,
+      Leeds, Birmingham. Britain becomes the world's first industrial economy. Coal
+      consumption surges; the factory system and the urban working class are born together.
+    tier: 5
+  stockton_darlington_railway_1825:
+    composed_of:
+    - mechanized_textile_mills_1785
+    defines: |
+      (1825) Stockton–Darlington Railway — The world's first steam-powered public railway
+      proves the locomotive commercially viable. The Railway Age begins, collapsing
+      distances, accelerating the movement of coal and goods, and knitting industrial
+      regions into a single national economy. By 1845 Britain has 2,000 miles of track.
+    tier: 11
+  # ── Thread B: Age of Revolutions ─────────────────────────────────
+  american_revolution_1775:
+    composed_of:
+    - seven_years_war_1756
+    - enlightenment_philosophy_1748
+    defines: |
+      (1775–1783) American Revolution — Thirteen British colonies invoke Enlightenment
+      principles to justify independence and defeat the world's foremost military power,
+      establishing the first modern constitutional republic. The event proves that
+      revolution is possible and emboldens movements worldwide; it bankrupts France
+      further by drawing it into the conflict.
+    tier: 4
+  french_revolution_1789:
+    composed_of:
+    - american_revolution_1775
+    defines: |
+      (1789–1799) French Revolution — Popular revolution topples the French monarchy,
+      abolishes feudalism, and proclaims liberty, equality, and popular sovereignty.
+      It destabilizes every European dynastic order and launches a century of revolutions
+      and counter-revolutions. The Declaration of the Rights of Man becomes the template
+      for liberal constitutions worldwide.
+    tier: 6
+  haitian_revolution_1791:
+    composed_of:
+    - french_revolution_1789
+    defines: |
+      (1791–1804) Haitian Revolution — Enslaved people in the French colony of
+      Saint-Domingue — the most profitable plantation colony on earth — rise up, defeat
+      French, Spanish, and British armies, and found Haiti: the first Black republic and
+      the only successful slave revolution in the modern era. It permanently shakes the
+      economic and moral foundations of the Atlantic slave system.
+    tier: 7
+  latin_american_independence_1808:
+    composed_of:
+    - haitian_revolution_1791
+    - french_revolution_1789
+    defines: |
+      (1808–1826) Latin American Independence — Napoleon's invasion of Iberia destroys the
+      political authority of Spain and Portugal over their colonies. Bolívar liberates
+      northern South America, San Martín the south, Hidalgo sparks Mexico. By 1826 Spain
+      and Portugal have lost virtually their entire American empires — the largest
+      geopolitical restructuring of the Western Hemisphere since 1492.
+    tier: 10
+  # ── Thread C: Economic Ideas & Abolition ─────────────────────────
+  adam_smith_1776:
+    composed_of:
+    - seven_years_war_1756
+    - agri_rev_1740s
+    defines: |
+      (1776) Adam Smith's Wealth of Nations — Smith articulates free markets, the division
+      of labor, and self-regulating economies. His work provides the intellectual framework
+      for industrial capitalism and free trade that British governments will implement over
+      the next century — and that directly underpins the 1846 Repeal of the Corn Laws,
+      the opening event of ch01.
+    tier: 4
+  abolition_slave_trade_1807:
+    composed_of:
+    - adam_smith_1776
+    - haitian_revolution_1791
+    defines: |
+      (1807) British Abolition of the Slave Trade — Britain bans the transatlantic slave
+      trade and uses Royal Navy patrols to enforce it globally. The Haitian Revolution's
+      proof that enslaved resistance could succeed combines with Enlightenment moral
+      arguments to shift British political opinion. A turning point in the legitimacy of
+      the Atlantic slave economy.
+    tier: 9
+  british_abolition_slavery_1833:
+    composed_of:
+    - abolition_slave_trade_1807
+    defines: |
+      (1833) British Abolition of Slavery — Britain frees roughly 800,000 enslaved people
+      throughout its empire, paying £20 million in compensation to slaveholders. Colonial
+      labor economics are permanently reshaped; the moral argument for abolition spreads
+      to the USA, where it fuels the conflict that will culminate in the Civil War.
+    tier: 13
+  # ── Thread D: Geopolitical Order ─────────────────────────────────
+  napoleonic_wars_1799:
+    composed_of:
+    - french_revolution_1789
+    defines: |
+      (1799–1815) Napoleonic Wars — Napoleon conquers most of Europe, spreading the
+      Napoleonic legal code, abolishing feudal structures, and awakening nationalist
+      movements everywhere he occupies. His defeat by a grand coalition — Britain,
+      Russia, Prussia, Austria — is the first modern instance of great powers cooperating
+      to restrain a continental hegemon.
+    tier: 8
+  congress_of_vienna_1815:
+    composed_of:
+    - napoleonic_wars_1799
+    defines: |
+      (1815) Congress of Vienna — The four great powers redraw the map of Europe and create
+      the Concert of Europe: a balance-of-power framework managed through periodic great-
+      power congresses. It prevents major European war for nearly a century and invents the
+      template for multilateral diplomacy that the League of Nations and the UN will later
+      adapt.
+    tier: 10
+  revolutions_of_1830:
+    composed_of:
+    - congress_of_vienna_1815
+    - latin_american_independence_1808
+    defines: |
+      (1830) Revolutions of 1830 — Liberal and nationalist uprisings in France (deposing
+      the ultra-royalist Charles X), Belgium (winning independence from the Netherlands),
+      and Poland test the Congress of Vienna settlement. The old order is stable but no
+      longer uncontested; the 1848 explosion is already visible in outline.
+    tier: 12
+  first_opium_war_1839:
+    composed_of:
+    - congress_of_vienna_1815
+    - british_abolition_slavery_1833
+    defines: |
+      (1839–1842) First Opium War — Britain defeats Qing China after China destroys British
+      opium stockpiles, forcing the Treaty of Nanking: Hong Kong is ceded, five treaty
+      ports are opened, and extraterritorial rights are granted to British merchants.
+      China's "Century of Humiliation" begins. This is the opening event of the Qing
+      decline chain that runs through all of ch08.
+    tier: 14
+  # ── Thread E: Scientific Revolution ──────────────────────────────
+  lavoisier_chemistry_1772:
+    composed_of:
+    - franklin_electricity_1752
+    defines: |
+      (1772–1789) Lavoisier's Chemical Revolution — Lavoisier names oxygen and hydrogen,
+      establishes the law of conservation of mass, and systematizes chemistry with a
+      rigorous new nomenclature. He transforms alchemy into a modern experimental science
+      and founds the quantitative approach that makes industrial chemistry possible in the
+      next century.
+    tier: 3
+  jenner_vaccine_and_volta_battery:
+    composed_of:
+    - lavoisier_chemistry_1772
+    defines: |
+      (1796–1800) Jenner's Smallpox Vaccine & Volta's Electric Battery — Jenner (1796)
+      demonstrates that cowpox inoculation protects against smallpox — the first vaccine,
+      founding immunology. Volta (1800) invents the first reliable continuous electric
+      current source, immediately enabling electrolysis and opening the age of electrical
+      experimentation. Medicine and physics each gain a new experimental tool.
+    tier: 7
+  dalton_atomic_theory_1803:
+    composed_of:
+    - jenner_vaccine_and_volta_battery
+    defines: |
+      (1803) Dalton's Atomic Theory — John Dalton proposes that matter is composed of
+      atoms with characteristic weights, giving chemistry a quantitative foundation. The
+      atomic model underpins all modern chemistry and physics, and sets up the periodic
+      table and eventually nuclear physics.
+    tier: 8
+  oersted_faraday_electromagnetism_1820:
+    composed_of:
+    - dalton_atomic_theory_1803
+    defines: |
+      (1820–1831) Electromagnetism — Oersted discovers that electric current creates a
+      magnetic field (1820); Faraday demonstrates that a moving magnetic field generates
+      electric current (1831). Together these make electric motors and generators
+      possible. This is the scientific payoff that seeds the Second Industrial Revolution
+      and ch08's science thread.
+    tier: 11
+  lyell_darwin_1830:
+    composed_of:
+    - oersted_faraday_electromagnetism_1820
+    defines: |
+      (1830–1831) Lyell's Geology & Darwin's Beagle Voyage — Lyell's Principles of
+      Geology (1830) argues that Earth was shaped by slow, uniform processes over vast
+      time scales, overturning the biblical timeline. Darwin departs on the HMS Beagle
+      (1831) with Lyell's book aboard. His five-year voyage gathering specimens will
+      produce On the Origin of Species (1859) — the most consequential scientific work
+      of the 19th century.
+    tier: 12
+  # ── Payoff Nodes — bridge to ch01 & ch08 ─────────────────────────
+  payoff_british_industrial_supremacy:
+    composed_of:
+    - stockton_darlington_railway_1825
+    - adam_smith_1776
+    - british_abolition_slavery_1833
+    defines: |
+      [Payoff → ch01 UK] By 1845 Britain is the undisputed Workshop of the World: the
+      most industrialized economy, dominant naval and colonial power, and champion of free
+      trade. The immediate next event in ch01 is the 1846 Repeal of the Corn Laws —
+      Robert Peel's crystallization of Adam Smith's free-trade argument, enabled by an
+      industrial economy that no longer needs to protect domestic grain.
+    tier: 15
+  payoff_liberal_nationalism:
+    composed_of:
+    - revolutions_of_1830
+    - latin_american_independence_1808
+    defines: |
+      [Payoff → ch01 France / ch01 Germany] The Congress of Vienna suppresses but cannot
+      extinguish liberal nationalism. Latin American independence proves constitutional
+      republics can replace empires; the 1830 revolutions prove European monarchies are
+      not immune. The 1848 Revolutions — which open the France and Germany chains in ch08
+      — are already inevitable in outline.
+    tier: 15
+  payoff_opium_war_and_china:
+    composed_of:
+    - first_opium_war_1839
+    defines: |
+      [Payoff → ch08 China] The Treaty of Nanking (1842) is the start of the Qing decline
+      chain. The self-strengthening reforms that follow fail to close the gap; the Taiping
+      Rebellion, the Second Opium War, and the Sino-Japanese War all trace back to this
+      moment of exposed vulnerability.
+    tier: 15
+  payoff_scientific_foundations:
+    composed_of:
+    - oersted_faraday_electromagnetism_1820
+    - lyell_darwin_1830
+    defines: |
+      [Payoff → ch08 Science Thread] Faraday's electromagnetic induction is the direct
+      seed of Maxwell's equations (1865), Edison's power station (1882), and Tesla's AC
+      grid — the technologies that shift industrial leadership from Britain to Germany and
+      the USA. Darwin's voyage seeds On the Origin of Species (1859), which reshapes
+      biology, medicine, and — misapplied — the ideological justifications for imperialism.
+    tier: 15
+  bridge_to_1845:
+    composed_of:
+    - payoff_british_industrial_supremacy
+    - payoff_liberal_nationalism
+    - payoff_opium_war_and_china
+    - payoff_scientific_foundations
+    defines: |
+      [Bridge to ch01–ch16] By 1845 the five threads of this chapter converge into a
+      single world: Britain industrially dominant and free-trading; France and Germany
+      shaped by revolution and resurgent nationalism; Russia and the USA as rising
+      continental powers; Japan still isolated but a generation from the Meiji
+      Restoration; China at the start of its long decline. The seven powers that will
+      dominate the next 200 years are in formation. The stage is set.
+    tier: 16

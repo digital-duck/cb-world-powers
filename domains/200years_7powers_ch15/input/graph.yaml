@@ -1,0 +1,197 @@
+domain: 200years_7powers_ch15
+layout: timeline
+primitives:
+  usa_1945_founding_un_member:
+    defines: |
+      (1945) Founding UN Member — The US becomes a founding member of the United Nations and
+      emerges from WWII as one of two global superpowers.
+    tier: 0
+concepts:
+  usa_1947_truman_doctrine_marshall_plan:
+    composed_of:
+    - usa_1945_founding_un_member
+    defines: |
+      (1947) Truman Doctrine & Marshall Plan — The US commits to containing communism globally
+      and funds the reconstruction of war-torn Europe, launching the Cold War era.
+    tier: 1
+  usa_1949_nato_founded:
+    composed_of:
+    - usa_1947_truman_doctrine_marshall_plan
+    defines: |
+      (1949) NATO Founded — The US anchors a Western military alliance against Soviet
+      expansion in Europe.
+    tier: 2
+  usa_1950_korean_war:
+    composed_of:
+    - usa_1949_nato_founded
+    defines: |
+      (1950–1953) Korean War — US-led UN forces fight to contain communist North Korea (backed
+      by China/USSR); ends in armistice and a divided peninsula that persists today.
+    tier: 3
+  usa_1954_brown_v_board_education:
+    composed_of:
+    - usa_1950_korean_war
+    defines: |
+      (1954) Brown v. Board of Education — The Supreme Court rules school segregation
+      unconstitutional, catalyzing the modern Civil Rights Movement.
+    tier: 4
+  usa_1955_civil_rights_movement:
+    composed_of:
+    - usa_1954_brown_v_board_education
+    defines: |
+      (1955–1968) Civil Rights Movement — Grassroots activism (Montgomery Bus Boycott, March
+      on Washington, MLK's leadership) dismantles legal segregation, culminating in the Civil
+      Rights Act (1964) and Voting Rights Act (1965); MLK is assassinated in 1968.
+    tier: 5
+  usa_1961_bay_pigs_space_race_begins:
+    composed_of:
+    - usa_1955_civil_rights_movement
+    defines: |
+      (1961) Bay of Pigs & Space Race Begins — A failed US-backed invasion of Cuba deepens
+      Cold War tensions with the USSR just as the space race accelerates.
+    tier: 6
+  usa_1962_cuban_missile_crisis:
+    composed_of:
+    - usa_1961_bay_pigs_space_race_begins
+    defines: |
+      (1962) Cuban Missile Crisis — The US and USSR come to the brink of nuclear war over
+      Soviet missiles in Cuba; resolved through tense diplomacy.
+    tier: 7
+  usa_1963_jfk_assassination:
+    composed_of:
+    - usa_1962_cuban_missile_crisis
+    defines: |
+      (1963) JFK Assassination — President Kennedy is assassinated in Dallas, a national
+      trauma that reshapes American political culture.
+    tier: 8
+  usa_1961_vietnam_war:
+    composed_of:
+    - usa_1963_jfk_assassination
+    defines: |
+      (1961–1975) Vietnam War — Prolonged, divisive US military involvement in Vietnam ends in
+      withdrawal and the fall of Saigon; fuels major domestic anti-war and countercultural
+      movements.
+    tier: 9
+  usa_1969_apollo_11_moon_landing:
+    composed_of:
+    - usa_1961_vietnam_war
+    defines: |
+      (1969) Apollo 11 Moon Landing — The US lands the first humans on the Moon, a defining
+      Cold War technological and symbolic victory.
+    tier: 10
+  usa_1972_watergate_scandal:
+    composed_of:
+    - usa_1969_apollo_11_moon_landing
+    defines: |
+      (1972–1974) Watergate Scandal — A political cover-up leads to President Nixon's
+      resignation, deeply eroding public trust in government institutions.
+    tier: 11
+  usa_1979_iran_hostage_crisis:
+    composed_of:
+    - usa_1972_watergate_scandal
+    defines: |
+      (1979–1981) Iran Hostage Crisis — Islamist revolutionaries hold American diplomats
+      hostage for 444 days, straining US-Middle East relations for decades.
+    tier: 12
+  usa_1980_reagan_era_cold_war_escalation:
+    composed_of:
+    - usa_1979_iran_hostage_crisis
+    defines: |
+      (1980s) Reagan Era & Cold War Escalation — Reagan pursues military buildup, tax cuts,
+      and anti-communist rhetoric ("evil empire"), while later engaging Gorbachev in
+      arms-reduction diplomacy.
+    tier: 13
+  usa_1989_fall_berlin_wall:
+    composed_of:
+    - usa_1980_reagan_era_cold_war_escalation
+    defines: |
+      (1989) Fall of the Berlin Wall — Symbolizes the imminent collapse of Soviet-backed
+      communism in Europe, with the US as the Cold War's principal victor.
+    tier: 14
+  usa_1991_gulf_war_soviet_collapse:
+    composed_of:
+    - usa_1989_fall_berlin_wall
+    defines: |
+      (1991) Gulf War & Soviet Collapse — The US leads a coalition to expel Iraq from Kuwait;
+      the USSR dissolves the same year, leaving the US as the sole global superpower.
+    tier: 15
+  usa_2001_september_11_attacks:
+    composed_of:
+    - usa_1991_gulf_war_soviet_collapse
+    defines: |
+      (2001) September 11 Attacks — Al-Qaeda terrorists hijack airliners, killing nearly 3,000
+      people and triggering the US-led "War on Terror."
+    tier: 16
+  usa_2001_war_afghanistan:
+    composed_of:
+    - usa_2001_september_11_attacks
+    defines: |
+      (2001–2021) War in Afghanistan — The US topples the Taliban after 9/11, then fights a
+      two-decade counterinsurgency before a chaotic 2021 withdrawal and Taliban resurgence.
+    tier: 17
+  usa_2003_iraq_war:
+    composed_of:
+    - usa_2001_war_afghanistan
+    defines: |
+      (2003–2011) Iraq War — The US invades Iraq over disputed WMD claims, toppling Saddam
+      Hussein but triggering years of insurgency and regional instability.
+    tier: 18
+  usa_2008_global_financial_crisis_obama_elected:
+    composed_of:
+    - usa_2003_iraq_war
+    defines: |
+      (2008) Global Financial Crisis & Obama Elected — A US-originated banking and housing
+      collapse triggers a global recession; Barack Obama becomes the first Black US president.
+    tier: 19
+  usa_2010_affordable_care_act:
+    composed_of:
+    - usa_2008_global_financial_crisis_obama_elected
+    defines: |
+      (2010) Affordable Care Act — Landmark healthcare reform expands insurance coverage,
+      becoming a defining and contested domestic policy legacy.
+    tier: 20
+  usa_2020_covid_19_pandemic:
+    composed_of:
+    - usa_2010_affordable_care_act
+    defines: |
+      (2020) COVID-19 Pandemic — A global pandemic kills over a million Americans, disrupts
+      the economy, and becomes deeply politically polarizing.
+    tier: 21
+  usa_2021_january_6_capitol_attack:
+    composed_of:
+    - usa_2020_covid_19_pandemic
+    defines: |
+      (2021) January 6 Capitol Attack — Supporters of President Trump storm the US Capitol to
+      contest the 2020 election results, an unprecedented attack on the peaceful transfer of
+      power.
+    tier: 22
+  usa_2022_support_ukraine:
+    composed_of:
+    - usa_2021_january_6_capitol_attack
+    defines: |
+      (2022) Support for Ukraine — The US leads Western military and financial support for
+      Ukraine following Russia's full-scale invasion.
+    tier: 23
+  usa_2022_generative_ai_boom:
+    composed_of:
+    - usa_2022_support_ukraine
+    defines: |
+      (2022–2023) Generative AI Boom — OpenAI's ChatGPT (late 2022) triggers a wave of public
+      and commercial adoption of generative AI, reshaping technology investment and beginning
+      a new competitive race among US AI labs.
+    tier: 24
+  usa_2024_trump_re_elected:
+    composed_of:
+    - usa_2022_generative_ai_boom
+    defines: |
+      (2024) Trump Re-elected — Donald Trump wins a second, non-consecutive presidential term,
+      defeating Vice President Kamala Harris after President Biden withdraws from the race.
+    tier: 25
+  usa_2025_second_trump_administration_tariff_regime:
+    composed_of:
+    - usa_2024_trump_re_elected
+    defines: |
+      (2025) Second Trump Administration & Tariff Regime — Trump's second term begins with
+      sweeping new tariffs on major trading partners, marking a sharp break from decades of US
+      trade liberalization.
+    tier: 26

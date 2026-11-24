@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Concept Graph — graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f2f5;overflow:hidden;height:100vh}
+.app{
+  display:grid;
+  grid-template-columns:230px 1fr 210px;
+  grid-template-rows:60vh 40vh;
+  height:100vh;
+  gap:0;
+}
+/* ── Left sidebar: learning path ── */
+#path-sidebar{
+  grid-column:1;grid-row:1/3;
+  background:#f5f6f8;color:#2a2a2a;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  border-right:1px solid #dde0e6;
+}
+#path-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid #dde0e6;
+  flex-shrink:0;
+}
+#path-header h1{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:#888;margin-bottom:2px;font-weight:700}
+#path-header .domain-name{font-size:11px;color:#555;margin-top:4px}
+#path-steps{flex:1;overflow-y:auto;padding:8px 0}
+#path-steps .hint{color:#aaa;font-size:12px;text-align:center;padding:24px 12px;line-height:1.5}
+.step-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 12px;cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .15s;
+}
+.step-item:hover{background:#ebebf0}
+.step-item.active{background:#e8eef8;border-left-color:#4a90d9}
+.step-item.target{background:#eaf5ea;border-left-color:#4caf50}
+.step-num{min-width:20px;font-size:10px;font-weight:700;color:#bbb;padding-top:2px;flex-shrink:0}
+.step-item.target .step-num{color:#4caf50}
+.step-label{font-size:12px;font-weight:600;color:#333;line-height:1.4}
+.step-def{font-size:10px;color:#888;margin-top:2px;line-height:1.4}
+.step-kind{display:inline-block;padding:0 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:4px}
+#path-count{font-size:10px;color:#aaa;margin-top:3px}
+/* vis-network's own default tooltip CSS sets white-space:nowrap with no
+   width cap, so a node's `defines` text (a full sentence) renders as one
+   unbroken line stretching across the whole canvas — override both here. */
+.vis-tooltip{white-space:normal!important;max-width:280px;line-height:1.4}
+/* ── Graph panel ── */
+#graph-panel{
+  grid-column:2;grid-row:1;
+  position:relative;background:#fff;
+  border-bottom:2px solid #dde;
+}
+#graph-container{width:100%;height:100%}
+.graph-recenter-btn{
+  position:absolute;right:16px;bottom:16px;z-index:50;
+  padding:6px 14px;border-radius:6px;
+  border:1px solid #1e3a5f;background:#1e3a5f;color:#fff;
+  font-size:12px;font-weight:600;font-family:system-ui,sans-serif;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;
+}
+.graph-recenter-btn:hover{background:#28496f;border-color:#28496f}
+/* ── Explanation panel ── */
+#explain-panel{
+  grid-column:2;grid-row:2;
+  background:#fff;overflow-y:auto;
+  padding:16px 20px;
+}
+#explain-panel .empty{color:#aaa;font-size:13px;padding:20px 0;text-align:center}
+#explain-panel .node-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+#explain-panel .node-title h2{font-size:16px;color:#1e3a5f}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:10px;
+  font-size:11px;font-weight:700;
+}
+.badge.primitive{background:#e8f5e9;color:#2e7d32}
+.badge.concept{background:#e3f2fd;color:#1565c0}
+.badge.application{background:#fff3e0;color:#ef6c00}
+.tier-tag{font-size:11px;color:#999;margin-left:auto}
+#explain-panel .defines{
+  font-size:14px;color:#333;line-height:1.6;margin-bottom:12px;
+  padding:10px 12px;background:#f8f9fb;border-radius:6px;
+  border-left:3px solid #90b4e8;
+}
+#explain-panel .section-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#999;margin-bottom:6px;
+}
+#explain-panel .prereq-list{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.prereq-chip{
+  padding:3px 9px;border-radius:12px;font-size:11px;
+  background:#e3f2fd;color:#1565c0;cursor:pointer;
+  border:1px solid #90caf9;transition:background .12s;
+}
+.prereq-chip:hover{background:#bbdefb}
+#explain-panel .meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.meta-item{font-size:12px;color:#555}
+.meta-item b{color:#1e3a5f}
+#explain-panel .play-hint{
+  font-size:12px;color:#5a5a5a;line-height:1.6;
+  padding:8px 12px;background:#fffde7;border-radius:6px;
+  border-left:3px solid #ffd54f;margin-bottom:8px;
+}
+/* ── Notes sidebar ── */
+#notes-sidebar{
+  grid-column:3;grid-row:1/3;
+  background:#fafaf8;
+  border-left:2px solid #e8e8e0;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+#notes-header{
+  padding:10px 12px 8px;
+  border-bottom:1px solid #e0e0d8;
+  flex-shrink:0;
+}
+#notes-header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+#notes-header h2{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin:0}
+#notes-node-label{font-size:11px;color:#999;margin-top:2px}
+.nb-btn{font-size:10px;padding:2px 7px;border-radius:3px;
+  border:1px solid #ddd;background:#f0f0ea;cursor:pointer;color:#777;
+  font-family:system-ui,sans-serif}
+.nb-btn:hover{background:#e0e0d8;color:#444}
+#notes-textarea{
+  /* 40:60 entry:history split of the sidebar's remaining height (below the
+     fixed header) — flex-grow ratio 2:3 against #notes-with-entries below,
+     not a fixed height, so both panes scale together as the sidebar is
+     resized (see GraphViewer.js's resizable-pane embed). */
+  flex:2 1 0;min-height:0;border:none;resize:none;
+  padding:12px;font-size:12px;line-height:1.6;
+  font-family:inherit;background:#fafaf8;color:#333;
+  outline:none;
+}
+#notes-with-entries{
+  border-top:1px solid #e8e8e0;flex:3 1 0;min-height:0;overflow-y:auto;
+}
+.note-empty-hint{padding:12px;color:#aaa;font-size:11px;font-style:italic}
+.note-entry{
+  padding:6px 12px;cursor:pointer;
+  border-bottom:1px solid #f0f0e8;
+  font-size:11px;
+}
+.note-entry:hover{background:#f0efe8}
+.note-entry .note-node{font-weight:600;color:#555;display:flex;justify-content:space-between;align-items:center}
+.note-entry .note-ts{font-weight:400;color:#bbb;font-size:10px}
+.note-entry .note-preview{color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ── kind badge colours in sidebar ── */
+.primitive-k{background:#e8f5e9;color:#2e7d32}
+.concept-k{background:#e3f2fd;color:#1565c0}
+.application-k{background:#fff3e0;color:#ef6c00}
+/* ── concept detail panel ── */
+#concept-detail{margin-top:14px;border-top:1px solid #e8e8e0;padding-top:10px;}
+#concept-iframe{width:100%;height:500px;border:1px solid #e0e0d8;border-radius:4px;margin-top:6px;display:block;}
+.concept-not-found{color:#e57373;font-size:12px;padding:6px 0;font-style:italic;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LEFT: learning path sidebar -->
+<aside id="path-sidebar">
+  <div id="path-header">
+    <h1>Learning Path</h1>
+    <div class="domain-name">graph</div>
+    <div id="path-count"></div>
+  </div>
+  <div id="path-steps">
+    <div class="hint">Click any node in the graph<br>to see its learning path</div>
+  </div>
+</aside>
+
+<!-- CENTRE TOP: concept graph -->
+<div id="graph-panel">
+  <div id="graph-container"></div>
+  <button class="graph-recenter-btn" onclick="reCenterGraph()" title="Re-fit the graph to the viewport">Re-Center</button>
+</div>
+
+<!-- CENTRE BOTTOM: explanation panel -->
+<div id="explain-panel">
+  <div class="empty">Select a node to see its definition, prerequisites, and learning context.</div>
+</div>
+
+<!-- RIGHT: notes sidebar -->
+<aside id="notes-sidebar">
+  <div id="notes-header">
+    <div id="notes-header-top">
+      <h2>Notes</h2>
+      <div>
+        <button class="nb-btn" id="nb-save-btn" onclick="saveNoteEntry()">Save</button>
+        <button class="nb-btn" id="nb-clear-btn" onclick="clearNoteInput()">Clear</button>
+        <button class="nb-btn" onclick="exportNotes()">Export</button>
+      </div>
+    </div>
+    <div id="notes-node-label">no node selected</div>
+  </div>
+  <textarea id="notes-textarea" placeholder="Type notes here, then click Save"></textarea>
+  <div id="notes-with-entries"></div>
+</aside>
+
+</div><!-- .app -->
+
+<script>
+const RAW = {"nodes": [{"id": "uk_postwar_settlement_1945", "label": "uk postwar settlement 1945", "kind": "primitive", "tier": 0, "defines": "Britain in 1945: victorious but financially exhausted, electing a Labour government that\nbegins building the welfare state (NHS) while still holding the largest colonial empire\nin the world.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "france_liberation_1945", "label": "france liberation 1945", "kind": "primitive", "tier": 0, "defines": "France in 1945: liberated but economically devastated and politically fractured, about\nto draft a new republic while still holding a large colonial empire in Indochina and\nAfrica.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "germany_occupation_1945", "label": "germany occupation 1945", "kind": "primitive", "tier": 0, "defines": "Germany in 1945: defeated, divided into four Allied occupation zones, its political\nfuture undecided between the emerging US and Soviet camps.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "russia_soviet_superpower_1945", "label": "russia soviet superpower 1945", "kind": "primitive", "tier": 0, "defines": "The USSR in 1945: a victorious global superpower occupying Eastern Europe, about to\nconvert wartime alliance with the West into Cold War rivalry.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "japan_occupation_1945", "label": "japan occupation 1945", "kind": "primitive", "tier": 0, "defines": "Japan in 1945: defeated and under US-led Allied occupation (SCAP), its political and\nmilitary structure about to be rebuilt under a new pacifist constitution.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "china_civil_war_resumption_1945", "label": "china civil war resumption 1945", "kind": "primitive", "tier": 0, "defines": "China in 1945: Japan's defeat ends foreign occupation but the Nationalist-Communist\nalliance immediately collapses back into civil war.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "usa_postwar_superpower_1945", "label": "usa postwar superpower 1945", "kind": "primitive", "tier": 0, "defines": "The USA in 1945: the only major power to emerge from WWII economically strengthened\nrather than devastated, about to underwrite a new international order (UN, Bretton\nWoods) as the other global superpower.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "cold_war_bipolar_order", "label": "cold war bipolar order", "kind": "primitive", "tier": 0, "defines": "The post-1945 international system organized around two rival superpower blocs (US-led\nand Soviet-led), each building alliances, client states, and nuclear arsenals against\nthe other.\n", "prereqs": [], "verifier": "", "lab": "", "play": "", "color": {"background": "#fffde7", "border": "#795548"}, "font": {"size": 13}}, {"id": "uk_decolonization_wave", "label": "uk decolonization wave", "kind": "concept", "tier": 1, "defines": "Britain grants India independence in 1947 and then, through the 1960s, independence to\nmost of its African and Caribbean colonies, rapidly winding down the empire within two\npostwar decades.\n", "prereqs": ["uk_postwar_settlement_1945"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "uk_suez_humiliation", "label": "uk suez humiliation", "kind": "concept", "tier": 2, "defines": "The 1956 Suez Crisis: Britain, France, and Israel invade Egypt over the nationalized\ncanal, then withdraw under US pressure — read at the time as the moment Britain's\nindependent great-power status effectively ended.\n", "prereqs": ["uk_decolonization_wave"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "uk_eec_membership", "label": "uk eec membership", "kind": "concept", "tier": 3, "defines": "Britain joins the European Economic Community in 1973, tying its post-empire economic\nfuture to European integration after two earlier applications were vetoed by France.\n", "prereqs": ["uk_suez_humiliation"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "uk_thatcher_restructuring", "label": "uk thatcher restructuring", "kind": "concept", "tier": 4, "defines": "Margaret Thatcher's 1979-90 government pursues privatization and confronts the trade\nunions (the 1984-85 miners' strike), reshaping the British economy away from its postwar\nnationalized-industry model.\n", "prereqs": ["uk_eec_membership"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "uk_brexit_realignment", "label": "uk brexit realignment", "kind": "concept", "tier": 5, "defines": "Britain votes to leave the EU in 2016 and formally exits in 2020, reversing the 1973\nintegration decision after nearly five decades of membership.\n", "prereqs": ["uk_thatcher_restructuring"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "france_indochina_defeat", "label": "france indochina defeat", "kind": "concept", "tier": 1, "defines": "France fights to retain colonial Indochina from 1946, losing decisively at Dien Bien Phu\nin 1954 and withdrawing under the Geneva Accords.\n", "prereqs": ["france_liberation_1945"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "france_algerian_war", "label": "france algerian war", "kind": "concept", "tier": 2, "defines": "The 1954-62 Algerian War of Independence nearly triggers civil war in France itself\nbefore ending in Algerian independence and the exodus of over a million settlers.\n", "prereqs": ["france_indochina_defeat"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "france_fifth_republic_eu_integration", "label": "france fifth republic eu integration", "kind": "concept", "tier": 3, "defines": "Amid the Algerian crisis, de Gaulle establishes the Fifth Republic (1958) while France\nco-founds the EEC (Treaty of Rome, 1957), anchoring its postwar recovery in European\nintegration rather than colonial retention.\n", "prereqs": ["france_algerian_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "france_may68_social_change", "label": "france may68 social change", "kind": "concept", "tier": 4, "defines": "The May 1968 protests and strikes nearly topple the de Gaulle government, reshaping\nFrench social and labor politics for a generation.\n", "prereqs": ["france_fifth_republic_eu_integration"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "france_recent_instability", "label": "france recent instability", "kind": "concept", "tier": 5, "defines": "The 2018-19 Yellow Vest protests and the 2024 snap election's hung parliament mark a\nperiod of unusual political fragmentation under Macron.\n", "prereqs": ["france_may68_social_change"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_division_and_wall", "label": "germany division and wall", "kind": "concept", "tier": 1, "defines": "Germany splits into the US/NATO-aligned Federal Republic and the Soviet-aligned\nDemocratic Republic (1949); East Germany builds the Berlin Wall in 1961 to stop mass\nemigration, making the division physical.\n", "prereqs": ["germany_occupation_1945", "cold_war_bipolar_order"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_wirtschaftswunder", "label": "germany wirtschaftswunder", "kind": "concept", "tier": 2, "defines": "West Germany's postwar 'economic miracle,' NATO membership (1955), and EEC founding\nmembership (1957) rebuild it into Western Europe's largest economy within little more\nthan a decade of total defeat.\n", "prereqs": ["germany_division_and_wall"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_reunification_1990", "label": "germany reunification 1990", "kind": "concept", "tier": 3, "defines": "The Berlin Wall falls in 1989 and Germany formally reunifies in 1990, ending over four\ndecades of division as the Soviet bloc that had enforced it collapses.\n", "prereqs": ["germany_wirtschaftswunder"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_merkel_era", "label": "germany merkel era", "kind": "concept", "tier": 4, "defines": "Angela Merkel's 2005-2021 chancellorship spans the Eurozone crisis and the 2015 refugee\ncrisis, during which Germany accepts over a million refugees mostly from Syria.\n", "prereqs": ["germany_reunification_1990"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "germany_zeitenwende_2022", "label": "germany zeitenwende 2022", "kind": "concept", "tier": 6, "defines": "Chancellor Scholz declares a 'Zeitenwende' (turning point) in 2022, reversing decades of\nrestrained German defense policy in direct response to Russia's invasion of Ukraine.\n", "prereqs": ["germany_merkel_era"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "russia_cold_war_buildup", "label": "russia cold war buildup", "kind": "concept", "tier": 1, "defines": "The USSR tests an atomic bomb (1949), launches Sputnik (1957), and forms the Warsaw Pact\n(1955), building the military and technological counterweight to the US-led bloc.\n", "prereqs": ["russia_soviet_superpower_1945", "cold_war_bipolar_order"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "russia_soviet_interventions", "label": "russia soviet interventions", "kind": "concept", "tier": 2, "defines": "The USSR intervenes militarily to preserve Soviet-bloc control — Hungary (1956),\nCzechoslovakia's Prague Spring (1968), and a decade-long war in Afghanistan (1979-89) —\nat rising cost to its own resources and prestige.\n", "prereqs": ["russia_cold_war_buildup"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "russia_soviet_collapse_1991", "label": "russia soviet collapse 1991", "kind": "concept", "tier": 3, "defines": "Gorbachev's Glasnost and Perestroika reforms (from 1985) unintentionally accelerate the\nSoviet system's collapse; the USSR formally dissolves in 1991 into 15 independent\nstates.\n", "prereqs": ["russia_soviet_interventions"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "russia_putin_consolidation", "label": "russia putin consolidation", "kind": "concept", "tier": 4, "defines": "Vladimir Putin, president from 2000, steadily consolidates political power through the\n2000s-2010s, curbing independent media and reshaping Russia's post-Soviet institutions\naround a single long-tenured leader.\n", "prereqs": ["russia_soviet_collapse_1991"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "russia_ukraine_war_2022", "label": "russia ukraine war 2022", "kind": "concept", "tier": 5, "defines": "Russia annexes Crimea in 2014 and launches a full-scale invasion of Ukraine in 2022,\ntriggering Europe's largest war since WWII and sweeping international sanctions.\n", "prereqs": ["russia_putin_consolidation"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_postwar_constitution_pacifism", "label": "japan postwar constitution pacifism", "kind": "concept", "tier": 1, "defines": "Japan adopts a US-drafted constitution (1947) renouncing war, regains full sovereignty\nvia the 1951-52 San Francisco Peace Treaty, and rebuilds under the LDP's dominant 'JAPAN\n1955 system.'\n", "prereqs": ["japan_occupation_1945", "usa_postwar_superpower_1945"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_economic_miracle", "label": "japan economic miracle", "kind": "concept", "tier": 2, "defines": "Japan achieves extraordinary industrial growth from the 1960s-1980s, hosting the 1964\nTokyo Olympics and becoming the world's second-largest economy by the 1980s.\n", "prereqs": ["japan_postwar_constitution_pacifism"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_bubble_and_lost_decade", "label": "japan bubble and lost decade", "kind": "concept", "tier": 3, "defines": "The 1985 Plaza Accord contributes to a Japanese asset-price bubble whose 1990s collapse\ntriggers prolonged economic stagnation — the 'Lost Decade.'\n", "prereqs": ["japan_economic_miracle"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_disasters_and_resilience", "label": "japan disasters and resilience", "kind": "concept", "tier": 4, "defines": "The 1995 Kobe earthquake and the 2011 Tōhoku earthquake/tsunami/Fukushima nuclear\ndisaster test Japan's disaster-response and energy policy in the midst of prolonged\neconomic stagnation.\n", "prereqs": ["japan_bubble_and_lost_decade"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "japan_abe_era", "label": "japan abe era", "kind": "concept", "tier": 5, "defines": "Shinzo Abe, Japan's longest-serving PM (2012-2020), pursues 'Abenomics' monetary and\nstructural reform to break the deflationary stagnation, before his 2022 assassination\nshocks the country.\n", "prereqs": ["japan_disasters_and_resilience"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_communist_consolidation", "label": "china communist consolidation", "kind": "concept", "tier": 1, "defines": "The Communists win the civil war and found the PRC in 1949; China then fights US-led UN\nforces to a stalemate in the Korean War (1950-53), its first major confrontation with\nthe American-led postwar order.\n", "prereqs": ["china_civil_war_resumption_1945", "usa_postwar_superpower_1945"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_maoist_upheaval", "label": "china maoist upheaval", "kind": "concept", "tier": 2, "defines": "Mao's Great Leap Forward (1958-62) causes catastrophic famine, and the Cultural\nRevolution (1966-76) causes massive social upheaval and persecution — two self-inflicted\ncrises with no external cause in the source chain.\n", "prereqs": ["china_communist_consolidation"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_reform_and_opening", "label": "china reform and opening", "kind": "concept", "tier": 3, "defines": "Deng Xiaoping launches market-oriented reform and opening in 1978 after Mao's death, and\nChina joins the WTO in 2001, integrating rapidly into the global economy over the\nfollowing two decades.\n", "prereqs": ["china_maoist_upheaval"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_rise_as_power", "label": "china rise as power", "kind": "concept", "tier": 4, "defines": "China hosts the 2008 Olympics, launches the Belt and Road Initiative (2013), and\nconsolidates power under Xi Jinping, including the 2018 abolition of presidential term\nlimits.\n", "prereqs": ["china_reform_and_opening"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "china_hongkong_and_covid", "label": "china hongkong and covid", "kind": "concept", "tier": 5, "defines": "Hong Kong's 2019-20 protests are followed by a national security law curtailing its\nautonomy; the COVID-19 pandemic, first identified in Wuhan in 2020, becomes a defining\nglobal and domestic event.\n", "prereqs": ["china_rise_as_power"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_cold_war_containment", "label": "usa cold war containment", "kind": "concept", "tier": 1, "defines": "The USA commits to containing communism (Truman Doctrine, Marshall Plan, NATO, 1947-49)\nand fights the Korean War (1950-53) to a stalemate, its first direct Cold War military\ncommitment.\n", "prereqs": ["usa_postwar_superpower_1945", "cold_war_bipolar_order"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_civil_rights_and_vietnam", "label": "usa civil rights and vietnam", "kind": "concept", "tier": 2, "defines": "The 1955-68 Civil Rights Movement dismantles legal segregation at home while the 1961-75\nVietnam War becomes a prolonged, divisive Cold War military commitment abroad.\n", "prereqs": ["usa_cold_war_containment"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_cold_war_endgame", "label": "usa cold war endgame", "kind": "concept", "tier": 3, "defines": "Reagan-era military buildup and later engagement with Gorbachev culminate in the 1989\nfall of the Berlin Wall and 1991 Soviet collapse, leaving the USA as the sole global\nsuperpower.\n", "prereqs": ["usa_civil_rights_and_vietnam"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_war_on_terror", "label": "usa war on terror", "kind": "concept", "tier": 4, "defines": "The September 11, 2001 attacks trigger a two-decade 'War on Terror,' including wars in\nAfghanistan (2001-21) and Iraq (2003-11).\n", "prereqs": ["usa_cold_war_endgame"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "usa_polarization_era", "label": "usa polarization era", "kind": "concept", "tier": 6, "defines": "The 2008 financial crisis, rising economic competition with a rapidly risen China, the\nCOVID-19 pandemic, and the 2021 Capitol attack mark a period of deepening domestic\npolitical polarization.\n", "prereqs": ["usa_war_on_terror", "china_rise_as_power"], "verifier": "", "lab": "", "play": "", "color": {"background": "#e8f5e9", "border": "#2e7d32"}, "font": {"size": 13}}, {"id": "cold_war_bipolar_order_pattern", "label": "cold war bipolar order pattern", "kind": "application", "tier": 2, "defines": "Observation traceable to the USA and Russia/USSR chains above: both powers' dated events\n(alliance-building, proxy wars, arms races) mirror each other for four decades after\n1945 — recorded here as what the two chains show, not as a general law about superpower\nrivalry.\n", "prereqs": ["usa_cold_war_containment", "russia_cold_war_buildup"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}, {"id": "decolonization_wave_pattern", "label": "decolonization wave pattern", "kind": "application", "tier": 2, "defines": "Observation spanning the UK and France chains: both European empires wind down within\nroughly the same two postwar decades (1947-1962 in the dated events above), whatever\nweight a reader assigns to shared versus independent causes.\n", "prereqs": ["uk_decolonization_wave", "france_indochina_defeat", "france_algerian_war"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}, {"id": "economic_integration_pattern", "label": "economic integration pattern", "kind": "application", "tier": 3, "defines": "Observation spanning the Germany, France, and UK chains: all three converge on the same\nEuropean-integration institutions (EEC/EU) within the dated events above, despite each\nstarting from a very different 1945 position (occupied, defeated-colonial-power, and\nvictorious-but-exhausted, respectively).\n", "prereqs": ["germany_wirtschaftswunder", "france_fifth_republic_eu_integration", "uk_eec_membership"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}, {"id": "authoritarian_consolidation_pattern", "label": "authoritarian consolidation pattern", "kind": "application", "tier": 5, "defines": "Observation traceable to the Russia and China chains: both show a shift in the\n2010s-2020s toward long-tenured, term-limit-extending leadership (recorded in each\nchain's dated events), concurrent in the source data though arising from different\nstarting systems (post-Soviet Russia vs. one-party China).\n", "prereqs": ["russia_putin_consolidation", "china_rise_as_power"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}, {"id": "globalization_backlash_pattern", "label": "globalization backlash pattern", "kind": "application", "tier": 6, "defines": "Observation spanning the China, USA, and UK chains: the same roughly 2008-2020 window\ncontains the financial crisis, the UK's Brexit vote, and rising US political\npolarization tied partly to China's economic rise — concurrent events in the source\nchains, not an asserted single cause.\n", "prereqs": ["china_rise_as_power", "usa_polarization_era", "uk_brexit_realignment"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}, {"id": "vigilance_2045_synthesis", "label": "vigilance 2045 synthesis", "kind": "application", "tier": 7, "defines": "The five patterns above are a checklist derived from this era's traced event chains, not\na prediction about 2026-2045 — each is falsifiable against the underlying\nprimitives/concepts it cites and each should be re-examined, not assumed, as new rows\nare added to the living ch09-15 chapters year by year.\n", "prereqs": ["cold_war_bipolar_order_pattern", "decolonization_wave_pattern", "economic_integration_pattern", "authoritarian_consolidation_pattern", "globalization_backlash_pattern"], "verifier": "", "lab": "", "play": "", "color": {"background": "#fce4ec", "border": "#c62828"}, "font": {"size": 13}}], "edges": [{"from": "uk_postwar_settlement_1945", "to": "uk_decolonization_wave"}, {"from": "france_liberation_1945", "to": "france_indochina_defeat"}, {"from": "germany_occupation_1945", "to": "germany_division_and_wall"}, {"from": "russia_soviet_superpower_1945", "to": "russia_cold_war_buildup"}, {"from": "japan_occupation_1945", "to": "japan_postwar_constitution_pacifism"}, {"from": "china_civil_war_resumption_1945", "to": "china_communist_consolidation"}, {"from": "usa_postwar_superpower_1945", "to": "japan_postwar_constitution_pacifism"}, {"from": "usa_postwar_superpower_1945", "to": "china_communist_consolidation"}, {"from": "usa_postwar_superpower_1945", "to": "usa_cold_war_containment"}, {"from": "cold_war_bipolar_order", "to": "germany_division_and_wall"}, {"from": "cold_war_bipolar_order", "to": "russia_cold_war_buildup"}, {"from": "cold_war_bipolar_order", "to": "usa_cold_war_containment"}, {"from": "uk_decolonization_wave", "to": "uk_suez_humiliation"}, {"from": "uk_decolonization_wave", "to": "decolonization_wave_pattern"}, {"from": "uk_suez_humiliation", "to": "uk_eec_membership"}, {"from": "uk_eec_membership", "to": "uk_thatcher_restructuring"}, {"from": "uk_eec_membership", "to": "economic_integration_pattern"}, {"from": "uk_thatcher_restructuring", "to": "uk_brexit_realignment"}, {"from": "uk_brexit_realignment", "to": "globalization_backlash_pattern"}, {"from": "france_indochina_defeat", "to": "france_algerian_war"}, {"from": "france_indochina_defeat", "to": "decolonization_wave_pattern"}, {"from": "france_algerian_war", "to": "france_fifth_republic_eu_integration"}, {"from": "france_algerian_war", "to": "decolonization_wave_pattern"}, {"from": "france_fifth_republic_eu_integration", "to": "france_may68_social_change"}, {"from": "france_fifth_republic_eu_integration", "to": "economic_integration_pattern"}, {"from": "france_may68_social_change", "to": "france_recent_instability"}, {"from": "germany_division_and_wall", "to": "germany_wirtschaftswunder"}, {"from": "germany_wirtschaftswunder", "to": "germany_reunification_1990"}, {"from": "germany_wirtschaftswunder", "to": "economic_integration_pattern"}, {"from": "germany_reunification_1990", "to": "germany_merkel_era"}, {"from": "germany_merkel_era", "to": "germany_zeitenwende_2022"}, {"from": "russia_cold_war_buildup", "to": "russia_soviet_interventions"}, {"from": "russia_cold_war_buildup", "to": "cold_war_bipolar_order_pattern"}, {"from": "russia_soviet_interventions", "to": "russia_soviet_collapse_1991"}, {"from": "russia_soviet_collapse_1991", "to": "russia_putin_consolidation"}, {"from": "russia_putin_consolidation", "to": "russia_ukraine_war_2022"}, {"from": "russia_putin_consolidation", "to": "authoritarian_consolidation_pattern"}, {"from": "japan_postwar_constitution_pacifism", "to": "japan_economic_miracle"}, {"from": "japan_economic_miracle", "to": "japan_bubble_and_lost_decade"}, {"from": "japan_bubble_and_lost_decade", "to": "japan_disasters_and_resilience"}, {"from": "japan_disasters_and_resilience", "to": "japan_abe_era"}, {"from": "china_communist_consolidation", "to": "china_maoist_upheaval"}, {"from": "china_maoist_upheaval", "to": "china_reform_and_opening"}, {"from": "china_reform_and_opening", "to": "china_rise_as_power"}, {"from": "china_rise_as_power", "to": "china_hongkong_and_covid"}, {"from": "china_rise_as_power", "to": "usa_polarization_era"}, {"from": "china_rise_as_power", "to": "authoritarian_consolidation_pattern"}, {"from": "china_rise_as_power", "to": "globalization_backlash_pattern"}, {"from": "usa_cold_war_containment", "to": "usa_civil_rights_and_vietnam"}, {"from": "usa_cold_war_containment", "to": "cold_war_bipolar_order_pattern"}, {"from": "usa_civil_rights_and_vietnam", "to": "usa_cold_war_endgame"}, {"from": "usa_cold_war_endgame", "to": "usa_war_on_terror"}, {"from": "usa_war_on_terror", "to": "usa_polarization_era"}, {"from": "usa_polarization_era", "to": "globalization_backlash_pattern"}, {"from": "cold_war_bipolar_order_pattern", "to": "vigilance_2045_synthesis"}, {"from": "decolonization_wave_pattern", "to": "vigilance_2045_synthesis"}, {"from": "economic_integration_pattern", "to": "vigilance_2045_synthesis"}, {"from": "authoritarian_consolidation_pattern", "to": "vigilance_2045_synthesis"}, {"from": "globalization_backlash_pattern", "to": "vigilance_2045_synthesis"}]};
+const DOMAIN_KEY = "graph";
+const GRAPH_LAYOUT = "graph";
+
+// ── index ──────────────────────────────────────────────────────────────────
+const nodeIndex = {};
+RAW.nodes.forEach(n => nodeIndex[n.id] = n);
+
+const prereqOf  = {};  // id → ids that are direct prerequisites OF id
+const dependsOn = {};  // id → ids that id feeds into
+RAW.nodes.forEach(n => { prereqOf[n.id] = []; dependsOn[n.id] = []; });
+RAW.edges.forEach(e => {
+  prereqOf[e.to].push(e.from);
+  dependsOn[e.from].push(e.to);
+});
+
+// ── BFS longest-path levels (fixes application nodes at wrong tier) ─────────
+const bfsLevels = (() => {
+  const levels = {};
+  const successors = {};
+  RAW.nodes.forEach(n => { levels[n.id] = -1; successors[n.id] = []; });
+  RAW.edges.forEach(e => successors[e.from].push(e.to));
+  const sources = RAW.nodes.filter(n => !RAW.edges.some(e => e.to === n.id));
+  const queue = sources.map(n => n.id);
+  queue.forEach(n => levels[n] = 0);
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const succ of successors[cur]) {
+      const nl = levels[cur] + 1;
+      if (levels[succ] < nl) { levels[succ] = nl; queue.push(succ); }
+    }
+  }
+  return levels;
+})();
+
+// ── graph algorithms ────────────────────────────────────────────────────────
+function getAncestors(targetId) {
+  const visited = new Set();
+  const queue = [targetId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const p of prereqOf[cur])
+      if (!visited.has(p)) { visited.add(p); queue.push(p); }
+  }
+  return visited;
+}
+
+function topoSort(nodeSet) {
+  const inDeg = {};
+  nodeSet.forEach(n => inDeg[n] = 0);
+  nodeSet.forEach(n => { for (const p of prereqOf[n]) if (nodeSet.has(p)) inDeg[n]++; });
+  const reach = {};
+  nodeSet.forEach(n => {
+    let r = 0;
+    nodeSet.forEach(m => { if (m !== n && getAncestors(m).has(n)) r++; });
+    reach[n] = r;
+  });
+  const heap = [];
+  nodeSet.forEach(n => { if (inDeg[n] === 0) heap.push(n); });
+  heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+  const result = [];
+  while (heap.length) {
+    const node = heap.shift();
+    result.push(node);
+    for (const succ of dependsOn[node]) {
+      if (!nodeSet.has(succ)) continue;
+      if (--inDeg[succ] === 0) {
+        heap.push(succ);
+        heap.sort((a, b) => (reach[b] - reach[a]) || a.localeCompare(b));
+      }
+    }
+  }
+  return result;
+}
+
+// Read once, up front — used both for the network's own edge-curvature
+// hint below and by _layoutTimeline() later. Settings-page preference
+// (src/pages/Settings.js's getTimelineOrientation()); irrelevant for the
+// default "graph" layout.
+let TIMELINE_ORIENTATION = 'vertical';
+try {
+  TIMELINE_ORIENTATION = localStorage.getItem('cb-timeline-orientation') === 'horizontal' ? 'horizontal' : 'vertical';
+} catch (_) {}
+
+// ── vis.js network ──────────────────────────────────────────────────────────
+const container = document.getElementById('graph-container');
+// vis-network renders a node's `title` tooltip via the DOM node's
+// innerText (verified against the vis-network@9.1.9 bundle itself — it
+// does NOT interpret the string as HTML), so no escaping is needed here;
+// escaping it (an earlier version of this code did) actively backfires,
+// since innerText doesn't decode HTML entities back to characters —
+// "it's" would show up literally as "it&#39;s". Wrapping is handled by
+// the .vis-tooltip CSS override below, not here.
+const visNodes = new vis.DataSet(RAW.nodes.map(n => ({
+  id: n.id,
+  label: n.label.replace(/ /g, '\n'),
+  level: bfsLevels[n.id] !== undefined ? bfsLevels[n.id] : n.tier,
+  color: n.color,
+  font: n.font,
+  shape: n.kind === 'concept' ? 'ellipse' : 'box',
+  title: n.defines || undefined,
+})));
+const visEdges = new vis.DataSet(RAW.edges.map((e, i) => ({
+  id: i, from: e.from, to: e.to,
+  arrows: 'to', color: {color: '#c8ccd4'}, width: 1,
+})));
+// Edge curvature direction should follow whichever axis is the *main*
+// (sequence) axis — vertical for the default graph layout and a
+// vertical-orientation timeline, horizontal for a horizontal-orientation
+// timeline — otherwise the zig-zag connectors look bowed the wrong way.
+const _edgeForceDirection = (GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal') ? 'horizontal' : 'vertical';
+// hierarchical.enabled stays false: _layoutGraph()/_layoutTimeline() below
+// already set every node's final x/y explicitly via moveNode() once
+// 'afterDrawing' fires, so vis-network's own hierarchical engine would be
+// redundant — worse, vis-network re-runs that engine on every DataSet
+// change (selectNode()'s visNodes.update()/visEdges.update() calls when
+// highlighting a clicked node's path), which silently overwrote the
+// manual timeline positions and collapsed every node onto the same
+// cross-axis column the moment a node was clicked. Positions are fully
+// hand-computed below; the built-in layout engine has nothing to add and
+// only fights the manual one if left on.
+const network = new vis.Network(container, {nodes: visNodes, edges: visEdges}, {
+  layout: { hierarchical: { enabled: false } },
+  physics: { enabled: false },
+  interaction: { hover: true, tooltipDelay: 150 },
+  edges: { smooth: { type: 'cubicBezier', forceDirection: _edgeForceDirection } },
+});
+
+// Group nodes by their BFS tier — shared by both layouts below. Using the
+// *rank* of each distinct tier value (ti), not the raw tier number itself,
+// is what already made the compact layout's spacing even regardless of
+// gaps in the YAML's tier numbering — the timeline layout leans on that
+// same property to satisfy "don't treat the axis as a literal time scale".
+function _groupByTier() {
+  const byTier = {};
+  RAW.nodes.forEach(n => {
+    const tier = bfsLevels[n.id] ?? n.tier ?? 0;
+    if (!byTier[tier]) byTier[tier] = [];
+    byTier[tier].push(n.id);
+  });
+  const tiers = Object.keys(byTier).map(Number).sort((a, b) => a - b);
+  return { byTier, tiers };
+}
+
+// Compact layout (default "graph"): group by tier, sort alphabetically,
+// left-align all nodes — a hierarchical prerequisite DAG.
+function _layoutGraph() {
+  const { byTier, tiers } = _groupByTier();
+  const spacing = 140;
+  const tierSep = 85;
+  _mainAxisSpacing = tierSep;
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const y = ti * tierSep;
+    ids.forEach((id, i) => {
+      network.moveNode(id, i * spacing, y);
+    });
+  });
+}
+
+// Timeline layout ("layout: timeline" in graph.yaml): a linear chain of
+// stops — main axis position is the tier's *rank* (evenly spaced, not
+// scaled to any real date/duration — see graph.yaml's own tier field,
+// which is just a sequence index here, not a year), alternating to either
+// side of the centerline on the cross axis so consecutive stops zig-zag
+// rather than overlap. The zig-zag path traced by the connecting edges
+// *is* the visual timeline — no separate straight guide line is drawn.
+// Orientation (vertical: top-to-bottom main axis, or horizontal:
+// left-to-right) is a Settings-page preference (src/pages/Settings.js's
+// getTimelineOrientation()), read from localStorage here since it can
+// change without regenerating this static page.
+function _layoutTimeline() {
+  const { byTier, tiers } = _groupByTier();
+  const mainSep = 140;
+  const crossOffset = 90;
+  const withinTierSpacing = 60;
+  _mainAxisSpacing = mainSep;
+
+  tiers.forEach((tier, ti) => {
+    const ids = byTier[tier].sort();
+    const main = ti * mainSep;
+    const cross = (ti % 2 === 0 ? -1 : 1) * crossOffset;
+    ids.forEach((id, i) => {
+      // More than one event sharing a tier: spread them along the cross
+      // axis around that tier's alternating offset instead of stacking.
+      const spread = (i - (ids.length - 1) / 2) * withinTierSpacing;
+      if (TIMELINE_ORIENTATION === 'horizontal') {
+        network.moveNode(id, main, cross + spread);
+      } else {
+        network.moveNode(id, cross + spread, main);
+      }
+    });
+  });
+}
+
+// network.fit() alone zooms out to fit every node/tier in the viewport —
+// fine for a small graph, but for a large one it shrinks nodes/labels past
+// legibility. This floors the scale so the initial view shows roughly
+// DESIRED_VISIBLE_TIERS tiers along the layout's main axis instead of the
+// whole graph crammed in: a small graph that already fits within that many
+// tiers is untouched (fit's own scale wins), a large one defaults to a
+// legible subset instead of the whole graph in miniature. Sized off
+// _mainAxisSpacing (set by whichever of _layoutGraph/_layoutTimeline just
+// ran) rather than a sampled node's pixel size — a single sampled node
+// (e.g. a short-label primitive) previously over- or under-estimated the
+// scale needed for the graph's *typical* node size.
+let _mainAxisSpacing = 140;
+function _applyLegibleFloor() {
+  if (RAW.nodes.length === 0) return;
+  const fitScale = network.getScale();
+  const container = document.getElementById('graph-container');
+  const horizontal = GRAPH_LAYOUT === 'timeline' && TIMELINE_ORIENTATION === 'horizontal';
+  const viewportMain = horizontal ? container.clientWidth : container.clientHeight;
+  const DESIRED_VISIBLE_TIERS = 4;
+  const targetScale = viewportMain / (_mainAxisSpacing * DESIRED_VISIBLE_TIERS);
+  const minLegibleScale = Math.min(targetScale, 1);
+  if (fitScale < minLegibleScale) {
+    network.moveTo({ scale: minLegibleScale, animation: false });
+  }
+}
+
+network.once('afterDrawing', function() {
+  if (GRAPH_LAYOUT === 'timeline') {
+    _layoutTimeline();
+  } else {
+    _layoutGraph();
+  }
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+});
+
+// A true fit-to-everything, regardless of graph size — what the Re-Center
+// button explicitly promises ("re-fit the graph to the viewport").
+function reCenterGraph() {
+  network.fit({ animation: true });
+}
+
+// Same fit, but re-applies the legibility floor — used by GraphViewer.js's
+// automatic post-layout re-fit (once the parent app's CSS relayout has
+// settled the iframe's real container size) so a large graph's default
+// view stays readable instead of being reset to the full, tiny-node fit.
+function fitLegible() {
+  network.fit({ animation: false });
+  _applyLegibleFloor();
+}
+
+// The parent app's own CSS relayout (hiding graph.html's own chrome,
+// slotting the Notes drawer below the graph) doesn't necessarily finish
+// resizing #graph-container in a single frame — a further layout pass can
+// resize it again after GraphViewer.js's one requestAnimationFrame call to
+// fitLegible() already ran, and vis-network's own internal handling of a
+// container resize after the fact can leave the view at a scale neither
+// fit() nor our floor ever asked for. Re-applying the floor once the
+// container's size has actually stopped changing (debounced) catches
+// that; disconnecting after the first settle avoids overriding a user's
+// own manual zoom/pan on every later resize (e.g. dragging the Notes
+// drawer's gutter).
+if (typeof ResizeObserver !== 'undefined') {
+  const _graphContainer = document.getElementById('graph-container');
+  let _resizeSettleTimer = null;
+  const _ro = new ResizeObserver(() => {
+    clearTimeout(_resizeSettleTimer);
+    _resizeSettleTimer = setTimeout(() => {
+      _ro.disconnect();
+      try { fitLegible(); } catch (_) {}
+    }, 200);
+  });
+  _ro.observe(_graphContainer);
+}
+
+const C_PATH   = {background: '#fff9c4', border: '#f9a825'};
+const C_TARGET = {background: '#ffe082', border: '#e65100'};
+
+function resetColors() {
+  visNodes.update(RAW.nodes.map(n => ({id: n.id, color: n.color})));
+  visEdges.update(RAW.edges.map((e, i) => ({id: i, color: {color: '#c8ccd4'}, width: 1})));
+}
+
+// ── explanation panel ───────────────────────────────────────────────────────
+function renderExplanation(node) {
+  const kclass = node.kind;
+  const prereqChips = (node.prereqs || []).map(p =>
+    `<span class="prereq-chip" onclick="selectNode('${p}')">${p.replace(/_/g,' ')}</span>`
+  ).join('');
+  const metaItems = [
+    node.verifier ? `<span class="meta-item"><b>Verifier:</b> ${node.verifier}</span>` : '',
+    node.lab      ? `<span class="meta-item"><b>Lab:</b> ${node.lab}</span>` : '',
+  ].filter(Boolean).join('');
+  const playHtml = node.play
+    ? `<div class="section-label">Try it</div><div class="play-hint">${node.play}</div>`
+    : '';
+
+  const panel = document.getElementById('explain-panel');
+  panel.innerHTML = `
+    <div class="node-title">
+      <h2>${node.label}</h2>
+      <span class="badge ${kclass}">${kclass}</span>
+      <span class="tier-tag">BFS level ${bfsLevels[node.id] ?? node.tier}</span>
+    </div>
+    ${node.defines ? `<div class="defines">${node.defines}</div>` : ''}
+    ${prereqChips ? `<div class="section-label">Prerequisites</div><div class="prereq-list">${prereqChips}</div>` : ''}
+    ${metaItems ? `<div class="meta-row">${metaItems}</div>` : ''}
+    ${playHtml}
+  `;
+
+  // ── concept HTML detail ──
+  const conceptsBase = window.__cb_CONCEPTS_BASE;
+  const conceptUrls = window.__cb_CONCEPT_URLS || {};
+  const mappedUrl = conceptUrls[node.id];
+  if (mappedUrl || conceptsBase) {
+    const conceptUrl = mappedUrl || (conceptsBase + 'concept_' + encodeURIComponent(node.id) + '.html');
+    const detail = document.createElement('div');
+    detail.id = 'concept-detail';
+    detail.innerHTML = '<div class="section-label">Concept Detail</div><div class="concept-loading" style="color:#aaa;font-size:12px;padding:6px 0">Loading…</div>';
+    panel.appendChild(detail);
+    fetch(conceptUrl)
+      .then(r => {
+        if (!r.ok) throw new Error('not found');
+        return r.text();
+      })
+      .then(html => {
+        const slot = detail.querySelector('.concept-loading');
+        if (!slot) return;
+        // Vite dev server returns the SPA index.html (200) for missing static files.
+        // Verify we got a real concept page by checking for a known marker.
+        if (html.includes('spl-credit') || html.includes('Powered by')) {
+          const iframe = document.createElement('iframe');
+          iframe.id = 'concept-iframe';
+          iframe.src = conceptUrl;
+          slot.replaceWith(iframe);
+        } else {
+          slot.className = 'concept-not-found';
+          slot.textContent = 'Content not found — generate it first.';
+        }
+      })
+      .catch(() => {
+        const slot = detail.querySelector('.concept-loading');
+        if (slot) { slot.className = 'concept-not-found'; slot.textContent = 'Content not found — generate it first.'; }
+      });
+  }
+}
+
+// ── learning path sidebar ───────────────────────────────────────────────────
+function renderPathSidebar(orderedPath, targetId) {
+  const stepsEl = document.getElementById('path-steps');
+  const countEl = document.getElementById('path-count');
+  countEl.textContent = orderedPath.length
+    ? `${orderedPath.length} step${orderedPath.length !== 1 ? 's' : ''} to learn first`
+    : 'Root concept — no prerequisites';
+
+  const target = nodeIndex[targetId];
+  const kc = k => `${k.charAt(0).toUpperCase() + k.slice(1)}`;
+
+  stepsEl.innerHTML = orderedPath.map((n, i) => {
+    const nd = nodeIndex[n];
+    return `<div class="step-item" onclick="selectNode('${n}')">
+      <span class="step-num">${i + 1}.</span>
+      <div>
+        <div class="step-label">${nd.label}
+          <span class="step-kind ${nd.kind}-k">${nd.kind}</span>
+        </div>
+        ${nd.defines ? `<div class="step-def">${nd.defines}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('') + `<div class="step-item target">
+    <span class="step-num">▶</span>
+    <div>
+      <div class="step-label">${target.label}
+        <span class="step-kind ${target.kind}-k">${target.kind}</span>
+      </div>
+      ${target.defines ? `<div class="step-def">${target.defines}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── notes (localStorage) ────────────────────────────────────────────────────
+// Each node's notes are an append-only history of timestamped entries, not
+// a single overwritable value — Save (explicit, not triggered on every
+// keystroke) appends a new entry and clears the input, so writing a
+// follow-up thought later never clobbers what was already saved for that
+// node. See _parseEntries for the migration from the old single-note
+// format this replaces.
+let currentNodeId = null;
+
+function noteKey(nodeId) { return `concept_notes_${DOMAIN_KEY}_${nodeId}`; }
+
+function _parseEntries(raw) {
+  if (!raw) return [];
+  try {
+    const d = JSON.parse(raw);
+    if (Array.isArray(d)) return d;
+    // Legacy single-note format ({text, ts}) written before notes became
+    // an entry history — migrate it in place as a one-entry history
+    // instead of silently discarding whatever was already saved there.
+    if (d && typeof d === 'object' && d.text) return [{ text: d.text, ts: d.ts || '' }];
+    return [];
+  } catch (_) {
+    return raw ? [{ text: raw, ts: '' }] : [];
+  }
+}
+
+// Used by GraphViewer.js's _wireNoteHistoryBridge (parent app embed) to
+// pull one specific past entry's full text into the "Note Detail" tab —
+// a top-level `function` declaration so it lands on this iframe's window
+// (see that file's comment on why `const`/`let` don't).
+function getEntryText(nodeId, ts) {
+  const entry = _parseEntries(localStorage.getItem(noteKey(nodeId))).find(e => e.ts === ts);
+  return entry ? entry.text : '';
+}
+
+function saveNoteEntry() {
+  if (!currentNodeId) return;
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value;
+  if (!text.trim()) return;
+  const entries = _parseEntries(localStorage.getItem(noteKey(currentNodeId)));
+  entries.push({ text, ts: new Date().toISOString() });
+  localStorage.setItem(noteKey(currentNodeId), JSON.stringify(entries));
+  ta.value = '';
+  renderNoteHistory(currentNodeId);
+  const btn = document.getElementById('nb-save-btn');
+  if (btn) { btn.textContent = 'Saved!'; setTimeout(() => { btn.textContent = 'Save'; }, 1000); }
+}
+
+// Clears the draft in the input box only — the saved entry history is
+// untouched (there's no single "the note" to delete any more, just past
+// entries, none of which this button targets).
+function clearNoteInput() {
+  document.getElementById('notes-textarea').value = '';
+}
+
+function _fmtTs(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${yy}-${mm}-${dd} ${hh}:${mi}`;
+}
+
+// A note's text is whatever the reader typed into the textarea, stored
+// straight to localStorage with no sanitization — so renderNoteHistory's
+// preview has to escape it before it goes into innerHTML, even though
+// today's writer/reader is the same person in the same browser. Same
+// reasoning as this app's own src/lib/html.js escapeHtml.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// All saved entries for ONE node (the currently-selected one), most recent
+// first — not a cross-node index. data-node-id/data-ts on each row are read
+// by GraphViewer.js's _wireNoteHistoryBridge (the app embed's "click a past
+// entry to view its full text in the Note Detail tab" feature) via
+// getEntryText() above; unused, harmless in the standalone page.
+function renderNoteHistory(nodeId) {
+  const container = document.getElementById('notes-with-entries');
+  const entries = _parseEntries(localStorage.getItem(noteKey(nodeId)));
+  if (!entries.length) {
+    container.innerHTML = '<div class="note-empty-hint">No saved entries yet for this concept.</div>';
+    return;
+  }
+  container.innerHTML = entries.slice().reverse().map(e =>
+    `<div class="note-entry" data-node-id="${_escHtml(nodeId)}" data-ts="${_escHtml(e.ts)}">
+      <div class="note-node"><span class="note-ts">${_fmtTs(e.ts)}</span></div>
+      <div class="note-preview">${_escHtml(e.text.slice(0, 80))}</div>
+    </div>`
+  ).join('');
+}
+
+function switchNotes(nodeId) {
+  // No implicit carry-over save of whatever's in the input when switching
+  // nodes — Save is explicit now (see saveNoteEntry), so an unsaved draft
+  // is intentionally discarded, same as closing a document without saving.
+  currentNodeId = nodeId;
+  document.getElementById('notes-textarea').value = '';
+  document.getElementById('notes-node-label').textContent =
+    nodeIndex[nodeId]?.label || nodeId;
+  renderNoteHistory(nodeId);
+}
+
+function exportNotes() {
+  const notes = {};
+  RAW.nodes.forEach(n => {
+    const v = localStorage.getItem(noteKey(n.id));
+    if (v) notes[n.id] = v;
+  });
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${DOMAIN_KEY}_notes.json`;
+  a.click();
+}
+
+// ── unified node select ─────────────────────────────────────────────────────
+function selectNode(nodeId) {
+  if (!nodeIndex[nodeId]) return;
+  network.selectNodes([nodeId]);
+  handleSelect(nodeId);
+}
+
+function handleSelect(targetId) {
+  const node = nodeIndex[targetId];
+
+  renderExplanation(node);
+  switchNotes(targetId);
+
+  const ancestors = getAncestors(targetId);
+  const pathSet = new Set([...ancestors]);
+  const orderedPath = topoSort(pathSet);
+
+  renderPathSidebar(orderedPath, targetId);
+
+  resetColors();
+  visNodes.update(orderedPath.map(n => ({id: n, color: C_PATH})));
+  visNodes.update([{id: targetId, color: C_TARGET}]);
+  visEdges.update(RAW.edges.map((e, i) => {
+    const inPath = pathSet.has(e.from) && (pathSet.has(e.to) || e.to === targetId);
+    return {id: i, color: {color: inPath ? '#f9a825' : '#c8ccd4'}, width: inPath ? 2 : 1};
+  }));
+}
+
+network.on('click', params => {
+  if (params.nodes.length) handleSelect(params.nodes[0]);
+});
+
+// initial empty state — real content loads once a node is selected (see
+// switchNotes -> renderNoteHistory)
+document.getElementById('notes-with-entries').innerHTML =
+  '<div class="note-empty-hint">Select a concept to see or add notes.</div>';
+
+// When viewed directly (not in an iframe), inject a back link next to the
+// "Learning Path" heading so it doesn't look like a title-bar element.
+if (window.parent === window) {
+  var h1 = document.querySelector('#path-header h1');
+  if (h1) {
+    var backLink = document.createElement('a');
+    backLink.href = '../../';
+    backLink.textContent = '← App';
+    backLink.style.cssText = [
+      'font-size:10px','color:#2563eb','font-family:system-ui,sans-serif',
+      'text-decoration:none','font-weight:400','letter-spacing:normal',
+      'text-transform:none','white-space:nowrap','flex-shrink:0'
+    ].join(';');
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:baseline;gap:8px;';
+    h1.parentNode.insertBefore(row, h1);
+    row.appendChild(h1);
+    row.appendChild(backLink);
+  }
+}
+</script>
+</body>
+</html>
